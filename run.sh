@@ -12,5 +12,6 @@ docker run -ti --rm \
     -v ~/.gitconfig:/root/.gitconfig \
     -v ~/.aws:/root/.aws \
     -v ~/.azure:/root/.azure \
+    -v /var/run/docker.sock:/var/run/docker.sock \
     $IMAGE_TAG \
     bash

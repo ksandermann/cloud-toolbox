@@ -12,6 +12,7 @@ ARG ANSIBLE_VERSION="2.8.2"
 ARG JINJA_VERSION="2.10"
 ARG AZ_CLI_VERSION="2.0.69-1~bionic"
 ARG AWS_CLI_VERSION="1.16.198"
+ARG DOCKER_VERSION="18.09.8"
 
 ARG TILLER_NAMESPACE=kubetools
 
@@ -23,6 +24,7 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 ARG OC_CLI_SOURCE
 ARG HELM_VERSION
 ARG TERRAFORM_VERSION
+ARG DOCKER_VERSION
 
 USER root
 WORKDIR /root/download
@@ -50,6 +52,20 @@ RUN curl -SsL --retry 5 "https://storage.googleapis.com/kubernetes-helm/helm-v$H
 WORKDIR /root/download
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_$TERRAFORM_VERSION\_linux_amd64.zip && \
     unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
+
+#download docker
+#credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
+RUN mkdir -p /root/download/docker/bin && \
+    set -eux; \
+    arch="$(uname -m)"; \
+    if ! wget -O docker.tgz "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz"; then \
+        echo >&2 "error: failed to download 'docker-${DOCKER_VERSION}' from 'stable' for '${arch}'"; \
+        exit 1; \
+    fi; \
+    tar --extract \
+        --file docker.tgz \
+        --strip-components 1 \
+        --directory /root/download/docker/bin
 
 
 ######################################################### IMAGE ########################################################
@@ -122,7 +138,7 @@ RUN wget "http://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPE
     make install && \
     ssh -V
 
-#install ansible
+#install ansible + common requirements
 RUN pip3 install pip --upgrade
 RUN pip3 install cryptography==2.3
 RUN pip3 install \
@@ -165,12 +181,22 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
 COPY --from=builder "/root/download/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
+COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
+RUN ls -la /usr/local/bin
+
 RUN chmod +x \
     "/usr/local/bin/helm" \
     "/usr/local/bin/oc" \
-    "/usr/local/bin/terraform" && \
+    "/usr/local/bin/terraform" \
+    "/usr/local/bin/containerd" \
+    "/usr/local/bin/containerd-shim" \
+    "/usr/local/bin/docker" \
+    "/usr/local/bin/docker-init" \
+    "/usr/local/bin/docker-proxy" \
+    "/usr/local/bin/dockerd" && \
     helm init --client-only && \
-    terraform version
+    terraform version && \
+    docker --version
 
 COPY .bashrc /root/.bashrc
 
