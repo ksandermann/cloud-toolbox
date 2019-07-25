@@ -7,7 +7,7 @@ ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0
 ARG HELM_VERSION="2.14.2"
 ARG TERRAFORM_VERSION="0.12.4"
 ARG OPENSSH_VERSION="8.0p1"
-ARG KUBECTL_VERSION="1.15.0-00"
+ARG KUBECTL_VERSION="1.15.1"
 ARG ANSIBLE_VERSION="2.8.2"
 ARG JINJA_VERSION="2.10"
 ARG AZ_CLI_VERSION="2.0.69-1~bionic"
@@ -16,8 +16,9 @@ ARG DOCKER_VERSION="18.09.8"
 
 ARG TILLER_NAMESPACE=kubetools
 
+
 ######################################################### BUILDER ######################################################
-FROM ubuntu:$UBUNTU_VERSION as builder
+FROM ksandermann/multistage-builder:2019-07-25 as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -25,17 +26,8 @@ ARG OC_CLI_SOURCE
 ARG HELM_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
+ARG KUBECTL_VERSION
 
-USER root
-WORKDIR /root/download
-
-RUN apt-get update && \
-    apt-get install -y \
-    curl \
-    unzip \
-    wget
-
-RUN echo "https://storage.googleapis.com/kubernetes-helm/helm-v$HELM_VERSION-linux-amd64.tar.gz"
 
 #download oc-cli
 WORKDIR /root/download
@@ -46,7 +38,7 @@ RUN touch oc_cli.tar.gz && \
     cp oc_cli/*/* oc_cli
 
 #download helm-cli
-RUN curl -SsL --retry 5 "https://storage.googleapis.com/kubernetes-helm/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz
+RUN curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz
 
 #download terraform
 WORKDIR /root/download
@@ -67,6 +59,8 @@ RUN mkdir -p /root/download/docker/bin && \
         --strip-components 1 \
         --directory /root/download/docker/bin
 
+#download kubectl
+RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O /root/download/kubectl
 
 ######################################################### IMAGE ########################################################
 
@@ -101,6 +95,7 @@ RUN apt-get update && \
     ca-certificates \
     curl \
     dnsutils \
+    fping \
     git \
     gnupg \
     gnupg2 \
@@ -158,13 +153,6 @@ RUN pip3 install \
 RUN pip3 install awscli==$AWS_CLI_VERSION --upgrade && \
     aws --version
 
-#install kubectl
-RUN apt-get update && \
-    curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key add -  && \
-    echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | tee -a /etc/apt/sources.list.d/kubernetes.list && \
-    apt-get update && \
-    apt-get install -y kubectl=$KUBECTL_VERSION && \
-    kubectl version --client=true
 
 #install azure cli
 RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
@@ -182,12 +170,13 @@ COPY --from=builder "/root/download/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
-RUN ls -la /usr/local/bin
+COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 
 RUN chmod +x \
     "/usr/local/bin/helm" \
     "/usr/local/bin/oc" \
     "/usr/local/bin/terraform" \
+    "/usr/local/bin/kubectl" \
     "/usr/local/bin/containerd" \
     "/usr/local/bin/containerd-shim" \
     "/usr/local/bin/docker" \
@@ -195,6 +184,7 @@ RUN chmod +x \
     "/usr/local/bin/docker-proxy" \
     "/usr/local/bin/dockerd" && \
     helm init --client-only && \
+    kubectl version --client=true && \
     terraform version && \
     docker --version
 
