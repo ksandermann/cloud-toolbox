@@ -8,6 +8,12 @@ do
 done
 
 ######################################################## ALIASES #######################################################
+
+#GENERIC
+alias sshpw ="ssh -o 'PubkeyAuthentication no' "
+alias getpubip ='curl https://ipinfo.io/ip'
+
+
 #KUBECTL CLI
 
 ##generic
