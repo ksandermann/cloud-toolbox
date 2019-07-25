@@ -2,9 +2,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="ksandermann/cloud-toolbox:local"
+IMAGE_TAG="local"
 
-docker build --pull --no-cache -t $IMAGE_TAG .
+docker build \
+    --pull \
+    --no-cache \
+    -t ksandermann/cloud-toolbox:$IMAGE_TAG \
+    \
 
 ##push
 #docker login
