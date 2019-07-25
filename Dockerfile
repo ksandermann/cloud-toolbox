@@ -183,10 +183,11 @@ RUN chmod +x \
     "/usr/local/bin/docker-init" \
     "/usr/local/bin/docker-proxy" \
     "/usr/local/bin/dockerd" && \
-    helm init --client-only && \
+    helm version --client && \
     kubectl version --client=true && \
     terraform version && \
     docker --version
+
 
 COPY .bashrc /root/.bashrc
 

@@ -2,14 +2,17 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="local"
+IMAGE_TAG="2019-07-25_01"
 
 docker build \
     --pull \
     --no-cache \
     -t ksandermann/cloud-toolbox:$IMAGE_TAG \
-    \
+    .
 
 ##push
 #docker login
-#docker push $IMAGE_TAG
+#docker push ksandermann/cloud-toolbox:$IMAGE_TAG
+#
+#docker tag ksandermann/cloud-toolbox:$IMAGE_TAG ksandermann/cloud-toolbox:latest
+#docker push ksandermann/cloud-toolbox:altest

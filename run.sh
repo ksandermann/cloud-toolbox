@@ -7,6 +7,7 @@ IMAGE_TAG="latest"
 
 docker run -ti --rm \
     -v ~/.kube:/root/.kube \
+    -v ~/.helm:/root/.helm \
     -v ~/.ssh:/root/.ssh \
     -v ${PWD}:/root/project \
     -v ~/.gitconfig:/root/.gitconfig \
