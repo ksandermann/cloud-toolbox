@@ -13,6 +13,7 @@ ARG JINJA_VERSION="2.10"
 ARG AZ_CLI_VERSION="2.0.69-1~bionic"
 ARG AWS_CLI_VERSION="1.16.198"
 ARG DOCKER_VERSION="18.09.8"
+ARG KOPS_VERSION="1.12.2"
 
 ARG TILLER_NAMESPACE=kubetools
 
@@ -61,6 +62,10 @@ RUN mkdir -p /root/download/docker/bin && \
 
 #download kubectl
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O /root/download/kubectl
+
+#download kops
+RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/$KOPS_VERSION/kops-linux-amd64
+
 
 ######################################################### IMAGE ########################################################
 
@@ -115,6 +120,7 @@ RUN apt-get update && \
     sudo \
     telnet \
     unzip \
+    uuid-runtime \
     vim \
     wget \
     zlib1g-dev && \
@@ -165,12 +171,13 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
     apt-get install -y azure-cli=$AZ_CLI_VERSION && \
     az --version
 
-#install helm, oc-cli and terraform
+#install helm, oc-cli, terraform, docker and kops
 COPY --from=builder "/root/download/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
+COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
 
 RUN chmod +x \
     "/usr/local/bin/helm" \
@@ -182,11 +189,13 @@ RUN chmod +x \
     "/usr/local/bin/docker" \
     "/usr/local/bin/docker-init" \
     "/usr/local/bin/docker-proxy" \
-    "/usr/local/bin/dockerd" && \
+    "/usr/local/bin/dockerd" \
+    "/usr/local/bin/kops" && \
     helm version --client && \
     kubectl version --client=true && \
     terraform version && \
-    docker --version
+    docker --version && \
+    kops version
 
 
 COPY .bashrc /root/.bashrc
