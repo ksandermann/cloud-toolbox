@@ -10,7 +10,7 @@ done
 ######################################################## ALIASES #######################################################
 
 #GENERIC
-alias getpubip ="curl https://ipinfo.io/ip"
+alias getpubip='curl https://ipinfo.io/ip'
 
 
 #KUBECTL CLI

@@ -1,11 +1,11 @@
 ######################################################### TOOLCHAIN VERSIONING #########################################
-
+#settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=18.04
 
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
 ARG HELM_VERSION="2.14.2"
-ARG TERRAFORM_VERSION="0.12.4"
+ARG TERRAFORM_VERSION="0.12.5"
 ARG OPENSSH_VERSION="8.0p1"
 ARG KUBECTL_VERSION="1.15.1"
 ARG ANSIBLE_VERSION="2.8.2"
@@ -28,6 +28,7 @@ ARG HELM_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
+ARG KOPS_VERSION
 
 
 #download oc-cli
@@ -65,7 +66,6 @@ RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VER
 
 #download kops
 RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/$KOPS_VERSION/kops-linux-amd64
-
 
 ######################################################### IMAGE ########################################################
 
