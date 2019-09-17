@@ -5,21 +5,21 @@ ARG UBUNTU_VERSION=18.04
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
 ARG HELM_VERSION="2.14.3"
-ARG TERRAFORM_VERSION="0.12.6"
+ARG TERRAFORM_VERSION="0.12.8"
 ARG OPENSSH_VERSION="8.0p1"
-ARG KUBECTL_VERSION="1.15.2"
-ARG ANSIBLE_VERSION="2.8.3"
+ARG KUBECTL_VERSION="1.15.3"
+ARG ANSIBLE_VERSION="2.8.5"
 ARG JINJA_VERSION="2.10.1"
-ARG AZ_CLI_VERSION="2.0.70-1~bionic"
-ARG AWS_CLI_VERSION="1.16.198"
-ARG DOCKER_VERSION="18.09.8"
+ARG AZ_CLI_VERSION="2.0.73-1~bionic"
+ARG AWS_CLI_VERSION="1.16.239"
+ARG DOCKER_VERSION="19.03.2"
 ARG KOPS_VERSION="1.13.0"
 
 ARG TILLER_NAMESPACE=kubetools
 
 
 ######################################################### BUILDER ######################################################
-FROM ksandermann/multistage-builder:2019-07-25 as builder
+FROM ksandermann/multistage-builder:2019-09-17 as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -150,6 +150,7 @@ RUN pip3 install \
     jmespath \
     netaddr \
     openshift \
+    passlib \
     pbr==5.1.1 \
     pip \
     pyOpenSSL \
@@ -169,7 +170,8 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
     tee /etc/apt/sources.list.d/azure-cli.list && \
     apt-get update && \
     apt-get install -y azure-cli=$AZ_CLI_VERSION && \
-    az --version
+    az --version && \
+    az extension add --name azure-devops
 
 #install helm, oc-cli, terraform, docker and kops
 COPY --from=builder "/root/download/linux-amd64/helm" "/usr/local/bin/helm"
