@@ -11,8 +11,10 @@ docker run -ti --rm \
     -v ~/.ssh:/root/.ssh \
     -v ${PWD}:/root/project \
     -v ~/.gitconfig:/root/.gitconfig \
+    -v ${PWD}/.autoexec.sh:/root/.autoexec.sh \
     -v ~/.aws:/root/.aws \
     -v ~/.azure:/root/.azure \
     -v /var/run/docker.sock:/var/run/docker.sock \
+    --env-file <(env | grep proxy) \
     ksandermann/cloud-toolbox:$IMAGE_TAG \
     bash
