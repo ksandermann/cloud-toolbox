@@ -7,6 +7,7 @@ do
 	ssh-add "/root/.ssh/$key"
 done
 
+
 ######################################################## ALIASES #######################################################
 
 #GENERIC
@@ -149,5 +150,10 @@ echo "oc bash completion installed!"
 terraform -install-autocomplete
 echo "terraform bash completion installed!"
 
+######################################################## SOURCE ########################################################
 sleep 1
-echo "/root/.bashrc loaded succesfully!"
+if [ -f "/root/.autoexec.sh" ]; then
+    source /root/.autoexec.sh
+fi
+
+echo "/root/.bashrc loaded successfully!"
