@@ -9,6 +9,9 @@ The default shell is sh.
 However, the CMD step inside the Dockerfile as well as the default command inside run.sh points to /bin/zsh.
 By default, any the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
 
+# custom ca certificates
+All CAs placed inside ```~/ca-certificates``` will be mounted into the container and trusted on startup.
+
 # Versioning 
 Release tags will be build following pattern YYYY-MM-dd-version.
 Version 1.0 of a date will always contain the latest stable/official versions of tooling available.
