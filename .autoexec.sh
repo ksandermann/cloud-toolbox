@@ -13,6 +13,6 @@ alias getpubip='curl https://ipinfo.io/ip'
 alias ksn='kubectl config set-context $(kubectl config current-context) --namespace '
 
 ######################################################## MOUNTED CAs ###################################################
-
+update-ca-certificates
 
 echo "$( cd "$(dirname "$0")" ; pwd -P )/.autoexec.sh loaded successfully!"
