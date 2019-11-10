@@ -4,10 +4,10 @@ It's the toolchain I'm working with on a daily basis, packed into a docker image
 platform-independent development environment.
 Feel free to use/share/contribute.
 
-# default shell
+# default shell & custom startup-script
 The default shell is sh.
 However, the CMD step inside the Dockerfile as well as the default command inside run.sh points to /bin/zsh.
-By default, any the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
+By default, the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
 
 # custom ca certificates
 All CAs placed inside ```~/ca-certificates``` will be mounted into the container and trusted on startup.
