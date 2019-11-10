@@ -4,16 +4,17 @@ ARG UBUNTU_VERSION=18.04
 
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
-ARG HELM_VERSION="2.15.2"
+ARG HELM_VERSION="2.16.0"
 ARG TERRAFORM_VERSION="0.12.13"
 ARG OPENSSH_VERSION="8.1p1"
 ARG KUBECTL_VERSION="1.16.2"
 ARG ANSIBLE_VERSION="2.9.0"
 ARG JINJA_VERSION="2.10.3"
 ARG AZ_CLI_VERSION="2.0.76-1~bionic"
-ARG AWS_CLI_VERSION="1.16.273"
+ARG AWS_CLI_VERSION="1.16.278"
 ARG DOCKER_VERSION="19.03.4"
-ARG KOPS_VERSION="1.14.0"
+ARG KOPS_VERSION="1.14.1"
+ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 
 ARG TILLER_NAMESPACE=kubetools
 
@@ -29,6 +30,7 @@ ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
+ARG ZSH_VERSION
 
 
 #download oc-cli
@@ -109,6 +111,7 @@ RUN apt-get update && \
     jq \
     less \
     libssl-dev \
+    locales \
     lsb-release \
     nano \
     net-tools \
@@ -123,12 +126,27 @@ RUN apt-get update && \
     uuid-runtime \
     vim \
     wget \
-    zlib1g-dev && \
+    zlib1g-dev &&\
     apt-get clean -y && \
     apt-get autoclean -y && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
+
+#install zsh
+RUN locale-gen en_US.UTF-8
+RUN apt-get update && \
+    apt-get install -y \
+    fonts-powerline \
+    powerline \
+    zsh=${ZSH_VERSION}
+
+ENV TERM xterm
+ENV ZSH_THEME agnoster
+RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
+
+#keep standard shell for automation usecases
+#RUN chsh -s /bin/zsh
 
 #install OpenSSH
 RUN wget "http://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" && \
@@ -199,7 +217,8 @@ RUN chmod +x \
     docker --version && \
     kops version
 
-
 COPY .bashrc /root/.bashrc
+COPY .zshrc /root/.zshrc
 
 WORKDIR /root/project
+CMD ["/bin/zsh"]

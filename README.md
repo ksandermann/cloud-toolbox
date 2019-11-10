@@ -4,8 +4,10 @@ This is basically the toolchain I am working with on a daily basis, packed into 
 platform-independent development environment.
 Feel free to use/share/contribute.
 
-# custom .bashrc
-By default, any file mounted into /root/.autoexec.sh will be sourced inside the .bashrc of the container. 
+# default shell
+The default shell is sh.
+However, the CMD step inside the Dockerfile as well as the default command inside run.sh points to /bin/zsh.
+By default, any the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
 
 # Versioning 
 Release tags will be build following pattern YYYY-MM-dd-version.
@@ -16,6 +18,7 @@ below.
 ## Version history
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH | TILLER_NAMESPACE |
 |---------------|--------|----------|----------|--------|--------|-----------|----------|--------|--------|---------|--------|---------|------------------|
+| 2019-11-10_01 | 18.04  | 19.03.4  | 1.16.2   | 3.11   | 2.16.0 | 0.12.13   | 1.16.278 | 2.0.76 | 1.14.1 | 2.9.0   | 2.10.3 | 8.1p1   | kubetools        |
 | 2019-11-05_01 | 18.04  | 19.03.4  | 1.16.2   | 3.11   | 2.15.2 | 0.12.13   | 1.16.273 | 2.0.76 | 1.14.0 | 2.9.0   | 2.10.3 | 8.1p1   | kubetools        |
 | 2019-09-19_01 | 18.04  | 19.03.2  | 1.16.0   | 3.11   | 2.14.3 | 0.12.9    | 1.16.239 | 2.0.73 | 1.13.0 | 2.8.5   | 2.10.1 | 8.0p1   | kubetools        |
 | 2019-09-19_02 | 18.04  | 19.03.2  | 1.13.10  | 3.11   | 2.14.3 | 0.12.9    | 1.16.239 | 2.0.73 | 1.13.0 | 2.8.5   | 2.10.1 | 8.0p1   | kubetools        |
