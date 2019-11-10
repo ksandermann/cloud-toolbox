@@ -30,7 +30,6 @@ ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
-ARG ZSH_VERSION
 
 
 #download oc-cli
@@ -82,6 +81,8 @@ ARG ANSIBLE_VERSION
 ARG JINJA_VERSION
 ARG AZ_CLI_VERSION
 ARG AWS_CLI_VERSION
+ARG ZSH_VERSION
+
 
 ARG TILLER_NAMESPACE
 
@@ -139,7 +140,7 @@ RUN apt-get update && \
     apt-get install -y \
     fonts-powerline \
     powerline \
-    zsh=${ZSH_VERSION}
+    zsh=$ZSH_VERSION
 
 ENV TERM xterm
 ENV ZSH_THEME agnoster
