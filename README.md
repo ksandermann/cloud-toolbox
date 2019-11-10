@@ -1,6 +1,6 @@
 # cloud-toolbox
 Docker Image to work with Azure, AWS, Docker, Kubernetes, Openshift, Helm, Ansible, kops and Terraform.
-This is basically the toolchain I am working with on a daily basis, packed into a docker image to have a 
+It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a 
 platform-independent development environment.
 Feel free to use/share/contribute.
 
