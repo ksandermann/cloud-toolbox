@@ -11,8 +11,8 @@ docker build \
     .
 
 #push
-#docker login
-#docker push ksandermann/cloud-toolbox:$IMAGE_TAG
-#
+docker login
+docker push ksandermann/cloud-toolbox:$IMAGE_TAG
+
 #docker tag ksandermann/cloud-toolbox:$IMAGE_TAG ksandermann/cloud-toolbox:latest
 #docker push ksandermann/cloud-toolbox:latest
