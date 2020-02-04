@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2019-12-05_01"
+IMAGE_TAG="2020-02-04_01"
 
 docker build \
     --pull \

@@ -7,6 +7,7 @@ TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 IMAGE_TAG="latest"
 
 docker run -ti --rm \
+    --name toolbox \
     -v ~/.kube:/root/.kube \
     -v ~/.helm:/root/.helm \
     -v ~/.ssh:/root/.ssh \
