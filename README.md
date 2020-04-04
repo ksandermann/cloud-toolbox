@@ -9,17 +9,30 @@ The default shell is sh.
 However, the CMD step inside the Dockerfile as well as the default command inside run.sh points to /bin/zsh.
 By default, the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
 
-# custom ca certificates
-All CAs placed inside ```~/ca-certificates``` will be mounted into the container and trusted on startup.
+# custom ca certificates`
+All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
-# Versioning 
+# helm 2 and helm 3
+While a lot of projects/customers are upgrading to helm 3, helm 2 will probably still be around for some time.
+As helm 3 does not provide backward-compatibility, both versions are installed in parallel in cloud-toolbox.
+Helm 2 can be used as before to provide backward-compatibility, helm 3 can be used via binary `helm3`. 
+
+# versioning 
 Release tags will be build following pattern YYYY-MM-dd-version.
-Version 1.0 of a date will always contain the latest stable/official versions of tooling available.
+Version 01 of a date will always contain the latest stable/official versions of tooling available.
 Other versions of a date can contain version combinations of the toolchain and will be documented in the version history
 below.
 
-## Version history
-project -> 2020-03-02_02
+## version history
+project -> 2020-04-04_02
+
+| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
+|---------------|--------|----------|----------|--------|--------|---------|-----------|----------|--------|--------|---------|--------|---------|
+| 2020-04-04_01 | 18.04  | 19.03.8  | 1.18.0   | 3.11   | 2.16.5 | 3.1.2   | 0.12.24   | 1.18.36  | 2.3.1  | 1.16.0 | 2.9.6   | 2.11.1 | 8.2p1   |
+| 2020-04-04_02 | 18.04  | 19.03.8  | 1.15.11  | 3.11   | 2.16.1 | 3.1.2   | 0.12.24   | 1.18.36  | 2.3.1  | 1.16.0 | 2.9.6   | 2.11.1 | 8.2p1   |
+
+
+## version history before 2020-04-04_01
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH | TILLER_NAMESPACE |
 |---------------|--------|----------|----------|--------|--------|-----------|----------|--------|--------|---------|--------|---------|------------------|
