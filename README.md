@@ -23,7 +23,7 @@ Version 01 of a date will always contain the latest stable/official versions of 
 Other versions of a date can contain version combinations of the toolchain and will be documented in the version history
 below.
 
-## version History
+## version history
 project -> 2020-04-04_02
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
