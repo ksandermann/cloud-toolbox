@@ -4,21 +4,19 @@ ARG UBUNTU_VERSION=18.04
 
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
-ARG DOCKER_VERSION="19.03.6"
-ARG KUBECTL_VERSION="1.17.3"
-ARG HELM_VERSION="2.16.3"
-ARG TERRAFORM_VERSION="0.12.21"
-ARG AWS_CLI_VERSION="1.18.12"
-ARG AZ_CLI_VERSION="2.1.0-1~bionic"
+ARG DOCKER_VERSION="19.03.8"
+ARG KUBECTL_VERSION="1.18.0"
+ARG HELM_VERSION="2.16.5"
+ARG HELM3_VERSION="3.1.2"
+ARG TERRAFORM_VERSION="0.12.24"
+ARG AWS_CLI_VERSION="1.18.36"
+ARG AZ_CLI_VERSION="2.3.1-1~bionic"
 ARG KOPS_VERSION="1.16.0"
-ARG ANSIBLE_VERSION="2.9.5"
+ARG ANSIBLE_VERSION="2.9.6"
 ARG JINJA_VERSION="2.11.1"
 ARG OPENSSH_VERSION="8.2p1"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
-
-ARG TILLER_NAMESPACE=kubetools
-
 
 ######################################################### BUILDER ######################################################
 FROM ksandermann/multistage-builder:2019-09-17 as builder
@@ -27,6 +25,7 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG OC_CLI_SOURCE
 ARG HELM_VERSION
+ARG HELM3_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -42,7 +41,10 @@ RUN touch oc_cli.tar.gz && \
     cp oc_cli/*/* oc_cli
 
 #download helm-cli
-RUN curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz
+RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm2
+
+#download helm3-cli
+RUN mkdir helm3 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM3_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm3
 
 #download terraform
 WORKDIR /root/download
@@ -84,11 +86,7 @@ ARG AZ_CLI_VERSION
 ARG AWS_CLI_VERSION
 ARG ZSH_VERSION
 
-
-ARG TILLER_NAMESPACE
-
 #env
-ENV TILLER_NAMESPACE $TILLER_NAMESPACE
 ENV EDITOR nano
 
 USER root
@@ -159,6 +157,7 @@ RUN wget "http://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPE
     ./configure && \
     make && \
     make install && \
+    rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} && \
     ssh -V
 
 #install ansible + common requirements
@@ -196,7 +195,8 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
     az extension add --name azure-devops
 
 #install helm, oc-cli, terraform, docker and kops
-COPY --from=builder "/root/download/linux-amd64/helm" "/usr/local/bin/helm"
+COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm"
+COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
@@ -205,6 +205,7 @@ COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
 
 RUN chmod +x \
     "/usr/local/bin/helm" \
+    "/usr/local/bin/helm3" \
     "/usr/local/bin/oc" \
     "/usr/local/bin/terraform" \
     "/usr/local/bin/kubectl" \
@@ -215,7 +216,8 @@ RUN chmod +x \
     "/usr/local/bin/docker-proxy" \
     "/usr/local/bin/dockerd" \
     "/usr/local/bin/kops" && \
-    helm version --client && \
+    helm version --client && helm init --client-only && helm repo update && \
+    helm3 version && \
     kubectl version --client=true && \
     terraform version && \
     docker --version && \
