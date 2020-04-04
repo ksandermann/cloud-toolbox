@@ -3,6 +3,7 @@ set -euo pipefail
 IFS=$'\n\t'
 
 IMAGE_TAG="2020-04-04_01"
+UPSTREAM_TAG="latest"
 
 docker build \
     --pull \
@@ -14,5 +15,5 @@ docker build \
 docker login
 docker push ksandermann/cloud-toolbox:$IMAGE_TAG
 
-docker tag ksandermann/cloud-toolbox:$IMAGE_TAG ksandermann/cloud-toolbox:latest
-docker push ksandermann/cloud-toolbox:latest
+docker tag ksandermann/cloud-toolbox:$IMAGE_TAG ksandermann/cloud-toolbox:$UPSTREAM_TAG
+docker push ksandermann/cloud-toolbox:$UPSTREAM_TAG
