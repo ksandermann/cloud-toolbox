@@ -5,15 +5,15 @@ ARG UBUNTU_VERSION=18.04
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
 ARG DOCKER_VERSION="19.03.8"
-ARG KUBECTL_VERSION="1.18.0"
-ARG HELM_VERSION="2.16.5"
-ARG HELM3_VERSION="3.1.2"
+ARG KUBECTL_VERSION="1.18.2"
+ARG HELM_VERSION="2.16.7"
+ARG HELM3_VERSION="3.2.1"
 ARG TERRAFORM_VERSION="0.12.24"
-ARG AWS_CLI_VERSION="1.18.36"
-ARG AZ_CLI_VERSION="2.3.1-1~bionic"
-ARG KOPS_VERSION="1.16.0"
-ARG ANSIBLE_VERSION="2.9.6"
-ARG JINJA_VERSION="2.11.1"
+ARG AWS_CLI_VERSION="1.18.56"
+ARG AZ_CLI_VERSION="2.5.1-1~bionic"
+ARG KOPS_VERSION="1.16.2"
+ARG ANSIBLE_VERSION="2.9.7"
+ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.2p1"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
@@ -73,7 +73,7 @@ RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/v$KOPS_VE
 
 ######################################################### IMAGE ########################################################
 
-FROM ubuntu:18.04
+FROM ubuntu:$UBUNTU_VERSION
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -124,10 +124,12 @@ RUN apt-get update && \
     software-properties-common \
     sudo \
     telnet \
+    traceroute \
     unzip \
     uuid-runtime \
     vim \
     wget \
+    zip \
     zlib1g-dev &&\
     apt-get clean -y && \
     apt-get autoclean -y && \
@@ -227,4 +229,4 @@ COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
 
 WORKDIR /root/project
-CMD ["/bin/zsh"]
+CMD ["/bin/bash"]
