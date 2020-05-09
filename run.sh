@@ -2,11 +2,12 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+IMAGE_TAG="latest"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
-IMAGE_TAG="latest"
-
-docker run -ti --rm \
+#functions
+function startNewToolbox {
+  docker run -ti --rm \
     --name toolbox \
     -v ~/.kube:/root/.kube \
     -v ~/.helm:/root/.helm \
@@ -21,3 +22,15 @@ docker run -ti --rm \
     --env-file <(env | grep proxy) \
     ksandermann/cloud-toolbox:$IMAGE_TAG \
     /bin/zsh
+}
+
+function attachToToolbox {
+  docker exec -it toolbox /bin/bash
+}
+
+if [[ "$(docker ps -a | grep toolbox)" ]]
+then
+    attachToToolbox
+else
+    startNewToolbox
+fi

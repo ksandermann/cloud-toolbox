@@ -6,8 +6,14 @@ Feel free to use/share/contribute.
 
 # default shell & custom startup-script
 The default shell is sh.
-However, the CMD step inside the Dockerfile as well as the default command inside run.sh points to /bin/zsh.
+However, the CMD step inside the Dockerfile points to /bin/bash.
 By default, the file .autoexec.sh will be mounted into the container and sourced inside both bash and zsh.
+
+# run.sh
+The behaviour of run.sh is as follows:
+1. check if there is already a running toolbox.
+1. if so, attach to the container and start a new shell (/bin/bash) inside it.
+1. if no, start a new interactive container and start a new shell (/bin/zsh) inside it.
 
 # custom ca certificates`
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
@@ -24,10 +30,12 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-project -> 2020-04-04_02
+project -> 2020-05-09_02
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
 |---------------|--------|----------|----------|--------|--------|---------|-----------|----------|--------|--------|---------|--------|---------|
+| 2020-05-09_01 | 18.04  | 19.03.8  | 1.18.2   | 3.11   | 2.16.7 | 3.2.1   | 0.12.24   | 1.18.56  | 2.5.1  | 1.16.2 | 2.9.7   | 2.11.2 | 8.2p1   |
+| 2020-05-09_02 | 18.04  | 19.03.8  | 1.15.12  | 3.11   | 2.16.1 | 3.2.1   | 0.12.24   | 1.18.56  | 2.5.1  | 1.16.2 | 2.9.7   | 2.11.2 | 8.2p1   |
 | 2020-04-04_01 | 18.04  | 19.03.8  | 1.18.0   | 3.11   | 2.16.5 | 3.1.2   | 0.12.24   | 1.18.36  | 2.3.1  | 1.16.0 | 2.9.6   | 2.11.1 | 8.2p1   |
 | 2020-04-04_02 | 18.04  | 19.03.8  | 1.15.11  | 3.11   | 2.16.1 | 3.1.2   | 0.12.24   | 1.18.36  | 2.3.1  | 1.16.0 | 2.9.6   | 2.11.1 | 8.2p1   |
 
