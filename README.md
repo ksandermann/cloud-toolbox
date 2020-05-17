@@ -30,7 +30,7 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-project -> 2020-05-09_02
+project -> 2020-05-17_02
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | AWS CLI  | AZ CLI | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
 |---------------|--------|----------|----------|--------|--------|---------|-----------|----------|--------|--------|---------|--------|---------|
