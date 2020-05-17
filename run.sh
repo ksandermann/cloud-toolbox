@@ -28,6 +28,8 @@ function attachToToolbox {
   docker exec -it toolbox /bin/bash
 }
 
+
+docker pull ksandermann/cloud-toolbox:$IMAGE_TAG
 if [[ "$(docker ps -a | grep toolbox)" ]]
 then
     attachToToolbox

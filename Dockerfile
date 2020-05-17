@@ -8,11 +8,11 @@ ARG DOCKER_VERSION="19.03.8"
 ARG KUBECTL_VERSION="1.18.2"
 ARG HELM_VERSION="2.16.7"
 ARG HELM3_VERSION="3.2.1"
-ARG TERRAFORM_VERSION="0.12.24"
-ARG AWS_CLI_VERSION="1.18.56"
+ARG TERRAFORM_VERSION="0.12.25"
+ARG AWS_CLI_VERSION="1.18.61"
 ARG AZ_CLI_VERSION="2.5.1-1~bionic"
 ARG KOPS_VERSION="1.16.2"
-ARG ANSIBLE_VERSION="2.9.7"
+ARG ANSIBLE_VERSION="2.9.9"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.2p1"
 
@@ -70,6 +70,9 @@ RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VER
 
 #download kops
 RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/v$KOPS_VERSION/kops-linux-amd64
+
+#download yq
+RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
 
 ######################################################### IMAGE ########################################################
 
@@ -204,6 +207,8 @@ COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/ter
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
+COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
+
 
 RUN chmod +x \
     "/usr/local/bin/helm" \
@@ -217,13 +222,15 @@ RUN chmod +x \
     "/usr/local/bin/docker-init" \
     "/usr/local/bin/docker-proxy" \
     "/usr/local/bin/dockerd" \
+    "/usr/local/bin/yq" \
     "/usr/local/bin/kops" && \
     helm version --client && helm init --client-only && helm repo update && \
     helm3 version && \
     kubectl version --client=true && \
     terraform version && \
     docker --version && \
-    kops version
+    kops version && \
+    yq --version
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
