@@ -7,7 +7,6 @@ plugins=(ansible aws git helm kops kubectl oc terraform)
 
 source $ZSH/oh-my-zsh.sh
 
-
 ######################################################## SOURCE ########################################################
 sleep 1
 if [ -f "/root/.autoexec.sh" ]; then

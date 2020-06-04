@@ -18,6 +18,7 @@ function startNewToolbox {
     -v $TOOLBOX_DIR/.autoexec.sh:/root/.autoexec.sh \
     -v ~/.aws:/root/.aws \
     -v ~/.azure:/root/.azure \
+    -v ~/.config/gcloud:/root/.config/gcloud \
     -v ~/ca-certificates:/usr/local/share/ca-certificates/extra \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --env-file <(env | grep proxy) \
