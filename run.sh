@@ -7,7 +7,7 @@ TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
 #functions
 function startNewToolbox {
-  #docker pull ksandermann/cloud-toolbox:$IMAGE_TAG
+  docker pull ksandermann/cloud-toolbox:$IMAGE_TAG
   docker run -ti --rm \
     --name toolbox \
     -v ~/.kube:/root/.kube \
