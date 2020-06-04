@@ -4,17 +4,18 @@ ARG UBUNTU_VERSION=18.04
 
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
-ARG DOCKER_VERSION="19.03.8"
+ARG DOCKER_VERSION="19.03.11"
 ARG KUBECTL_VERSION="1.18.3"
 ARG HELM_VERSION="2.16.7"
 ARG HELM3_VERSION="3.2.1"
-ARG TERRAFORM_VERSION="0.12.25"
-ARG AWS_CLI_VERSION="1.18.66"
-ARG AZ_CLI_VERSION="2.6.0-1~bionic"
-ARG KOPS_VERSION="1.16.2"
+ARG TERRAFORM_VERSION="0.12.26"
+ARG AWS_CLI_VERSION="1.18.73"
+ARG AZ_CLI_VERSION="2.7.0-1~bionic"
+ARG KOPS_VERSION="1.17.0"
 ARG ANSIBLE_VERSION="2.9.9"
 ARG JINJA_VERSION="2.11.2"
-ARG OPENSSH_VERSION="8.2p1"
+ARG OPENSSH_VERSION="8.3p1"
+ARG GCLOUD_VERSION="295.0.0-0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 
@@ -30,7 +31,6 @@ ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
-
 
 #download oc-cli
 WORKDIR /root/download
@@ -88,6 +88,7 @@ ARG JINJA_VERSION
 ARG AZ_CLI_VERSION
 ARG AWS_CLI_VERSION
 ARG ZSH_VERSION
+ARG GCLOUD_VERSION
 
 #env
 ENV EDITOR nano
@@ -121,6 +122,7 @@ RUN apt-get update && \
     net-tools \
     netcat \
     nmap \
+    openssl \
     python3 \
     python3-dev \
     python3-pip \
@@ -199,7 +201,14 @@ RUN curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
     az --version && \
     az extension add --name azure-devops
 
-#install helm, oc-cli, terraform, docker and kops
+#install gcloud
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
+    apt-get update && \
+    apt-get install -y \
+    google-cloud-sdk=${GCLOUD_VERSION}
+
+#install binaries
 COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
@@ -209,28 +218,15 @@ COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
 COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 
-
-RUN chmod +x \
-    "/usr/local/bin/helm" \
-    "/usr/local/bin/helm3" \
-    "/usr/local/bin/oc" \
-    "/usr/local/bin/terraform" \
-    "/usr/local/bin/kubectl" \
-    "/usr/local/bin/containerd" \
-    "/usr/local/bin/containerd-shim" \
-    "/usr/local/bin/docker" \
-    "/usr/local/bin/docker-init" \
-    "/usr/local/bin/docker-proxy" \
-    "/usr/local/bin/dockerd" \
-    "/usr/local/bin/yq" \
-    "/usr/local/bin/kops" && \
+RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
     helm3 version && \
     kubectl version --client=true && \
     terraform version && \
     docker --version && \
     kops version && \
-    yq --version
+    yq --version && \
+    gcloud version
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
