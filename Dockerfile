@@ -21,7 +21,7 @@ ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
 
 ######################################################### BUILDER ######################################################
-FROM ksandermann/multistage-builder:2019-09-17 as builder
+FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -170,7 +170,7 @@ RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OP
 
 #install ansible + common requirements
 RUN pip3 install pip --upgrade
-RUN pip3 install cryptography==2.3
+RUN pip3 install cryptography
 RUN pip3 install \
     ansible==${ANSIBLE_VERSION} \
     ansible-lint \
@@ -180,7 +180,7 @@ RUN pip3 install \
     netaddr \
     openshift \
     passlib \
-    pbr==5.1.1 \
+    pbr \
     pip \
     pyOpenSSL \
     pyvmomi
