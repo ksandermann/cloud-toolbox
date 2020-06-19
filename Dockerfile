@@ -5,22 +5,23 @@ ARG UBUNTU_VERSION=18.04
 ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
 
 ARG DOCKER_VERSION="19.03.11"
-ARG KUBECTL_VERSION="1.18.3"
-ARG HELM_VERSION="2.16.7"
-ARG HELM3_VERSION="3.2.1"
+ARG KUBECTL_VERSION="1.18.4"
+ARG HELM_VERSION="2.16.9"
+ARG HELM3_VERSION="3.2.4"
 ARG TERRAFORM_VERSION="0.12.26"
-ARG AWS_CLI_VERSION="1.18.73"
+ARG AWS_CLI_VERSION="1.18.84"
 ARG AZ_CLI_VERSION="2.7.0-1~bionic"
 ARG KOPS_VERSION="1.17.0"
-ARG ANSIBLE_VERSION="2.9.9"
+ARG ANSIBLE_VERSION="2.9.10"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.3p1"
-ARG GCLOUD_VERSION="295.0.0-0"
+ARG GCLOUD_VERSION="297.0.1-0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
+ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
 
 ######################################################### BUILDER ######################################################
-FROM ksandermann/multistage-builder:2019-09-17 as builder
+FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -169,7 +170,7 @@ RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OP
 
 #install ansible + common requirements
 RUN pip3 install pip --upgrade
-RUN pip3 install cryptography==2.3
+RUN pip3 install cryptography
 RUN pip3 install \
     ansible==${ANSIBLE_VERSION} \
     ansible-lint \
@@ -179,7 +180,7 @@ RUN pip3 install \
     netaddr \
     openshift \
     passlib \
-    pbr==5.1.1 \
+    pbr \
     pip \
     pyOpenSSL \
     pyvmomi
