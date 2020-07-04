@@ -21,7 +21,7 @@ function startNewToolbox {
     -v ~/.config/gcloud:/root/.config/gcloud \
     -v ~/ca-certificates:/usr/local/share/ca-certificates/extra \
     -v /var/run/docker.sock:/var/run/docker.sock \
-    --env-file <(env | grep proxy) \
+    --env-file <(env | grep -i proxy) \
     ksandermann/cloud-toolbox:$IMAGE_TAG \
     /bin/zsh
 }
