@@ -13,7 +13,7 @@ By default, the file .autoexec.sh will be mounted into the container and sourced
 The behaviour of run.sh is as follows:
 1. check if there is already a running toolbox.
 1. if so, attach to the container and start a new shell (/bin/bash) inside it.
-1. if no, start a new interactive container and start a new shell (/bin/zsh) inside it.
+1. if not, pull latest tag and start a new interactive container and start a new shell (/bin/zsh) inside it.
 
 # custom ca certificates`
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
