@@ -9,7 +9,7 @@ ARG KUBECTL_VERSION="1.18.5"
 ARG HELM_VERSION="2.16.9"
 ARG HELM3_VERSION="3.2.4"
 ARG TERRAFORM_VERSION="0.12.28"
-ARG TERRAFORM3_VERSION="v0.13.0-beta3"
+ARG TERRAFORM13_VERSION="0.13.0-beta3"
 ARG AWS_CLI_VERSION="1.18.97"
 ARG AZ_CLI_VERSION="2.8.0-1~bionic"
 ARG KOPS_VERSION="1.17.1"
@@ -30,6 +30,7 @@ ARG OC_CLI_SOURCE
 ARG HELM_VERSION
 ARG HELM3_VERSION
 ARG TERRAFORM_VERSION
+ARG TERRAFORM13_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
@@ -54,8 +55,8 @@ RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_
     unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
 
 #download terraform
-RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM3_VERSION/terraform\_$TERRAFORM3_VERSION\_linux_amd64.zip && \
-    unzip ./terraform\_$TERRAFORM3_VERSION\_linux_amd64.zip -d terraform3_cli
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM13_VERSION}/terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip && \
+    unzip ./terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip -d terraform13_cli
 
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
@@ -219,7 +220,7 @@ COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm
 COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
-COPY --from=builder "/root/download/terraform3_cli/terraform" "/usr/local/bin/terraform3"
+COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
@@ -230,7 +231,7 @@ RUN chmod -R +x /usr/local/bin && \
     helm3 version && \
     kubectl version --client=true && \
     terraform version && \
-    terraform3 version && \
+    terraform13 version && \
     docker --version && \
     kops version && \
     yq --version && \
