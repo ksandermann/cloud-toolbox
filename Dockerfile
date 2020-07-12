@@ -9,13 +9,14 @@ ARG KUBECTL_VERSION="1.18.5"
 ARG HELM_VERSION="2.16.9"
 ARG HELM3_VERSION="3.2.4"
 ARG TERRAFORM_VERSION="0.12.28"
-ARG AWS_CLI_VERSION="1.18.93"
+ARG TERRAFORM3_VERSION="v0.13.0-beta3"
+ARG AWS_CLI_VERSION="1.18.97"
 ARG AZ_CLI_VERSION="2.8.0-1~bionic"
-ARG KOPS_VERSION="1.17.0"
+ARG KOPS_VERSION="1.17.1"
 ARG ANSIBLE_VERSION="2.9.10"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.3p1"
-ARG GCLOUD_VERSION="299.0.0-0"
+ARG GCLOUD_VERSION="300.0.0-0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
@@ -51,6 +52,10 @@ RUN mkdir helm3 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM3_VERSION
 WORKDIR /root/download
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_$TERRAFORM_VERSION\_linux_amd64.zip && \
     unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
+
+#download terraform
+RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM3_VERSION/terraform\_$TERRAFORM3_VERSION\_linux_amd64.zip && \
+    unzip ./terraform\_$TERRAFORM3_VERSION\_linux_amd64.zip -d terraform3_cli
 
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
@@ -214,6 +219,7 @@ COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm
 COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
+COPY --from=builder "/root/download/terraform3_cli/terraform" "/usr/local/bin/terraform3"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
@@ -224,6 +230,7 @@ RUN chmod -R +x /usr/local/bin && \
     helm3 version && \
     kubectl version --client=true && \
     terraform version && \
+    terraform3 version && \
     docker --version && \
     kops version && \
     yq --version && \

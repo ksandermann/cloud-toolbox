@@ -30,8 +30,17 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2020-07-04_01
-project -> 2020-07-04_02
+latest -> 2020-07-12_01
+project -> 2020-07-12_02
+
+v0.13.0-beta3
+
+| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | TERRAFORM3      | AWS CLI  | AZ CLI | GCLOUD SDK | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
+|---------------|--------|----------|----------|--------|--------|---------|-----------|-----------------|----------|--------|------------|--------|---------|--------|---------|
+| 2020-07-12_01 | 18.04  | 19.03.11 | 1.18.5   | 3.11   | 2.16.9 | 3.2.4   | 0.12.28   | v0.13.0-beta3   | 1.18.97  | 2.8.0  | 300.0.0    | 1.17.1 | 2.9.10  | 2.11.2 | 8.3p1   |
+| 2020-07-12_02 | 18.04  | 19.03.11 | 1.16.12  | 3.11   | 2.16.1 | 3.2.4   | 0.12.28   | v0.13.0-beta3   | 1.18.97  | 2.8.0  | 300.0.0    | 1.17.1 | 2.9.10  | 2.11.2 | 8.3p1   |
+
+## version history before 2020-07-12
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM   | HELM3   | TERRAFORM | AWS CLI  | AZ CLI | GCLOUD SDK | KOPS   | ANSIBLE | JINJA2 | OPENSSH |
 |---------------|--------|----------|----------|--------|--------|---------|-----------|----------|--------|------------|--------|---------|--------|---------|
