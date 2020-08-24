@@ -2,8 +2,8 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2020-08-24_02"
-UPSTREAM_TAG="project"
+IMAGE_TAG="2020-08-24_01"
+UPSTREAM_TAG="latest"
 
 docker build \
     --pull \
