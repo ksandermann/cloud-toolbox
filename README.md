@@ -48,4 +48,4 @@ project -> 2020-24-08_02
 | 2020-07-12_02 | 18.04  | 19.03.11 | 1.16.12  | 3.11   | 2.16.1  | 3.2.4   | 0.12.28   | 0.13.0-beta3  | 1.18.97  | 2.8.0  | 300.0.0    | 1.17.1 | 2.9.10  | 2.11.2 | 8.3p1   |
 
 
-## [ version history before 2020-07-12](./docs/version_history.md)
+## [ version history before 2020-07-12](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
