@@ -2,21 +2,20 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=18.04
 
-ARG OC_CLI_SOURCE="https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz"
-
 ARG DOCKER_VERSION="19.03.12"
-ARG KUBECTL_VERSION="1.18.6"
+ARG KUBECTL_VERSION="1.16.14"
+ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.16.10"
 ARG HELM3_VERSION="3.3.0"
 ARG TERRAFORM_VERSION="0.12.29"
 ARG TERRAFORM13_VERSION="0.13.0"
-ARG AWS_CLI_VERSION="1.18.118"
+ARG AWS_CLI_VERSION="1.18.124"
 ARG AZ_CLI_VERSION="2.10.1-1~bionic"
 ARG KOPS_VERSION="1.18.0"
 ARG ANSIBLE_VERSION="2.9.12"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.3p1"
-ARG GCLOUD_VERSION="305.0.0-0"
+ARG GCLOUD_VERSION="306.0.0-0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
@@ -39,7 +38,7 @@ ARG KOPS_VERSION
 WORKDIR /root/download
 RUN touch oc_cli.tar.gz && \
     mkdir -p oc_cli && \
-    curl -SsL --retry 5 -o oc_cli.tar.gz $OC_CLI_SOURCE && \
+    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v$(echo $OC_VERSION | cut -d'.' -f 1)/clients/oc/$OC_VERSION/linux/oc.tar.gz && \
     tar xf oc_cli.tar.gz -C oc_cli && \
     cp oc_cli/*/* oc_cli
 
@@ -229,6 +228,8 @@ COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
     helm3 version && \
+    helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/ && \
+    helm3 repo update && \
     kubectl version --client=true && \
     terraform version && \
     terraform13 version && \
