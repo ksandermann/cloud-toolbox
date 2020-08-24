@@ -25,7 +25,7 @@ FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
-ARG OC_CLI_SOURCE
+ARG OC_CLI_VERSION
 ARG HELM_VERSION
 ARG HELM3_VERSION
 ARG TERRAFORM_VERSION
@@ -36,11 +36,9 @@ ARG KOPS_VERSION
 
 #download oc-cli
 WORKDIR /root/download
-RUN touch oc_cli.tar.gz && \
-    mkdir -p oc_cli && \
-    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v$(echo $OC_VERSION | cut -d'.' -f 1)/clients/oc/$OC_VERSION/linux/oc.tar.gz && \
-    tar xf oc_cli.tar.gz -C oc_cli && \
-    cp oc_cli/*/* oc_cli
+RUN mkdir -p oc_cli && \
+    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/oc/$OC_CLI_VERSION/linux/oc.tar.gz && \
+    tar xzvf oc_cli.tar.gz -C oc_cli
 
 #download helm-cli
 RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm2
@@ -231,6 +229,7 @@ RUN chmod -R +x /usr/local/bin && \
     helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/ && \
     helm3 repo update && \
     kubectl version --client=true && \
+    oc version --client && \
     terraform version && \
     terraform13 version && \
     docker --version && \
