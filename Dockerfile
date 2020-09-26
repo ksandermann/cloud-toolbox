@@ -3,19 +3,19 @@
 ARG UBUNTU_VERSION=18.04
 
 ARG DOCKER_VERSION="19.03.12"
-ARG KUBECTL_VERSION="1.18.8"
+ARG KUBECTL_VERSION="1.19.2"
 ARG OC_CLI_VERSION="4.6"
-ARG HELM_VERSION="2.16.10"
-ARG HELM3_VERSION="3.3.0"
+ARG HELM_VERSION="2.16.12"
+ARG HELM3_VERSION="3.3.4"
 ARG TERRAFORM_VERSION="0.12.29"
-ARG TERRAFORM13_VERSION="0.13.0"
-ARG AWS_CLI_VERSION="1.18.124"
-ARG AZ_CLI_VERSION="2.10.1-1~bionic"
-ARG KOPS_VERSION="1.18.0"
-ARG ANSIBLE_VERSION="2.9.12"
+ARG TERRAFORM13_VERSION="0.13.3"
+ARG AWS_CLI_VERSION="1.18.146"
+ARG AZ_CLI_VERSION="2.12.0-1~bionic"
+ARG GCLOUD_VERSION="311.0.0-0"
+ARG KOPS_VERSION="1.18.1"
+ARG ANSIBLE_VERSION="2.10.0"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.3p1"
-ARG GCLOUD_VERSION="306.0.0-0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
@@ -168,7 +168,7 @@ RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OP
     ./configure && \
     make && \
     make install && \
-    rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} && \
+    rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} && \
     ssh -V
 
 #install ansible + common requirements
@@ -186,7 +186,8 @@ RUN pip3 install \
     pbr \
     pip \
     pyOpenSSL \
-    pyvmomi
+    pyvmomi \
+    setuptools
 
 #install AWS CLI
 RUN pip3 install awscli==$AWS_CLI_VERSION --upgrade && \
