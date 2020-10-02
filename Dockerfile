@@ -2,20 +2,21 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=18.04
 
-ARG DOCKER_VERSION="19.03.12"
+ARG DOCKER_VERSION="19.03.13"
 ARG KUBECTL_VERSION="1.19.2"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.16.12"
 ARG HELM3_VERSION="3.3.4"
 ARG TERRAFORM_VERSION="0.12.29"
-ARG TERRAFORM13_VERSION="0.13.3"
-ARG AWS_CLI_VERSION="1.18.146"
-ARG AZ_CLI_VERSION="2.12.0-1~bionic"
-ARG GCLOUD_VERSION="311.0.0-0"
+ARG TERRAFORM13_VERSION="0.13.4"
+ARG AWS_CLI_VERSION="1.18.151"
+ARG AZ_CLI_VERSION="2.12.1-1~bionic"
+ARG GCLOUD_VERSION="312.0.0-0"
 ARG KOPS_VERSION="1.18.1"
 ARG ANSIBLE_VERSION="2.10.0"
 ARG JINJA_VERSION="2.11.2"
-ARG OPENSSH_VERSION="8.3p1"
+ARG OPENSSH_VERSION="8.4p1"
+ARG CRICTL_VERSION="1.19.0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
@@ -33,6 +34,7 @@ ARG TERRAFORM13_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
+ARG CRICTL_VERSION
 
 #download oc-cli
 WORKDIR /root/download
@@ -71,6 +73,13 @@ RUN mkdir -p /root/download/docker/bin && \
 
 #download kubectl
 RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O /root/download/kubectl
+
+#download crictl
+RUN mkdir -p /root/download/crictl && \
+    wget "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-amd64.tar.gz" -O /root/download/crictl.tar.gz && \
+    tar zxvf /root/download/crictl.tar.gz -C /root/download/crictl  && \
+    chmod +x /root/download/crictl/crictl
+
 
 #download kops
 RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/v$KOPS_VERSION/kops-linux-amd64
@@ -221,6 +230,7 @@ COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/ter
 COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
+COPY --from=builder "/root/download/crictl/crictl" "/usr/local/bin/crictl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
 COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 
@@ -230,6 +240,7 @@ RUN chmod -R +x /usr/local/bin && \
     helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/ && \
     helm3 repo update && \
     kubectl version --client=true && \
+    crictl --version && \
     oc version --client && \
     terraform version && \
     terraform13 version && \
