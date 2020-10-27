@@ -3,17 +3,17 @@
 ARG UBUNTU_VERSION=18.04
 
 ARG DOCKER_VERSION="19.03.13"
-ARG KUBECTL_VERSION="1.19.2"
+ARG KUBECTL_VERSION="1.19.3"
 ARG OC_CLI_VERSION="4.6"
-ARG HELM_VERSION="2.16.12"
-ARG HELM3_VERSION="3.3.4"
+ARG HELM_VERSION="2.17.0"
+ARG HELM3_VERSION="3.4.0"
 ARG TERRAFORM_VERSION="0.12.29"
-ARG TERRAFORM13_VERSION="0.13.4"
-ARG AWS_CLI_VERSION="1.18.151"
-ARG AZ_CLI_VERSION="2.12.1-1~bionic"
-ARG GCLOUD_VERSION="312.0.0-0"
-ARG KOPS_VERSION="1.18.1"
-ARG ANSIBLE_VERSION="2.10.0"
+ARG TERRAFORM13_VERSION="0.13.5"
+ARG AWS_CLI_VERSION="1.18.165"
+ARG AZ_CLI_VERSION="2.14.0-1~bionic"
+ARG GCLOUD_VERSION="316.0.0-0"
+ARG KOPS_VERSION="1.18.2"
+ARG ANSIBLE_VERSION="2.10.1"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.4p1"
 ARG CRICTL_VERSION="1.19.0"
@@ -237,7 +237,7 @@ COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
     helm3 version && \
-    helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/ && \
+    helm3 repo add stable https://charts.helm.sh/stable && \
     helm3 repo update && \
     kubectl version --client=true && \
     crictl --version && \
