@@ -3,7 +3,7 @@
 ARG UBUNTU_VERSION=18.04
 
 ARG DOCKER_VERSION="19.03.13"
-ARG KUBECTL_VERSION="1.18.10"
+ARG KUBECTL_VERSION="1.19.3"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.17.0"
 ARG HELM3_VERSION="3.4.0"
@@ -237,7 +237,7 @@ COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
     helm3 version && \
-    helm3 repo add stable https://kubernetes-charts.storage.googleapis.com/ && \
+    helm3 repo add stable https://charts.helm.sh/stable && \
     helm3 repo update && \
     kubectl version --client=true && \
     crictl --version && \
