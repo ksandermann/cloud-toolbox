@@ -9,17 +9,18 @@ ARG HELM_VERSION="2.17.0"
 ARG HELM3_VERSION="3.4.1"
 ARG TERRAFORM_VERSION="0.12.29"
 ARG TERRAFORM13_VERSION="0.13.5"
-ARG AWS_CLI_VERSION="1.18.178"
-ARG AZ_CLI_VERSION="2.14.2-1~bionic"
-ARG GCLOUD_VERSION="318.0.0-0"
+ARG TERRAFORM14_VERSION="0.14.0"
+ARG AWS_CLI_VERSION="1.18.190"
+ARG AZ_CLI_VERSION="2.15.1-1~bionic"
+ARG GCLOUD_VERSION="319.0.0-0"
 ARG KOPS_VERSION="1.18.2"
-ARG ANSIBLE_VERSION="2.10.3"
+ARG ANSIBLE_VERSION="2.10.4"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.4p1"
 ARG CRICTL_VERSION="1.19.0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
-ARG MULTISTAGE_BUILDER_VERSION="2020-06-19"
+ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
 
 ######################################################### BUILDER ######################################################
 FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
@@ -31,6 +32,7 @@ ARG HELM_VERSION
 ARG HELM3_VERSION
 ARG TERRAFORM_VERSION
 ARG TERRAFORM13_VERSION
+ARG TERRAFORM14_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
@@ -48,14 +50,18 @@ RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-
 #download helm3-cli
 RUN mkdir helm3 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM3_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm3
 
-#download terraform
+#download terraform 0.12
 WORKDIR /root/download
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_$TERRAFORM_VERSION\_linux_amd64.zip && \
     unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
 
-#download terraform
+#download terraform 0.13
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM13_VERSION}/terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip && \
     unzip ./terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip -d terraform13_cli
+
+#download terraform 0.14
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip && \
+    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip -d terraform14_cli
 
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
@@ -228,6 +234,7 @@ COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
+COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/crictl/crictl" "/usr/local/bin/crictl"
@@ -244,6 +251,7 @@ RUN chmod -R +x /usr/local/bin && \
     oc version --client && \
     terraform version && \
     terraform13 version && \
+    terraform14 version && \
     docker --version && \
     kops version && \
     yq --version && \
