@@ -18,11 +18,11 @@ The behaviour of run.sh is as follows:
 # custom ca certificates`
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
-# helm 3 and terraform 0.13
+# helm 3 and terraform 0.13/0.14
 While a lot of projects are upgrading to helm 3, helm 2 will probably still be around for some time.
 As helm 3 does not provide backward-compatibility, both versions are installed in parallel in cloud-toolbox.
 Helm 2 can be used as before to provide backward-compatibility, helm 3 can be used via binary `helm3`.
-The same pattern applies to terraform 0.12 and 0.13 - 0.12 can be used via binary `terraform`, while 0.13 is available via binary `terraform13`.
+The same pattern applies to terraform 0.12, 0.13 and 0.14 - 0.12 can be used via binary `terraform`, while 0.13 is available via binary `terraform13` and 0.14 via binary `terraform14`.
 
 # versioning 
 Release tags will be build following pattern YYYY-MM-dd-version.
@@ -31,13 +31,15 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2020-11-14_01
+latest -> 2020-12-07_01
 
-project -> 2020-11-14_02
+project -> 2020-12-07_02
 
 
-| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM    | HELM3   | TERRAFORM | TERRAFORM13   | AWS CLI  | AZ CLI | GCLOUD SDK | KOPS   | ANSIBLE | JINJA2 | OPENSSH | CRICTL |
+| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM    | HELM3   | TERRAFORM | TERRAFORM14   | AWS CLI  | AZ CLI | GCLOUD SDK | KOPS   | ANSIBLE | JINJA2 | OPENSSH | CRICTL |
 |---------------|--------|----------|----------|--------|---------|---------|-----------|---------------|----------|--------|------------|--------|---------|--------|---------|--------|
+| 2020-12-07_01 | 18.04  | 19.03.13 | 1.19.4   | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 |
+| 2020-12-07_02 | 18.04  | 19.03.13 | 1.18.12  | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 |
 | 2020-11-14_01 | 18.04  | 19.03.13 | 1.19.4   | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.13.5        | 1.18.178 | 2.14.2 | 318.0.0    | 1.18.2 | 2.10.3  | 2.11.2 | 8.4p1   | 1.19.0 |
 | 2020-11-14_02 | 18.04  | 19.03.13 | 1.18.12  | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.13.5        | 1.18.178 | 2.14.2 | 318.0.0    | 1.18.2 | 2.10.3  | 2.11.2 | 8.4p1   | 1.19.0 |
 | 2020-10-27_01 | 18.04  | 19.03.13 | 1.19.3   | 4.6    | 2.17.0  | 3.4.0   | 0.12.29   | 0.13.5        | 1.18.165 | 2.14.0 | 316.0.0    | 1.18.2 | 2.10.1  | 2.11.2 | 8.4p1   | 1.19.0 |
