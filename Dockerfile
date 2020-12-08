@@ -18,6 +18,7 @@ ARG ANSIBLE_VERSION="2.10.4"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.4p1"
 ARG CRICTL_VERSION="1.19.0"
+ARG VAULT_VERSION="1.6.0"
 
 ARG ZSH_VERSION="5.4.2-3ubuntu3.1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
@@ -37,6 +38,7 @@ ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG KOPS_VERSION
 ARG CRICTL_VERSION
+ARG VAULT_VERSION
 
 #download oc-cli
 WORKDIR /root/download
@@ -92,6 +94,10 @@ RUN curl -Lo kops https://github.com/kubernetes/kops/releases/download/v$KOPS_VE
 
 #download yq
 RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+
+#download vault
+RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip && \
+    unzip ./vault_${VAULT_VERSION}_linux_amd64.zip
 
 ######################################################### IMAGE ########################################################
 
@@ -240,6 +246,7 @@ COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/crictl/crictl" "/usr/local/bin/crictl"
 COPY --from=builder "/root/download/kops" "/usr/local/bin/kops"
 COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
+COPY --from=builder "/root/download/vault" "/usr/local/bin/vault"
 
 RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
@@ -255,6 +262,7 @@ RUN chmod -R +x /usr/local/bin && \
     docker --version && \
     kops version && \
     yq --version && \
+    vault -version && \
     gcloud version
 
 COPY .bashrc /root/.bashrc
