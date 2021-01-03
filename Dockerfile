@@ -2,7 +2,7 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=20.04
 
-ARG DOCKER_VERSION="20.10.11"
+ARG DOCKER_VERSION="20.10.1"
 ARG KUBECTL_VERSION="1.20.1"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.17.0"
