@@ -1,5 +1,5 @@
 # cloud-toolbox
-Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, kops, Terraform and HashiCorp Vault.
+Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.
 It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
 platform-independent development environment.
 Feel free to use/share/contribute.
@@ -22,7 +22,7 @@ All CAs placed inside ```~/ca-certificates``` on the host system will be mounted
 While a lot of projects are upgrading to helm 3, helm 2 will probably still be around for some time.
 As helm 3 does not provide backward-compatibility, both versions are installed in parallel in cloud-toolbox.
 Helm 2 can be used as before to provide backward-compatibility, helm 3 can be used via binary `helm3`.
-The same pattern applies to terraform 0.12, 0.13 and 0.14 - 0.12 can be used via binary `terraform`, while 0.13 is available via binary `terraform13` and 0.14 via binary `terraform14`.
+The same pattern applies to terraform 0.12 and 0.14 - 0.12 can be used via binary `terraform`, while 0.14 is available via binary `terraform14`.
 
 # versioning
 Release tags will be build following pattern YYYY-MM-dd-version.
@@ -31,32 +31,14 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2020-12-08_01
+latest -> 2021-01-03_01
 
-project -> 2020-12-08_02
+project -> 2021-01-03_02
 
 
-| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM    | HELM3   | TERRAFORM | TERRAFORM14   | AWS CLI  | AZ CLI | GCLOUD SDK | KOPS   | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT |
-|---------------|--------|----------|----------|--------|---------|---------|-----------|---------------|----------|--------|------------|--------|---------|--------|---------|--------|-------|
-| 2020-12-08_01 | 18.04  | 19.03.13 | 1.19.4   | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.0 |
-| 2020-12-08_02 | 18.04  | 19.03.13 | 1.18.12  | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.0 |
-| 2020-12-07_01 | 18.04  | 19.03.13 | 1.19.4   | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-12-07_02 | 18.04  | 19.03.13 | 1.18.12  | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.14.0        | 1.18.190 | 2.15.1 | 319.0.0    | 1.18.2 | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-11-14_01 | 18.04  | 19.03.13 | 1.19.4   | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.13.5        | 1.18.178 | 2.14.2 | 318.0.0    | 1.18.2 | 2.10.3  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-11-14_02 | 18.04  | 19.03.13 | 1.18.12  | 4.6    | 2.17.0  | 3.4.1   | 0.12.29   | 0.13.5        | 1.18.178 | 2.14.2 | 318.0.0    | 1.18.2 | 2.10.3  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-10-27_01 | 18.04  | 19.03.13 | 1.19.3   | 4.6    | 2.17.0  | 3.4.0   | 0.12.29   | 0.13.5        | 1.18.165 | 2.14.0 | 316.0.0    | 1.18.2 | 2.10.1  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-10-27_02 | 18.04  | 19.03.13 | 1.18.10  | 4.6    | 2.17.0  | 3.4.0   | 0.12.29   | 0.13.5        | 1.18.165 | 2.14.0 | 316.0.0    | 1.18.2 | 2.10.1  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-10-02_01 | 18.04  | 19.03.13 | 1.19.2   | 4.6    | 2.16.12 | 3.3.4   | 0.12.29   | 0.13.4        | 1.18.151 | 2.12.1 | 312.0.0    | 1.18.1 | 2.10.0  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-10-02_02 | 18.04  | 19.03.13 | 1.18.9   | 4.6    | 2.16.12 | 3.3.4   | 0.12.29   | 0.13.4        | 1.18.151 | 2.12.1 | 312.0.0    | 1.18.1 | 2.10.0  | 2.11.2 | 8.4p1   | 1.19.0 |  N/A  |
-| 2020-09-25_01 | 18.04  | 19.03.12 | 1.19.2   | 4.6    | 2.16.12 | 3.3.4   | 0.12.29   | 0.13.3        | 1.18.146 | 2.12.0 | 311.0.0    | 1.18.1 | 2.10.0  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-09-25_02 | 18.04  | 19.03.12 | 1.16.15  | 4.6    | 2.16.12 | 3.3.4   | 0.12.29   | 0.13.3        | 1.18.146 | 2.12.0 | 311.0.0    | 1.18.1 | 2.10.0  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-24_01 | 18.04  | 19.03.12 | 1.18.8   | 4.6    | 2.16.10 | 3.3.0   | 0.12.29   | 0.13.0        | 1.18.124 | 2.10.1 | 306.0.0    | 1.18.0 | 2.9.12  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-24_02 | 18.04  | 19.03.12 | 1.16.14  | 4.6    | 2.16.1  | 3.3.0   | 0.12.29   | 0.13.0        | 1.18.124 | 2.10.1 | 306.0.0    | 1.18.0 | 2.9.12  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-13_01 | 18.04  | 19.03.12 | 1.18.6   | 3.11   | 2.16.10 | 3.3.0   | 0.12.29   | 0.13.0        | 1.18.118 | 2.10.1 | 305.0.0    | 1.18.0 | 2.9.12  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-13_02 | 18.04  | 19.03.12 | 1.16.13  | 3.11   | 2.16.1  | 3.3.0   | 0.12.29   | 0.13.0        | 1.18.118 | 2.10.1 | 305.0.0    | 1.18.0 | 2.9.12  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-07_01 | 18.04  | 19.03.12 | 1.18.6   | 3.11   | 2.16.9  | 3.2.4   | 0.12.29   | 0.13.0-rc1    | 1.18.114 | 2.10.1 | 304.0.0    | 1.18.0 | 2.9.11  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-08-07_02 | 18.04  | 19.03.12 | 1.16.13  | 3.11   | 2.16.1  | 3.2.4   | 0.12.29   | 0.13.0-rc1    | 1.18.114 | 2.10.1 | 304.0.0    | 1.18.0 | 2.9.11  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-07-12_01 | 18.04  | 19.03.11 | 1.18.5   | 3.11   | 2.16.9  | 3.2.4   | 0.12.28   | 0.13.0-beta3  | 1.18.97  | 2.8.0  | 300.0.0    | 1.17.1 | 2.9.10  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
-| 2020-07-12_02 | 18.04  | 19.03.11 | 1.16.12  | 3.11   | 2.16.1  | 3.2.4   | 0.12.28   | 0.13.0-beta3  | 1.18.97  | 2.8.0  | 300.0.0    | 1.17.1 | 2.9.10  | 2.11.2 | 8.3p1   |  N/A   |  N/A  |
+| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM3   | TERRAFORM | TERRAFORM14 | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT |
+|---------------|--------|----------|----------|--------|----------|---------|-----------|-------------|----------|--------|------------|---------|--------|---------|--------|-------|
+| 2021-01-03_01 | 20.04  | 20.10.1  | 1.20.1   | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | latest  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
+| 2021-01-03_02 | 20.04  | 20.10.1  | 1.18.14  | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | latest  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
 
-## [ version history before 2020-07-12](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
+## [ version history before 2021-01-03](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
