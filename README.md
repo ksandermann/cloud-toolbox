@@ -1,5 +1,5 @@
 # cloud-toolbox
-Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, kops, Terraform and HashiCorp Vault.
+Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.
 It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
 platform-independent development environment.
 Feel free to use/share/contribute.
@@ -38,7 +38,7 @@ project -> 2021-01-03_02
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM3   | TERRAFORM | TERRAFORM14 | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT |
 |---------------|--------|----------|----------|--------|----------|---------|-----------|-------------|----------|--------|------------|---------|--------|---------|--------|-------|
-| 2021-01-03_01 | 20.04  | 20.10.1 | 1.20.1   | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
-| 2021-01-03_01 | 20.04  | 20.10.1 | 1.18.14  | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
+| 2021-01-03_01 | 20.04  | 20.10.1  | 1.20.1   | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | latest  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
+| 2021-01-03_02 | 20.04  | 20.10.1  | 1.18.14  | 4.6    | 2.17.0   | 3.4.2   | 0.12.29   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | latest  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
 
 ## [ version history before 2021-01-03](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
