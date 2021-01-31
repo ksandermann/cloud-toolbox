@@ -3,7 +3,7 @@
 ARG UBUNTU_VERSION=20.04
 
 ARG DOCKER_VERSION="20.10.2"
-ARG KUBECTL_VERSION="1.18.15"
+ARG KUBECTL_VERSION="1.20.2"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.17.0"
 ARG HELM3_VERSION="3.5.1"
@@ -16,7 +16,7 @@ ARG GCLOUD_VERSION="325.0.0-0"
 ARG ANSIBLE_VERSION="2.10.6"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.4p1"
-ARG CRICTL_VERSION="1.19.1"
+ARG CRICTL_VERSION="1.20.0"
 ARG VAULT_VERSION="1.6.2"
 ARG STERN_VERSION="1.14.0"
 
@@ -104,7 +104,8 @@ RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -
 RUN mkdir -p /root/download/stern && \
     wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
     tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
-    mv /root/download/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
+    mkdir -p /root/download/stern_binary && \
+    mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
 
 
 
