@@ -2,21 +2,23 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=20.04
 
-ARG DOCKER_VERSION="20.10.1"
-ARG KUBECTL_VERSION="1.20.1"
+ARG DOCKER_VERSION="20.10.2"
+ARG KUBECTL_VERSION="1.20.2"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM_VERSION="2.17.0"
-ARG HELM3_VERSION="3.4.2"
-ARG TERRAFORM_VERSION="0.12.29"
-ARG TERRAFORM14_VERSION="0.14.3"
-ARG AWS_CLI_VERSION="1.18.207"
-ARG AZ_CLI_VERSION="2.17.0-1~focal"
-ARG GCLOUD_VERSION="321.0.0-0"
-ARG ANSIBLE_VERSION="2.10.4"
+ARG HELM3_VERSION="3.5.1"
+ARG TERRAFORM_VERSION="0.12.30"
+ARG TERRAFORM13_VERSION="0.13.6"
+ARG TERRAFORM14_VERSION="0.14.5"
+ARG AWS_CLI_VERSION="1.18.223"
+ARG AZ_CLI_VERSION="2.18.0-1~focal"
+ARG GCLOUD_VERSION="325.0.0-0"
+ARG ANSIBLE_VERSION="2.10.6"
 ARG JINJA_VERSION="2.11.2"
 ARG OPENSSH_VERSION="8.4p1"
-ARG CRICTL_VERSION="1.19.0"
-ARG VAULT_VERSION="1.6.1"
+ARG CRICTL_VERSION="1.20.0"
+ARG VAULT_VERSION="1.6.2"
+ARG STERN_VERSION="1.14.0"
 
 ARG ZSH_VERSION="5.8-3ubuntu1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
@@ -30,11 +32,13 @@ ARG OC_CLI_VERSION
 ARG HELM_VERSION
 ARG HELM3_VERSION
 ARG TERRAFORM_VERSION
+ARG TERRAFORM13_VERSION
 ARG TERRAFORM14_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG CRICTL_VERSION
 ARG VAULT_VERSION
+ARG STERN_VERSION
 
 #download oc-cli
 WORKDIR /root/download
@@ -52,6 +56,10 @@ RUN mkdir helm3 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM3_VERSION
 WORKDIR /root/download
 RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_$TERRAFORM_VERSION\_linux_amd64.zip && \
     unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
+
+#download terraform 0.13
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM13_VERSION}/terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip && \
+    unzip ./terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip -d terraform13_cli
 
 #download terraform 0.14
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip && \
@@ -91,6 +99,15 @@ RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VER
 #download tcpping
 #todo: switch to https://github.com/deajan/tcpping/blob/master/tcpping when ubuntu is supported
 RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -O /root/download/tcpping
+
+#download stern
+RUN mkdir -p /root/download/stern && \
+    wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
+    tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
+    mkdir -p /root/download/stern_binary && \
+    mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
+
+
 
 ######################################################### IMAGE ########################################################
 
@@ -238,6 +255,7 @@ COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm
 COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
+COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
 COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
@@ -245,6 +263,8 @@ COPY --from=builder "/root/download/crictl/crictl" "/usr/local/bin/crictl"
 COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 COPY --from=builder "/root/download/vault" "/usr/local/bin/vault"
 COPY --from=builder "/root/download/tcpping" "/usr/local/bin/tcpping"
+COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
+
 
 RUN chmod -R +x /usr/local/bin && \
     helm version --client && helm init --client-only && helm repo update && \
@@ -255,12 +275,14 @@ RUN chmod -R +x /usr/local/bin && \
     crictl --version && \
     oc version --client && \
     terraform version && \
+    terraform13 version && \
     terraform14 version && \
     docker --version && \
     yq --version && \
     vault -version && \
     gcloud version && \
-    tcpping
+    tcpping && \
+    stern --version
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
