@@ -21,8 +21,8 @@ All CAs placed inside ```~/ca-certificates``` on the host system will be mounted
 # helm 3 and terraform 0.13/0.14
 While a lot of projects are upgrading to helm 3, helm 2 will probably still be around for some time.
 As helm 3 does not provide backward-compatibility, both versions are installed in parallel in cloud-toolbox.
-Helm 2 can be used as before to provide backward-compatibility, helm 3 can be used via binary `helm3`.
-The same pattern applies to terraform 0.12 and 0.14 - 0.12 can be used via binary `terraform`, while 0.14 is available via binary `terraform14`.
+Helm 2 can be used as before via binary `helm2`, while helm3 can be natively used using `helm`.
+The same pattern applies to terraform 0.12 and 0.14 - 0.12 can be used via binary `terraform12`, while 0.14 is available via binary `terraform`.
 
 # versioning
 Release tags will be build following pattern YYYY-MM-dd-version.
@@ -31,16 +31,16 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2021-01-31_01
+latest -> 2021-03-09_01
+project -> 2021-03-09_01
 
-project -> 2021-01-31_02
 
-
-| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM3   | TERRAFORM14 | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT |
-|---------------|--------|----------|----------|--------|----------|---------|-------------|----------|--------|------------|---------|--------|---------|--------|-------|
-| 2021-01-31_01 | 20.04  | 20.10.2  | 1.20.2   | 4.6    | 2.17.0   | 3.5.1   | 0.14.5      | 1.18.223 | 2.18.0 | 325.0.0    | 2.10.6  | 2.11.2 | 8.4p1   | 1.20.0 | 1.6.2 |
-| 2021-01-31_02 | 20.04  | 20.10.2  | 1.18.15  | 4.6    | 2.17.0   | 3.5.1   | 0.14.5      | 1.18.223 | 2.18.0 | 325.0.0    | 2.10.6  | 2.11.2 | 8.4p1   | 1.20.0 | 1.6.2 |
-| 2021-01-03_01 | 20.04  | 20.10.1  | 1.20.1   | 4.6    | 2.17.0   | 3.4.2   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
-| 2021-01-03_02 | 20.04  | 20.10.1  | 1.18.14  | 4.6    | 2.17.0   | 3.4.2   | 0.14.3      | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |
+| RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM   | TERRAFORM | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT | VELERO |
+|---------------|--------|----------|----------|--------|----------|--------|-----------|----------|--------|------------|---------|--------|---------|--------|-------|--------|
+| 2021-03-09_01 | 20.04  | 20.10.5  | 1.20.4   | 4.6    | 2.17.0   | 3.5.2  | 0.14.7    | 1.19.23  | 2.20.0 | 330.0.0    | 3.0.0   | 2.11.3 | 8.5p1   | 1.20.0 | 1.6.3 | 1.5.3  |
+| 2021-01-31_01 | 20.04  | 20.10.2  | 1.20.2   | 4.6    | 2.17.0   | 3.5.1  | 0.14.5    | 1.18.223 | 2.18.0 | 325.0.0    | 2.10.6  | 2.11.2 | 8.4p1   | 1.20.0 | 1.6.2 |   N/A  |
+| 2021-01-31_02 | 20.04  | 20.10.2  | 1.18.15  | 4.6    | 2.17.0   | 3.5.1  | 0.14.5    | 1.18.223 | 2.18.0 | 325.0.0    | 2.10.6  | 2.11.2 | 8.4p1   | 1.20.0 | 1.6.2 |   N/A  |
+| 2021-01-03_01 | 20.04  | 20.10.1  | 1.20.1   | 4.6    | 2.17.0   | 3.4.2  | 0.14.3    | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |   N/A  |
+| 2021-01-03_02 | 20.04  | 20.10.1  | 1.18.14  | 4.6    | 2.17.0   | 3.4.2  | 0.14.3    | 1.18.207 | 2.17.0 | 321.0.0    | 2.10.4  | 2.11.2 | 8.4p1   | 1.19.0 | 1.6.1 |   N/A  |
 
 ## [ version history before 2021-01-03](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)

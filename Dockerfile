@@ -2,22 +2,23 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=20.04
 
-ARG DOCKER_VERSION="20.10.2"
-ARG KUBECTL_VERSION="1.20.2"
+ARG DOCKER_VERSION="20.10.5"
+ARG KUBECTL_VERSION="1.20.4"
 ARG OC_CLI_VERSION="4.6"
-ARG HELM_VERSION="2.17.0"
-ARG HELM3_VERSION="3.5.1"
-ARG TERRAFORM_VERSION="0.12.30"
+ARG HELM2_VERSION="2.17.0"
+ARG HELM_VERSION="3.5.2"
+ARG TERRAFORM12_VERSION="0.12.30"
 ARG TERRAFORM13_VERSION="0.13.6"
-ARG TERRAFORM14_VERSION="0.14.5"
-ARG AWS_CLI_VERSION="1.18.223"
-ARG AZ_CLI_VERSION="2.18.0-1~focal"
-ARG GCLOUD_VERSION="325.0.0-0"
-ARG ANSIBLE_VERSION="2.10.6"
-ARG JINJA_VERSION="2.11.2"
-ARG OPENSSH_VERSION="8.4p1"
+ARG TERRAFORM_VERSION="0.14.5"
+ARG AWS_CLI_VERSION="1.19.23"
+ARG AZ_CLI_VERSION="2.20.0-1~focal"
+ARG GCLOUD_VERSION="330.0.0-0"
+ARG ANSIBLE_VERSION="3.0.0"
+ARG JINJA_VERSION="2.11.3"
+ARG OPENSSH_VERSION="8.5p1"
 ARG CRICTL_VERSION="1.20.0"
-ARG VAULT_VERSION="1.6.2"
+ARG VAULT_VERSION="1.6.3"
+ARG VELERO_VERSION="1.5.3"
 ARG STERN_VERSION="1.14.0"
 
 ARG ZSH_VERSION="5.8-3ubuntu1"
@@ -29,16 +30,18 @@ MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG OC_CLI_VERSION
+ARG HELM2_VERSION
 ARG HELM_VERSION
-ARG HELM3_VERSION
-ARG TERRAFORM_VERSION
+ARG TERRAFORM12_VERSION
 ARG TERRAFORM13_VERSION
-ARG TERRAFORM14_VERSION
+ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
 ARG CRICTL_VERSION
 ARG VAULT_VERSION
+ARG VELERO_VERSION
 ARG STERN_VERSION
+
 
 #download oc-cli
 WORKDIR /root/download
@@ -47,23 +50,23 @@ RUN mkdir -p oc_cli && \
     tar xzvf oc_cli.tar.gz -C oc_cli
 
 #download helm-cli
-RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm2
+RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM2_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm2
 
 #download helm3-cli
-RUN mkdir helm3 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM3_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm3
+RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm
 
 #download terraform 0.12
 WORKDIR /root/download
-RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM_VERSION/terraform\_$TERRAFORM_VERSION\_linux_amd64.zip && \
-    unzip ./terraform\_$TERRAFORM_VERSION\_linux_amd64.zip -d terraform_cli
+RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM12_VERSION/terraform\_$TERRAFORM12_VERSION\_linux_amd64.zip && \
+    unzip ./terraform\_$TERRAFORM12_VERSION\_linux_amd64.zip -d terraform12_cli
 
 #download terraform 0.13
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM13_VERSION}/terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip && \
     unzip ./terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip -d terraform13_cli
 
 #download terraform 0.14
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip && \
-    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip -d terraform14_cli
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip && \
+    unzip ./terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip -d terraform_cli
 
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
@@ -107,6 +110,11 @@ RUN mkdir -p /root/download/stern && \
     mkdir -p /root/download/stern_binary && \
     mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
 
+#download velero CLI
+RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
+   tar -xvf velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
+   mkdir -p /root/download/velero_binary && \
+   mv velero-v${VELERO_VERSION}-linux-amd64/velero /root/download/velero_binary/velero
 
 
 ######################################################### IMAGE ########################################################
@@ -135,6 +143,7 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 RUN apt-get update && \
+    apt-get dist-upgrade -y && \
     apt-get upgrade -y && \
     apt-get install -y \
     apt-utils \
@@ -251,37 +260,40 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
     google-cloud-sdk=${GCLOUD_VERSION}
 
 #install binaries
-COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm"
-COPY --from=builder "/root/download/helm3/linux-amd64/helm" "/usr/local/bin/helm3"
+COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm2"
+COPY --from=builder "/root/download/helm/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
-COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
+COPY --from=builder "/root/download/terraform12_cli/terraform" "/usr/local/bin/terraform12"
 COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
-COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
+COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
 COPY --from=builder "/root/download/crictl/crictl" "/usr/local/bin/crictl"
 COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 COPY --from=builder "/root/download/vault" "/usr/local/bin/vault"
 COPY --from=builder "/root/download/tcpping" "/usr/local/bin/tcpping"
+COPY --from=builder "/root/download/velero_binary/velero" "/usr/local/bin/velero"
 COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
 
 
 RUN chmod -R +x /usr/local/bin && \
-    helm version --client && helm init --client-only && helm repo update && \
-    helm3 version && \
-    helm3 repo add stable https://charts.helm.sh/stable && \
-    helm3 repo update && \
+    helm2 version --client && helm2 init --client-only && helm2 repo update && \
+    helm version && \
+    helm repo add stable https://charts.helm.sh/stable && \
+    helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
+    helm repo update && \
     kubectl version --client=true && \
     crictl --version && \
     oc version --client && \
-    terraform version && \
+    terraform12 version && \
     terraform13 version && \
-    terraform14 version && \
+    terraform version && \
     docker --version && \
     yq --version && \
     vault -version && \
     gcloud version && \
     tcpping && \
+    velero --help && \
     stern --version
 
 COPY .bashrc /root/.bashrc
