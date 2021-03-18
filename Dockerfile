@@ -6,20 +6,21 @@ ARG DOCKER_VERSION="20.10.5"
 ARG KUBECTL_VERSION="1.20.4"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM2_VERSION="2.17.0"
-ARG HELM_VERSION="3.5.2"
+ARG HELM_VERSION="3.5.3"
 ARG TERRAFORM12_VERSION="0.12.30"
 ARG TERRAFORM13_VERSION="0.13.6"
-ARG TERRAFORM_VERSION="0.14.5"
-ARG AWS_CLI_VERSION="1.19.23"
+ARG TERRAFORM_VERSION="0.14.8"
+ARG AWS_CLI_VERSION="1.19.30"
 ARG AZ_CLI_VERSION="2.20.0-1~focal"
-ARG GCLOUD_VERSION="330.0.0-0"
-ARG ANSIBLE_VERSION="3.0.0"
+ARG GCLOUD_VERSION="332.0.0-0"
+ARG ANSIBLE_VERSION="3.1.0"
 ARG JINJA_VERSION="2.11.3"
 ARG OPENSSH_VERSION="8.5p1"
 ARG CRICTL_VERSION="1.20.0"
 ARG VAULT_VERSION="1.6.3"
 ARG VELERO_VERSION="1.5.3"
 ARG STERN_VERSION="1.14.0"
+ARG SENTINEL_VERSION="0.17.4"
 
 ARG ZSH_VERSION="5.8-3ubuntu1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
@@ -41,6 +42,7 @@ ARG CRICTL_VERSION
 ARG VAULT_VERSION
 ARG VELERO_VERSION
 ARG STERN_VERSION
+ARG SENTINEL_VERSION
 
 
 #download oc-cli
@@ -115,6 +117,10 @@ RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERS
    tar -xvf velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
    mkdir -p /root/download/velero_binary && \
    mv velero-v${VELERO_VERSION}-linux-amd64/velero /root/download/velero_binary/velero
+
+#download terraform sentinel
+RUN curl https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_amd64.zip --output ./sentinel.zip && \
+  unzip ./sentinel.zip -d ./sentinel_binary
 
 
 ######################################################### IMAGE ########################################################
@@ -274,6 +280,7 @@ COPY --from=builder "/root/download/vault" "/usr/local/bin/vault"
 COPY --from=builder "/root/download/tcpping" "/usr/local/bin/tcpping"
 COPY --from=builder "/root/download/velero_binary/velero" "/usr/local/bin/velero"
 COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
+COPY --from=builder "/root/download/sentinel_binary/sentinel" "/usr/local/bin/sentinel"
 
 
 RUN chmod -R +x /usr/local/bin && \
@@ -294,7 +301,8 @@ RUN chmod -R +x /usr/local/bin && \
     gcloud version && \
     tcpping && \
     velero --help && \
-    stern --version
+    stern --version && \
+    sentinel --version
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
