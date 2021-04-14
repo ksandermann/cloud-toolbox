@@ -31,8 +31,8 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2021-03-09_01
-project -> 2021-03-09_01
+latest -> 2021-04-04_01
+project -> 2021-04-04_01
 
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM   | TERRAFORM | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT | VELERO | SENTINEL |
