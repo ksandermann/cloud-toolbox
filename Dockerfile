@@ -3,22 +3,21 @@
 ARG UBUNTU_VERSION=20.04
 
 ARG DOCKER_VERSION="20.10.5"
-ARG KUBECTL_VERSION="1.20.5"
+ARG KUBECTL_VERSION="1.20.6"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM2_VERSION="2.17.0"
-ARG HELM_VERSION="3.5.3"
-ARG TERRAFORM12_VERSION="0.12.30"
-ARG TERRAFORM13_VERSION="0.13.6"
-ARG TERRAFORM_VERSION="0.14.9"
-ARG AWS_CLI_VERSION="1.19.44"
-ARG AZ_CLI_VERSION="2.21.0-1~focal"
-ARG GCLOUD_VERSION="334.0.0-0"
+ARG HELM_VERSION="3.5.4"
+ARG TERRAFORM14_VERSION="0.14.10"
+ARG TERRAFORM_VERSION="0.15.0"
+ARG AWS_CLI_VERSION="1.19.53"
+ARG AZ_CLI_VERSION="2.22.0-1~focal"
+ARG GCLOUD_VERSION="336.0.0-0"
 ARG ANSIBLE_VERSION="3.2.0"
 ARG JINJA_VERSION="2.11.3"
 ARG OPENSSH_VERSION="8.5p1"
-ARG CRICTL_VERSION="1.20.0"
+ARG CRICTL_VERSION="1.21.0"
 ARG VAULT_VERSION="1.7.0"
-ARG VELERO_VERSION="1.5.4"
+ARG VELERO_VERSION="1.6.0"
 ARG STERN_VERSION="1.14.0"
 ARG SENTINEL_VERSION="0.18.0"
 
@@ -33,8 +32,7 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 ARG OC_CLI_VERSION
 ARG HELM2_VERSION
 ARG HELM_VERSION
-ARG TERRAFORM12_VERSION
-ARG TERRAFORM13_VERSION
+ARG TERRAFORM14_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -57,16 +55,11 @@ RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM2_VERSION
 #download helm3-cli
 RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm
 
-#download terraform 0.12
-WORKDIR /root/download
-RUN wget https://releases.hashicorp.com/terraform/$TERRAFORM12_VERSION/terraform\_$TERRAFORM12_VERSION\_linux_amd64.zip && \
-    unzip ./terraform\_$TERRAFORM12_VERSION\_linux_amd64.zip -d terraform12_cli
-
-#download terraform 0.13
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM13_VERSION}/terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip && \
-    unzip ./terraform\_${TERRAFORM13_VERSION}\_linux_amd64.zip -d terraform13_cli
-
 #download terraform 0.14
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip && \
+    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip -d terraform14_cli
+
+#download terraform
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip && \
     unzip ./terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip -d terraform_cli
 
@@ -269,8 +262,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
 COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm2"
 COPY --from=builder "/root/download/helm/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
-COPY --from=builder "/root/download/terraform12_cli/terraform" "/usr/local/bin/terraform12"
-COPY --from=builder "/root/download/terraform13_cli/terraform" "/usr/local/bin/terraform13"
+COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
@@ -292,8 +284,7 @@ RUN chmod -R +x /usr/local/bin && \
     kubectl version --client=true && \
     crictl --version && \
     oc version --client && \
-    terraform12 version && \
-    terraform13 version && \
+    terraform14 version && \
     terraform version && \
     docker --version && \
     yq --version && \

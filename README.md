@@ -18,11 +18,11 @@ The behaviour of run.sh is as follows:
 # custom ca certificates`
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
-# helm 3 and terraform 0.13/0.14
+# helm 3 and terraform 0.14/0.15
 While a lot of projects are upgrading to helm 3, helm 2 will probably still be around for some time.
-As helm 3 does not provide backward-compatibility, both versions are installed in parallel in cloud-toolbox.
-Helm 2 can be used as before via binary `helm2`, while helm3 can be natively used using `helm`.
-The same pattern applies to terraform 0.12 and 0.14 - 0.12 can be used via binary `terraform12`, while 0.14 is available via binary `terraform`.
+As helm 3 does not provide backwards-compatibility, both versions are installed in parallel in cloud-toolbox.
+Helm 2 can be used via binary `helm2`, while helm3 can be used natively using `helm`.
+The same pattern applies to terraform 0.14 and 0.15 - 0.14 can be used via binary `terraform14`, while 0.15 is available via binary `terraform`.
 
 # versioning
 Release tags will be build following pattern YYYY-MM-dd-version.
@@ -31,12 +31,13 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2021-04-04_01
-project -> 2021-04-04_01
+latest -> 2021-04-17_01
+project -> 2021-04-17_01
 
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL  | OC CLI | HELM2    | HELM   | TERRAFORM | AWS CLI  | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT | VELERO | SENTINEL |
 |---------------|--------|----------|----------|--------|----------|--------|-----------|----------|--------|------------|---------|--------|---------|--------|-------|--------|----------|
+| 2021-04-17_01 | 20.04  | 20.10.5  | 1.20.6   | 4.6    | 2.17.0   | 3.5.4  | 0.15.0    | 1.19.53  | 2.22.0 | 336.0.0    | 3.2.0   | 2.11.3 | 8.5p1   | 1.21.0 | 1.7.0 | 1.6.0  |  0.18.0  |
 | 2021-04-04_01 | 20.04  | 20.10.5  | 1.20.5   | 4.6    | 2.17.0   | 3.5.3  | 0.14.9    | 1.19.44  | 2.21.0 | 334.0.0    | 3.2.0   | 2.11.3 | 8.5p1   | 1.20.0 | 1.7.0 | 1.5.4  |  0.18.0  |
 | 2021-03-18_01 | 20.04  | 20.10.5  | 1.20.4   | 4.6    | 2.17.0   | 3.5.3  | 0.14.7    | 1.19.30  | 2.20.0 | 332.0.0    | 3.1.0   | 2.11.3 | 8.5p1   | 1.20.0 | 1.6.3 | 1.5.3  |  0.17.4  |
 | 2021-03-09_01 | 20.04  | 20.10.5  | 1.20.4   | 4.6    | 2.17.0   | 3.5.2  | 0.14.7    | 1.19.23  | 2.20.0 | 330.0.0    | 3.0.0   | 2.11.3 | 8.5p1   | 1.20.0 | 1.6.3 | 1.5.3  |    N/A   |
