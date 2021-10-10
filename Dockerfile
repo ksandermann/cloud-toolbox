@@ -2,24 +2,24 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=20.04
 
-ARG DOCKER_VERSION="20.10.8"
+ARG DOCKER_VERSION="20.10.9"
 ARG KUBECTL_VERSION="1.22.2"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM2_VERSION="2.17.0"
 ARG HELM_VERSION="3.7.0"
 ARG TERRAFORM14_VERSION="0.14.11"
-ARG TERRAFORM_VERSION="1.0.7"
-ARG AWS_CLI_VERSION="1.20.46"
+ARG TERRAFORM_VERSION="1.0.8"
+ARG AWS_CLI_VERSION="1.20.58"
 ARG AZ_CLI_VERSION="2.28.0-1~focal"
-ARG GCLOUD_VERSION="358.0.0-0"
+ARG GCLOUD_VERSION="360.0.0-0"
 ARG ANSIBLE_VERSION="4.6.0"
-ARG JINJA_VERSION="3.0.1"
-ARG OPENSSH_VERSION="8.7p1"
+ARG JINJA_VERSION="3.0.2"
+ARG OPENSSH_VERSION="8.8p1"
 ARG CRICTL_VERSION="1.22.0"
-ARG VAULT_VERSION="1.8.2"
-ARG VELERO_VERSION="1.6.3"
-ARG STERN_VERSION="1.20.1"
+ARG VAULT_VERSION="1.8.4"
+ARG VELERO_VERSION="1.7.0"
 ARG SENTINEL_VERSION="0.18.4"
+ARG STERN_VERSION="1.20.1"
 
 ARG ZSH_VERSION="5.8-3ubuntu1"
 ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
@@ -39,9 +39,8 @@ ARG KUBECTL_VERSION
 ARG CRICTL_VERSION
 ARG VAULT_VERSION
 ARG VELERO_VERSION
-ARG STERN_VERSION
 ARG SENTINEL_VERSION
-
+ARG STERN_VERSION
 
 #download oc-cli
 WORKDIR /root/download
@@ -98,13 +97,6 @@ RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VER
 #todo: switch to https://github.com/deajan/tcpping/blob/master/tcpping when ubuntu is supported
 RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -O /root/download/tcpping
 
-#download stern
-RUN mkdir -p /root/download/stern && \
-    wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
-    tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
-    mkdir -p /root/download/stern_binary && \
-    mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
-
 #download velero CLI
 RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
    tar -xvf velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
@@ -115,6 +107,12 @@ RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERS
 RUN curl https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_amd64.zip --output ./sentinel.zip && \
   unzip ./sentinel.zip -d ./sentinel_binary
 
+#download stern
+RUN mkdir -p /root/download/stern && \
+    wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
+    tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
+    mkdir -p /root/download/stern_binary && \
+    mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
 
 ######################################################### IMAGE ########################################################
 
@@ -271,9 +269,8 @@ COPY --from=builder "/root/download/yq" "/usr/local/bin/yq"
 COPY --from=builder "/root/download/vault" "/usr/local/bin/vault"
 COPY --from=builder "/root/download/tcpping" "/usr/local/bin/tcpping"
 COPY --from=builder "/root/download/velero_binary/velero" "/usr/local/bin/velero"
-COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
 COPY --from=builder "/root/download/sentinel_binary/sentinel" "/usr/local/bin/sentinel"
-
+COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
 
 RUN chmod -R +x /usr/local/bin && \
     helm2 version --client && helm2 init --client-only && helm2 repo update && \
