@@ -6,13 +6,13 @@ ARG DOCKER_VERSION="20.10.9"
 ARG KUBECTL_VERSION="1.22.2"
 ARG OC_CLI_VERSION="4.6"
 ARG HELM2_VERSION="2.17.0"
-ARG HELM_VERSION="3.7.0"
+ARG HELM_VERSION="3.7.1"
 ARG TERRAFORM14_VERSION="0.14.11"
-ARG TERRAFORM_VERSION="1.0.8"
-ARG AWS_CLI_VERSION="1.20.58"
-ARG AZ_CLI_VERSION="2.28.0-1~focal"
-ARG GCLOUD_VERSION="360.0.0-0"
-ARG ANSIBLE_VERSION="4.6.0"
+ARG TERRAFORM_VERSION="1.0.9"
+ARG AWS_CLI_VERSION="1.21.2"
+ARG AZ_CLI_VERSION="2.29.0-1~focal"
+ARG GCLOUD_VERSION="361.0.0-0"
+ARG ANSIBLE_VERSION="4.7.0"
 ARG JINJA_VERSION="3.0.2"
 ARG OPENSSH_VERSION="8.8p1"
 ARG CRICTL_VERSION="1.22.0"
@@ -247,7 +247,8 @@ RUN apt remove azure-cli -y && apt autoremove -y && \
     apt-get update && \
     apt-get install -y azure-cli=$AZ_CLI_VERSION && \
     az --version && \
-    az extension add --name azure-devops
+    az extension add --name azure-devops && \
+    az extension add --name ssh
 
 #install gcloud
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
