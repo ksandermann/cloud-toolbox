@@ -2,27 +2,42 @@
 #settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION=20.04
 
-ARG DOCKER_VERSION="20.10.11"
-ARG KUBECTL_VERSION="1.23.0"
-ARG OC_CLI_VERSION="4.6"
-ARG HELM2_VERSION="2.17.0"
-ARG HELM_VERSION="3.7.2"
+#https://docs.docker.com/engine/release-notes/
+ARG DOCKER_VERSION="20.10.13"
+#https://github.com/kubernetes/kubernetes/releases
+ARG KUBECTL_VERSION="1.23.5"
+#https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
+ARG OC_CLI_VERSION="4.10.3"
+#https://github.com/helm/helm/releases
+ARG HELM_VERSION="3.8.1"
 ARG TERRAFORM14_VERSION="0.14.11"
-ARG TERRAFORM_VERSION="1.1.0"
-ARG AWS_CLI_VERSION="1.22.24"
-ARG AZ_CLI_VERSION="2.31.0-1~focal"
-ARG GCLOUD_VERSION="367.0.0-0"
-ARG ANSIBLE_VERSION="4.8.0"
+#https://github.com/hashicorp/terraform/releases
+ARG TERRAFORM_VERSION="1.1.7"
+#https://pypi.org/project/awscli/
+ARG AWS_CLI_VERSION="1.22.76"
+#apt-get update && apt-cache madison azure-cli | head -n 1
+ARG AZ_CLI_VERSION="2.34.1-1~focal"
+#apt-get update && apt-cache madison google-cloud-sdk | head -n 1
+ARG GCLOUD_VERSION="377.0.0-0"
+#https://pypi.org/project/ansible/
+ARG ANSIBLE_VERSION="5.5.0"
+#https://pypi.org/project/Jinja2/
 ARG JINJA_VERSION="3.0.3"
-ARG OPENSSH_VERSION="8.8p1"
-ARG CRICTL_VERSION="1.22.0"
-ARG VAULT_VERSION="1.9.1"
-ARG VELERO_VERSION="1.7.1"
-ARG SENTINEL_VERSION="0.18.4"
-ARG STERN_VERSION="1.20.1"
-
-ARG ZSH_VERSION="5.8-3ubuntu1"
-ARG MULTISTAGE_BUILDER_VERSION="2020-12-07"
+#https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
+ARG OPENSSH_VERSION="8.9p1"
+#https://github.com/kubernetes-sigs/cri-tools/releases
+ARG CRICTL_VERSION="1.23.0"
+#https://github.com/hashicorp/vault/releases
+ARG VAULT_VERSION="1.9.4"
+#https://github.com/vmware-tanzu/velero/releases
+ARG VELERO_VERSION="1.8.1"
+#https://docs.hashicorp.com/sentinel/changelog
+ARG SENTINEL_VERSION="0.18.7"
+#https://github.com/stern/stern/releases
+ARG STERN_VERSION="1.21.0"
+#apt-get update && apt-cache madison zsh | head -n 1
+ARG ZSH_VERSION="5.8-3ubuntu1.1"
+ARG MULTISTAGE_BUILDER_VERSION="2022-03-17"
 
 ######################################################### BUILDER ######################################################
 FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
@@ -30,7 +45,6 @@ MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG OC_CLI_VERSION
-ARG HELM2_VERSION
 ARG HELM_VERSION
 ARG TERRAFORM14_VERSION
 ARG TERRAFORM_VERSION
@@ -45,11 +59,8 @@ ARG STERN_VERSION
 #download oc-cli
 WORKDIR /root/download
 RUN mkdir -p oc_cli && \
-    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/clients/oc/$OC_CLI_VERSION/linux/oc.tar.gz && \
-    tar xzvf oc_cli.tar.gz -C oc_cli
-
-#download helm-cli
-RUN mkdir helm2 && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM2_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm2
+    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux-$OC_CLI_VERSION.tar.gz && \
+    tar xvf oc_cli.tar.gz -C oc_cli
 
 #download helm3-cli
 RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm
@@ -112,7 +123,7 @@ RUN mkdir -p /root/download/stern && \
     wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
     tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
     mkdir -p /root/download/stern_binary && \
-    mv /root/download/stern/stern_${STERN_VERSION}_linux_amd64/stern /root/download/stern_binary/stern
+    mv /root/download/stern/stern /root/download/stern_binary/stern
 
 ######################################################### IMAGE ########################################################
 
@@ -258,7 +269,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
     google-cloud-sdk=${GCLOUD_VERSION}
 
 #install binaries
-COPY --from=builder "/root/download/helm2/linux-amd64/helm" "/usr/local/bin/helm2"
 COPY --from=builder "/root/download/helm/linux-amd64/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
@@ -274,7 +284,6 @@ COPY --from=builder "/root/download/sentinel_binary/sentinel" "/usr/local/bin/se
 COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
 
 RUN chmod -R +x /usr/local/bin && \
-    helm2 version --client && helm2 init --client-only && helm2 repo update && \
     helm version && \
     helm repo add stable https://charts.helm.sh/stable && \
     helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
