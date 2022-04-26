@@ -3,36 +3,36 @@
 ARG UBUNTU_VERSION=20.04
 
 #https://docs.docker.com/engine/release-notes/
-ARG DOCKER_VERSION="20.10.13"
+ARG DOCKER_VERSION="20.10.14"
 #https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION="1.23.5"
+ARG KUBECTL_VERSION="1.23.6"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.10.3"
+ARG OC_CLI_VERSION="4.10.9"
 #https://github.com/helm/helm/releases
-ARG HELM_VERSION="3.8.1"
+ARG HELM_VERSION="3.8.2"
 ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
-ARG TERRAFORM_VERSION="1.1.7"
+ARG TERRAFORM_VERSION="1.1.9"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.22.76"
+ARG AWS_CLI_VERSION="1.23.0"
 #apt-get update && apt-cache madison azure-cli | head -n 1
-ARG AZ_CLI_VERSION="2.34.1-1~focal"
+ARG AZ_CLI_VERSION="2.36.0-1~focal"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
-ARG GCLOUD_VERSION="377.0.0-0"
+ARG GCLOUD_VERSION="382.0.0-0"
 #https://pypi.org/project/ansible/
-ARG ANSIBLE_VERSION="5.5.0"
+ARG ANSIBLE_VERSION="5.6.0"
 #https://pypi.org/project/Jinja2/
-ARG JINJA_VERSION="3.0.3"
+ARG JINJA_VERSION="3.1.1"
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
-ARG OPENSSH_VERSION="8.9p1"
+ARG OPENSSH_VERSION="9.0p1"
 #https://github.com/kubernetes-sigs/cri-tools/releases
 ARG CRICTL_VERSION="1.23.0"
 #https://github.com/hashicorp/vault/releases
-ARG VAULT_VERSION="1.9.4"
+ARG VAULT_VERSION="1.10.1"
 #https://github.com/vmware-tanzu/velero/releases
 ARG VELERO_VERSION="1.8.1"
 #https://docs.hashicorp.com/sentinel/changelog
-ARG SENTINEL_VERSION="0.18.7"
+ARG SENTINEL_VERSION="0.18.9"
 #https://github.com/stern/stern/releases
 ARG STERN_VERSION="1.21.0"
 #apt-get update && apt-cache madison zsh | head -n 1
