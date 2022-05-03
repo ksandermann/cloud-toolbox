@@ -7,28 +7,28 @@ ARG DOCKER_VERSION="20.10.14"
 #https://github.com/kubernetes/kubernetes/releases
 ARG KUBECTL_VERSION="1.23.6"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.10.9"
+ARG OC_CLI_VERSION="4.10.10"
 #https://github.com/helm/helm/releases
 ARG HELM_VERSION="3.8.2"
 ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
 ARG TERRAFORM_VERSION="1.1.9"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.23.0"
+ARG AWS_CLI_VERSION="1.23.4"
 #apt-get update && apt-cache madison azure-cli | head -n 1
 ARG AZ_CLI_VERSION="2.36.0-1~focal"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
-ARG GCLOUD_VERSION="382.0.0-0"
+ARG GCLOUD_VERSION="383.0.1-0"
 #https://pypi.org/project/ansible/
-ARG ANSIBLE_VERSION="5.6.0"
+ARG ANSIBLE_VERSION="5.7.0"
 #https://pypi.org/project/Jinja2/
-ARG JINJA_VERSION="3.1.1"
+ARG JINJA_VERSION="3.1.2"
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 ARG OPENSSH_VERSION="9.0p1"
 #https://github.com/kubernetes-sigs/cri-tools/releases
 ARG CRICTL_VERSION="1.23.0"
 #https://github.com/hashicorp/vault/releases
-ARG VAULT_VERSION="1.10.1"
+ARG VAULT_VERSION="1.10.2"
 #https://github.com/vmware-tanzu/velero/releases
 ARG VELERO_VERSION="1.8.1"
 #https://docs.hashicorp.com/sentinel/changelog
@@ -198,13 +198,15 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /var/cache/apt/archives/*
 
-#install zsh
+#install zsh + configure git
 RUN locale-gen en_US.UTF-8
 RUN apt-get update && \
     apt-get install -y \
     fonts-powerline \
     powerline \
     zsh=$ZSH_VERSION
+RUN git config --global --add safe.directory '*'
+
 
 ENV TERM xterm
 ENV ZSH_THEME agnoster
