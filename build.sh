@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-04-26_01"
+IMAGE_TAG="2022-05-02_01"
 UPSTREAM_TAG="latest"
 UPSTREAM_TAG2="project"
 
@@ -12,7 +12,7 @@ docker build \
     -t ksandermann/cloud-toolbox:$IMAGE_TAG \
     .
 
-#push
+push
 docker login
 docker push ksandermann/cloud-toolbox:$IMAGE_TAG
 
