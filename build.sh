@@ -12,7 +12,7 @@ docker build \
     -t ksandermann/cloud-toolbox:$IMAGE_TAG \
     .
 
-push
+
 docker login
 docker push ksandermann/cloud-toolbox:$IMAGE_TAG
 
