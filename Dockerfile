@@ -5,20 +5,20 @@ ARG UBUNTU_VERSION=20.04
 #https://docs.docker.com/engine/release-notes/
 ARG DOCKER_VERSION="20.10.17"
 #https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION="1.24.2"
+ARG KUBECTL_VERSION="1.24.3"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.10.20"
+ARG OC_CLI_VERSION="4.10.23"
 #https://github.com/helm/helm/releases
-ARG HELM_VERSION="3.9.0"
+ARG HELM_VERSION="3.9.2"
 ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
-ARG TERRAFORM_VERSION="1.2.5"
+ARG TERRAFORM_VERSION="1.2.6"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.25.28"
+ARG AWS_CLI_VERSION="1.25.41"
 #apt-get update && apt-cache madison azure-cli | head -n 1
 ARG AZ_CLI_VERSION="2.38.0-1~focal"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
-ARG GCLOUD_VERSION="393.0.0-0"
+ARG GCLOUD_VERSION="395.0.0-0"
 #https://pypi.org/project/ansible/
 ARG ANSIBLE_VERSION="6.1.0"
 #https://pypi.org/project/Jinja2/
@@ -28,9 +28,9 @@ ARG OPENSSH_VERSION="9.0p1"
 #https://github.com/kubernetes-sigs/cri-tools/releases
 ARG CRICTL_VERSION="1.24.2"
 #https://github.com/hashicorp/vault/releases
-ARG VAULT_VERSION="1.11.0"
+ARG VAULT_VERSION="1.11.1"
 #https://github.com/vmware-tanzu/velero/releases
-ARG VELERO_VERSION="1.8.1"
+ARG VELERO_VERSION="1.9.0"
 #https://docs.hashicorp.com/sentinel/changelog
 ARG SENTINEL_VERSION="0.18.11"
 #https://github.com/stern/stern/releases
