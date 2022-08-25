@@ -215,9 +215,6 @@ ENV TERM xterm
 ENV ZSH_THEME agnoster
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
-#keep standard shell for automation usecases
-#RUN chsh -s /bin/zsh
-
 #install OpenSSH
 RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
     tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
@@ -229,7 +226,6 @@ RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OP
     ssh -V
 
 #install ansible + azure-cli common requirements
-#RUN pip3 install pip --upgrade
 RUN apt remove azure-cli -y || true && \
     pip3 install \
     ansible==${ANSIBLE_VERSION} \
@@ -253,42 +249,20 @@ RUN apt remove azure-cli -y || true && \
 RUN az --version && \
     az extension add --name azure-devops && \
     az extension add --name ssh && \
-    az extension add --nameserial-console && \
-    az extension add --namesentinel && \
-    az extension add --nameresource-mover && \
-    az extension add --nameresource-graph && \
-    az extension add --namequota && \
-    az extension add --nameportal && \
-    az extension add --namek8sconfiguration && \
-    az extension add --namek8s-extension && \
-    az extension add --namek8s-configuration && \
+    az extension add --name serial-console && \
+    az extension add --name sentinel && \
+    az extension add --name resource-mover && \
+    az extension add --name resource-graph && \
+    az extension add --name quota && \
+    az extension add --name portal && \
+    az extension add --name k8sconfiguration && \
+    az extension add --name k8s-extension && \
+    az extension add --name k8s-configuration && \
     az extension add --name azure-firewall
 
 #install AWS CLI
 RUN pip3 install awscli==$AWS_CLI_VERSION && \
     aws --version
-
-
-##install azure cli
-##Ubuntu 20.04 (Focal Fossa), includes an azure-cli package with version 2.0.81 provided by the focal/universe repository. This package is outdated and and not recommended. If this package is installed, remove the package before continuing by running the command sudo apt remove azure-cli -y && sudo apt autoremove -y.
-#RUN apt remove azure-cli -y || true && apt autoremove -y && \
-#    curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
-#    gpg --dearmor | \
-#    tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null && \
-#    AZ_REPO=$(lsb_release -cs) && \
-#    AZ_ARCH=$(dpkg --print-architecture) && \
-#    echo "deb [arch=$AZ_ARCH] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
-#    tee /etc/apt/sources.list.d/azure-cli.list && \
-#    apt-get update && \
-#    apt-get install -y azure-cli=$AZ_CLI_VERSION:$AZ_ARCH && \
-#    az --version && \
-#    az extension add --name azure-devops && \
-#    az extension add --name ssh
-#
-##$ curl -L https://aka.ms/InstallAzureCli >> installAzureCli.sh
-##$ curl https://azurecliprod.blob.core.windows.net/install.py >> installAzureCliPython.py
-##$ sudo chmod +x installAzureCliPython.py
-##$ python3 installAzureCliPython.py
 
 #install gcloud
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
