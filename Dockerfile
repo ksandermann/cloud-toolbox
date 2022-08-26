@@ -15,7 +15,7 @@ ARG TERRAFORM14_VERSION="0.14.11"
 ARG TERRAFORM_VERSION="1.2.8"
 #https://pypi.org/project/awscli/
 ARG AWS_CLI_VERSION="1.25.60"
-#apt-get update && apt-cache madison azure-cli | head -n 1
+#https://pypi.org/project/azure-cli/
 ARG AZ_CLI_VERSION="2.39.0"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
 ARG GCLOUD_VERSION="399.0.0-0"
