@@ -5,22 +5,22 @@ ARG UBUNTU_VERSION=20.04
 #https://docs.docker.com/engine/release-notes/
 ARG DOCKER_VERSION="20.10.17"
 #https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION="1.24.3"
+ARG KUBECTL_VERSION="1.25.0"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.10.23"
+ARG OC_CLI_VERSION="4.11.0"
 #https://github.com/helm/helm/releases
-ARG HELM_VERSION="3.9.2"
+ARG HELM_VERSION="3.9.4"
 ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
-ARG TERRAFORM_VERSION="1.2.6"
+ARG TERRAFORM_VERSION="1.2.8"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.25.41"
-#apt-get update && apt-cache madison azure-cli | head -n 1
-ARG AZ_CLI_VERSION="2.38.0-1~focal"
+ARG AWS_CLI_VERSION="1.25.60"
+#https://pypi.org/project/azure-cli/
+ARG AZ_CLI_VERSION="2.39.0"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
-ARG GCLOUD_VERSION="395.0.0-0"
+ARG GCLOUD_VERSION="399.0.0-0"
 #https://pypi.org/project/ansible/
-ARG ANSIBLE_VERSION="6.1.0"
+ARG ANSIBLE_VERSION="6.3.0"
 #https://pypi.org/project/Jinja2/
 ARG JINJA_VERSION="3.1.2"
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
@@ -28,22 +28,23 @@ ARG OPENSSH_VERSION="9.0p1"
 #https://github.com/kubernetes-sigs/cri-tools/releases
 ARG CRICTL_VERSION="1.24.2"
 #https://github.com/hashicorp/vault/releases
-ARG VAULT_VERSION="1.11.1"
+ARG VAULT_VERSION="1.11.2"
 #https://github.com/vmware-tanzu/velero/releases
-ARG VELERO_VERSION="1.9.0"
+ARG VELERO_VERSION="1.9.1"
 #https://docs.hashicorp.com/sentinel/changelog
 ARG SENTINEL_VERSION="0.18.11"
 #https://github.com/stern/stern/releases
 ARG STERN_VERSION="1.21.0"
 #apt-get update && apt-cache madison zsh | head -n 1
 ARG ZSH_VERSION="5.8-3ubuntu1.1"
-ARG MULTISTAGE_BUILDER_VERSION="2022-03-17"
+ARG MULTISTAGE_BUILDER_VERSION="2022-08-25"
 
 ######################################################### BUILDER ######################################################
 FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
+ARG TARGETARCH
 ARG OC_CLI_VERSION
 ARG HELM_VERSION
 ARG TERRAFORM14_VERSION
@@ -58,23 +59,25 @@ ARG STERN_VERSION
 
 #download oc-cli
 WORKDIR /root/download
+
 RUN mkdir -p oc_cli && \
-    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux-$OC_CLI_VERSION.tar.gz && \
+    curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/$TARGETARCH/clients/ocp/stable/openshift-client-linux-$OC_CLI_VERSION.tar.gz && \
     tar xvf oc_cli.tar.gz -C oc_cli
 
 #download helm3-cli
-RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-amd64.tar.gz" | tar xz -C ./helm
+RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-$TARGETARCH.tar.gz" | tar xz -C ./helm
 
 #download terraform 0.14
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip && \
-    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_amd64.zip -d terraform14_cli
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip && \
+    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip -d terraform14_cli
 
 #download terraform
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip && \
-    unzip ./terraform\_${TERRAFORM_VERSION}\_linux_amd64.zip -d terraform_cli
+RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
+    unzip ./terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip -d terraform_cli
 
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
+#need to stick to uname since docker download link uses "aarch64" instead of "arm64"
 RUN mkdir -p /root/download/docker/bin && \
     set -eux; \
     arch="$(uname -m)"; \
@@ -88,39 +91,38 @@ RUN mkdir -p /root/download/docker/bin && \
         --directory /root/download/docker/bin
 
 #download kubectl
-RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/amd64/kubectl -O /root/download/kubectl
+RUN wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl
 
 #download crictl
 RUN mkdir -p /root/download/crictl && \
-    wget "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-amd64.tar.gz" -O /root/download/crictl.tar.gz && \
+    wget "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-${TARGETARCH}.tar.gz" -O /root/download/crictl.tar.gz && \
     tar zxvf /root/download/crictl.tar.gz -C /root/download/crictl  && \
     chmod +x /root/download/crictl/crictl
 
-
 #download yq
-RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_${TARGETARCH}
 
 #download vault
-RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip && \
-    unzip ./vault_${VAULT_VERSION}_linux_amd64.zip
+RUN wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
+    unzip ./vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip
 
 #download tcpping
 #todo: switch to https://github.com/deajan/tcpping/blob/master/tcpping when ubuntu is supported
 RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -O /root/download/tcpping
 
 #download velero CLI
-RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
-   tar -xvf velero-v${VELERO_VERSION}-linux-amd64.tar.gz && \
+RUN wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
+   tar -xvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
    mkdir -p /root/download/velero_binary && \
-   mv velero-v${VELERO_VERSION}-linux-amd64/velero /root/download/velero_binary/velero
+   mv velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /root/download/velero_binary/velero
 
 #download terraform sentinel
-RUN curl https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_amd64.zip --output ./sentinel.zip && \
+RUN curl https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_${TARGETARCH}.zip --output ./sentinel.zip && \
   unzip ./sentinel.zip -d ./sentinel_binary
 
 #download stern
 RUN mkdir -p /root/download/stern && \
-    wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_amd64.tar.gz -O /root/download/stern_arch.tar.gz && \
+    wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -O /root/download/stern_arch.tar.gz && \
     tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
     mkdir -p /root/download/stern_binary && \
     mv /root/download/stern/stern /root/download/stern_binary/stern
@@ -131,6 +133,7 @@ FROM ubuntu:$UBUNTU_VERSION
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
+ARG TARGETARCH
 # tooling versions
 ARG OPENSSH_VERSION
 ARG KUBECTL_VERSION
@@ -212,9 +215,6 @@ ENV TERM xterm
 ENV ZSH_THEME agnoster
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
-#keep standard shell for automation usecases
-#RUN chsh -s /bin/zsh
-
 #install OpenSSH
 RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
     tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
@@ -225,12 +225,12 @@ RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OP
     rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} && \
     ssh -V
 
-#install ansible + common requirements
-RUN pip3 install pip --upgrade
-RUN pip3 install cryptography
-RUN pip3 install \
+#install ansible + azure-cli common requirements
+RUN apt remove azure-cli -y || true && \
+    pip3 install \
     ansible==${ANSIBLE_VERSION} \
     ansible-lint \
+    cryptography \
     hvac \
     jinja2==${JINJA_VERSION} \
     jmespath \
@@ -241,37 +241,37 @@ RUN pip3 install \
     pip \
     pyOpenSSL \
     pyvmomi \
-    setuptools
+    setuptools && \
+    pip3 install \
+    azure-cli==${AZ_CLI_VERSION}
+
+#test azure-cli
+RUN az --version && \
+    az extension add --name azure-devops && \
+    az extension add --name ssh && \
+    az extension add --name serial-console && \
+    az extension add --name sentinel && \
+    az extension add --name resource-mover && \
+    az extension add --name resource-graph && \
+    az extension add --name quota && \
+    az extension add --name portal && \
+    az extension add --name k8sconfiguration && \
+    az extension add --name k8s-extension && \
+    az extension add --name k8s-configuration && \
+    az extension add --name azure-firewall
 
 #install AWS CLI
-RUN pip3 install awscli==$AWS_CLI_VERSION --upgrade && \
+RUN pip3 install awscli==$AWS_CLI_VERSION && \
     aws --version
-
-
-#install azure cli
-#Ubuntu 20.04 (Focal Fossa), includes an azure-cli package with version 2.0.81 provided by the focal/universe repository. This package is outdated and and not recommended. If this package is installed, remove the package before continuing by running the command sudo apt remove azure-cli -y && sudo apt autoremove -y.
-RUN apt remove azure-cli -y && apt autoremove -y && \
-    curl -sL https://packages.microsoft.com/keys/microsoft.asc | \
-    gpg --dearmor | \
-    tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null && \
-    AZ_REPO=$(lsb_release -cs) && \
-    echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" | \
-    tee /etc/apt/sources.list.d/azure-cli.list && \
-    apt-get update && \
-    apt-get install -y azure-cli=$AZ_CLI_VERSION && \
-    az --version && \
-    az extension add --name azure-devops && \
-    az extension add --name ssh
 
 #install gcloud
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
     curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
     apt-get update && \
-    apt-get install -y \
-    google-cloud-sdk=${GCLOUD_VERSION}
+    apt-get install -y google-cloud-sdk=${GCLOUD_VERSION}
 
 #install binaries
-COPY --from=builder "/root/download/helm/linux-amd64/helm" "/usr/local/bin/helm"
+COPY --from=builder "/root/download/helm/linux-${TARGETARCH}/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
 COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
