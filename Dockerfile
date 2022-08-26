@@ -82,7 +82,7 @@ RUN mkdir -p /root/download/docker/bin && \
     set -eux; \
     arch="$(uname -m)"; \
     if ! wget -O docker.tgz "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz"; then \
-        echo >&2 "error: failed to download 'docker-${DOCKER_VERSION}' from 'stable' for '${TARGETARCH}'"; \
+        echo >&2 "error: failed to download 'docker-${DOCKER_VERSION}' from 'stable' for '${arch}'"; \
         exit 1; \
     fi; \
     tar --extract \
