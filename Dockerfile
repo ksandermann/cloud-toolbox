@@ -128,7 +128,7 @@ MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG TARGETARCH
-# tooling versions
+#tooling versions
 ARG OPENSSH_VERSION
 ARG KUBECTL_VERSION
 ARG ANSIBLE_VERSION
@@ -286,7 +286,6 @@ RUN chmod -R +x /usr/local/bin && \
     kubectl version --client=true && \
     crictl --version && \
     oc version --client && \
-    terraform14 version && \
     terraform version && \
     docker --version && \
     yq --version && \

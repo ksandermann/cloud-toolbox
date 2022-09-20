@@ -12,15 +12,21 @@ docker buildx build \
     --no-cache \
     --pull \
     --platform linux/amd64,linux/arm64 \
-    --push \
     -t ksandermann/cloud-toolbox:$IMAGE_TAG \
     .
+
+#docker history ksandermann/cloud-toolbox:$IMAGE_TAG
+#squashing to removed ssh keys from base image
+#docker-squash \
+#    -f 2 -t ksandermann/cloud-toolbox:$IMAGE_TAG
 
 #trivy image \
 #    --ignore-unfixed \
 #    --severity HIGH,CRITICAL,MEDIUM \
 #    ksandermann/cloud-toolbox:$IMAGE_TAG
 #
+
+#docker push ksandermann/cloud-toolbox:$IMAGE_TAG
 #docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
 #    --amend ksandermann/cloud-toolbox:$IMAGE_TAG
 #
