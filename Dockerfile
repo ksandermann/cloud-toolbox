@@ -19,7 +19,7 @@ ARG AZ_CLI_VERSION="2.40.0"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
 ARG GCLOUD_VERSION="402.0.0-0"
 #https://pypi.org/project/ansible/
-ARG ANSIBLE_VERSION="6.3.0"
+ARG ANSIBLE_VERSION="6.4.0"
 #https://pypi.org/project/Jinja2/
 ARG JINJA_VERSION="3.1.2"
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
@@ -31,7 +31,7 @@ ARG VAULT_VERSION="1.11.3"
 #https://github.com/vmware-tanzu/velero/releases
 ARG VELERO_VERSION="1.9.1"
 #https://docs.hashicorp.com/sentinel/changelog
-ARG SENTINEL_VERSION="0.18.11"
+ARG SENTINEL_VERSION="0.18.12"
 #https://github.com/stern/stern/releases
 ARG STERN_VERSION="1.21.0"
 #apt-get update && apt-cache madison zsh | head -n 1
