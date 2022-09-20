@@ -5,16 +5,15 @@ ARG UBUNTU_VERSION=20.04
 #https://docs.docker.com/engine/release-notes/
 ARG DOCKER_VERSION="20.10.18"
 #https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION="1.25.0"
+ARG KUBECTL_VERSION="1.25.1"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.11.1"
+ARG OC_CLI_VERSION="4.11.4"
 #https://github.com/helm/helm/releases
 ARG HELM_VERSION="3.9.4"
-ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
 ARG TERRAFORM_VERSION="1.2.9"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.25.73"
+ARG AWS_CLI_VERSION="1.25.77"
 #https://pypi.org/project/azure-cli/
 ARG AZ_CLI_VERSION="2.40.0"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
@@ -47,7 +46,6 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 ARG TARGETARCH
 ARG OC_CLI_VERSION
 ARG HELM_VERSION
-ARG TERRAFORM14_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -66,10 +64,6 @@ RUN mkdir -p oc_cli && \
 
 #download helm3-cli
 RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-$TARGETARCH.tar.gz" | tar xz -C ./helm
-
-#download terraform 0.14
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip && \
-    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip -d terraform14_cli
 
 #download terraform
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
@@ -273,7 +267,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
 #install binaries
 COPY --from=builder "/root/download/helm/linux-${TARGETARCH}/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
-COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"

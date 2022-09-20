@@ -18,10 +18,6 @@ The behaviour of run.sh is as follows:
 # custom ca certificates`
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
-# terraform <=0.14 and >=0.15
-While a lot of projects and workspaces have already been upgraded to terraform >= 0.15, terraform 0.14 remains necessary to ugprade old workspaces.
-0.14 can be used via binary `terraform14`, while 1 is available via binary `terraform`.
-
 # multi-platform support
 Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and have been tested on linux/amd64 and Macbook M1.
 
@@ -32,13 +28,11 @@ Other versions of a date can contain version combinations of the toolchain and w
 below.
 
 ## version history
-latest -> 2022-09-14_01
-
-project -> 2022-09-14_01
-
+latest -> 2022-09-20_01
 
 | RELEASE       | UBUNTU | DOCKER   | KUBECTL | OC CLI  | HELM  | TERRAFORM | AWS CLI | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT  | VELERO | SENTINEL |
 |---------------|--------|----------|---------|---------|-------|-----------|---------|--------|------------|---------|--------|---------|--------|--------|--------|----------|
+| 2022-09-20_01 | 20.04  | 20.10.18 | 1.25.1  | 4.11.4  | 3.9.4 | 1.2.9     | 1.25.77 | 2.40.0 | 402.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  |  0.18.11 |
 | 2022-09-14_01 | 20.04  | 20.10.18 | 1.25.0  | 4.11.1  | 3.9.4 | 1.2.9     | 1.25.73 | 2.40.0 | 402.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  |  0.18.11 |
 | 2022-08-25_01 | 20.04  | 20.10.17 | 1.25.0  | 4.11.0  | 3.9.4 | 1.2.8     | 1.25.60 | 2.39.0 | 399.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.2 | 1.9.1  |  0.18.11 |
 | 2022-07-30_01 | 20.04  | 20.10.17 | 1.24.3  | 4.10.23 | 3.9.2 | 1.2.6     | 1.25.41 | 2.38.0 | 395.0.0    | 6.1.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.1 | 1.9.0  |  0.18.11 |

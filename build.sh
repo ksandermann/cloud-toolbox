@@ -2,9 +2,8 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-09-14"
+IMAGE_TAG="2022-09-20_01"
 UPSTREAM_TAG="latest"
-UPSTREAM_TAG2="project"
 
 docker login
 
@@ -15,6 +14,14 @@ docker buildx build \
     --platform linux/amd64,linux/arm64 \
     --push \
     -t ksandermann/cloud-toolbox:$IMAGE_TAG \
-    -t ksandermann/cloud-toolbox:$UPSTREAM_TAG \
-    -t ksandermann/cloud-toolbox:$UPSTREAM_TAG2 \
     .
+
+#trivy image \
+#    --ignore-unfixed \
+#    --severity HIGH,CRITICAL,MEDIUM \
+#    ksandermann/cloud-toolbox:$IMAGE_TAG
+#
+#docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
+#    --amend ksandermann/cloud-toolbox:$IMAGE_TAG
+#
+#docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG
