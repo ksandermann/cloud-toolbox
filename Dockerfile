@@ -5,22 +5,21 @@ ARG UBUNTU_VERSION=20.04
 #https://docs.docker.com/engine/release-notes/
 ARG DOCKER_VERSION="20.10.18"
 #https://github.com/kubernetes/kubernetes/releases
-ARG KUBECTL_VERSION="1.25.0"
+ARG KUBECTL_VERSION="1.25.1"
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-ARG OC_CLI_VERSION="4.11.1"
+ARG OC_CLI_VERSION="4.11.4"
 #https://github.com/helm/helm/releases
 ARG HELM_VERSION="3.9.4"
-ARG TERRAFORM14_VERSION="0.14.11"
 #https://github.com/hashicorp/terraform/releases
 ARG TERRAFORM_VERSION="1.2.9"
 #https://pypi.org/project/awscli/
-ARG AWS_CLI_VERSION="1.25.73"
+ARG AWS_CLI_VERSION="1.25.77"
 #https://pypi.org/project/azure-cli/
 ARG AZ_CLI_VERSION="2.40.0"
 #apt-get update && apt-cache madison google-cloud-sdk | head -n 1
 ARG GCLOUD_VERSION="402.0.0-0"
 #https://pypi.org/project/ansible/
-ARG ANSIBLE_VERSION="6.3.0"
+ARG ANSIBLE_VERSION="6.4.0"
 #https://pypi.org/project/Jinja2/
 ARG JINJA_VERSION="3.1.2"
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
@@ -32,7 +31,7 @@ ARG VAULT_VERSION="1.11.3"
 #https://github.com/vmware-tanzu/velero/releases
 ARG VELERO_VERSION="1.9.1"
 #https://docs.hashicorp.com/sentinel/changelog
-ARG SENTINEL_VERSION="0.18.11"
+ARG SENTINEL_VERSION="0.18.12"
 #https://github.com/stern/stern/releases
 ARG STERN_VERSION="1.21.0"
 #apt-get update && apt-cache madison zsh | head -n 1
@@ -47,7 +46,6 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 ARG TARGETARCH
 ARG OC_CLI_VERSION
 ARG HELM_VERSION
-ARG TERRAFORM14_VERSION
 ARG TERRAFORM_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -66,10 +64,6 @@ RUN mkdir -p oc_cli && \
 
 #download helm3-cli
 RUN mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-$TARGETARCH.tar.gz" | tar xz -C ./helm
-
-#download terraform 0.14
-RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM14_VERSION}/terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip && \
-    unzip ./terraform\_${TERRAFORM14_VERSION}\_linux_${TARGETARCH}.zip -d terraform14_cli
 
 #download terraform
 RUN wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
@@ -134,7 +128,7 @@ MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG TARGETARCH
-# tooling versions
+#tooling versions
 ARG OPENSSH_VERSION
 ARG KUBECTL_VERSION
 ARG ANSIBLE_VERSION
@@ -215,17 +209,17 @@ ENV TERM xterm
 ENV ZSH_THEME agnoster
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
-#install OpenSSH
+#install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
     tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
     cd openssh-${OPENSSH_VERSION} && \
     ./configure && \
     make && \
     make install && \
-    rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} && \
+    rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
     ssh -V
 
-#install ansible + azure-cli common requirements
+#install ansible common requirements + azure-cli
 RUN apt remove azure-cli -y || true && \
     pip3 install \
     ansible==${ANSIBLE_VERSION} \
@@ -273,7 +267,6 @@ RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.c
 #install binaries
 COPY --from=builder "/root/download/helm/linux-${TARGETARCH}/helm" "/usr/local/bin/helm"
 COPY --from=builder "/root/download/oc_cli/oc" "/usr/local/bin/oc"
-COPY --from=builder "/root/download/terraform14_cli/terraform" "/usr/local/bin/terraform14"
 COPY --from=builder "/root/download/terraform_cli/terraform" "/usr/local/bin/terraform"
 COPY --from=builder "/root/download/docker/bin/*" "/usr/local/bin/"
 COPY --from=builder "/root/download/kubectl" "/usr/local/bin/kubectl"
@@ -293,7 +286,6 @@ RUN chmod -R +x /usr/local/bin && \
     kubectl version --client=true && \
     crictl --version && \
     oc version --client && \
-    terraform14 version && \
     terraform version && \
     docker --version && \
     yq --version && \
