@@ -31,7 +31,6 @@ trivy image \
     --skip-files "/usr/local/bin/vault" \
     --skip-files "/usr/local/bin/tcpping" \
     --skip-files "/usr/local/bin/velero" \
-    --skip-files "/usr/local/bin/sentinel" \
     --skip-files "/usr/local/bin/stern" \
     --skip-files "/usr/local/bin/sentinel" \
     --skip-files "/usr/local/bin/containerd" \
