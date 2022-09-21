@@ -43,7 +43,13 @@ trivy image \
     --skip-dirs "/root/.azure/cliextensions/ssh/" \
     ksandermann/cloud-toolbox-private:$IMAGE_TAG
 
-echo "sleeping 60 seconds "
+for i in {1..5}
+do
+    echo ""
+done
+echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
+sleep 120
+echo hallo
 
 PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[0].digest')
 PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[1].digest')
