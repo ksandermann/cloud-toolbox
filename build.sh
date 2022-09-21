@@ -18,6 +18,7 @@ docker buildx build \
 
 #scanning private image - skipping binaries where it is known we are already using the latest available version.
 #ssh keys get removed in the step they get generated
+#azure-cli ssh extension triggers a false-positive string being recognized as Alibaba access token
 trivy image \
     --ignore-unfixed \
     --severity HIGH,CRITICAL,MEDIUM \
