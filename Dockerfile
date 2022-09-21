@@ -145,6 +145,9 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 WORKDIR /root
 
+#removing ssh key files - this is only reasonable when squashing the image layers afterwards
+RUN rm -rf /usr/local/etc/*_key /usr/local/etc/*.pub
+
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 RUN apt-get update && \
