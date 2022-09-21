@@ -7,29 +7,55 @@ UPSTREAM_TAG="latest"
 
 docker login
 
+#building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
 docker buildx build \
     --pull \
     --platform linux/amd64,linux/arm64 \
     -t ksandermann/cloud-toolbox-private:$IMAGE_TAG \
+    --push \
     .
-#
-#docker pull ksandermann/cloud-toolbox-private:$IMAGE_TAG
-#
-#trivy image \
-#    --ignore-unfixed \
-#    --severity HIGH,CRITICAL,MEDIUM \
-#    ksandermann/cloud-toolbox-private:$IMAGE_TAG
-#
-#docker-squash \
-#    ksandermann/cloud-toolbox-private:$IMAGE_TAG
-#
-#docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
-#    --amend ksandermann/cloud-toolbox-private:$IMAGE_TAG
-#
-#docker manifest push ksandermann/cloud-toolbox:$IMAGE_TAG
-#
-#docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
-#    --amend ksandermann/cloud-toolbox:$IMAGE_TAG
-#
-#docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG
+
+#scanning private image - skipping binaries where it is known we are already using the latest available version.
+#ssh keys get removed in the step they get generated
+trivy image \
+    --ignore-unfixed \
+    --severity HIGH,CRITICAL,MEDIUM \
+    --skip-files "/usr/local/bin/helm" \
+    --skip-files "/usr/local/bin/oc" \
+    --skip-files "/usr/local/bin/terraform" \
+    --skip-files "/usr/local/bin/kubectl" \
+    --skip-files "/usr/local/bin/crictl" \
+    --skip-files "/usr/local/bin/yq" \
+    --skip-files "/usr/local/bin/vault" \
+    --skip-files "/usr/local/bin/tcpping" \
+    --skip-files "/usr/local/bin/velero" \
+    --skip-files "/usr/local/bin/sentinel" \
+    --skip-files "/usr/local/bin/stern" \
+    --skip-files "/usr/local/bin/sentinel" \
+    --skip-files "/usr/local/bin/containerd" \
+    --skip-files "/usr/local/bin/containerd-shim" \
+    --skip-files "/usr/local/bin/containerd-shim-runc-v2" \
+    --skip-files "/usr/local/bin/docker" \
+    --skip-files "/usr/local/bin/docker-init" \
+    --skip-files "/usr/local/bin/docker-proxy" \
+    --skip-files "/usr/local/bin/dockerd" \
+    --skip-dirs "/root/.azure/cliextensions/ssh/" \
+    ksandermann/cloud-toolbox-private:$IMAGE_TAG
+
+echo "sleeping 60 seconds "
+
+PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[0].digest')
+PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[1].digest')
+
+docker manifest create ksandermann/cloud-toolbox:$IMAGE_TAG \
+    --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_2
+
+docker manifest push ksandermann/cloud-toolbox:$IMAGE_TAG
+
+docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
+    --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_2
+
+docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG

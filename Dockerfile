@@ -145,9 +145,6 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 WORKDIR /root
 
-#removing ssh key files - this is only reasonable when squashing the image layers afterwards
-RUN rm -rf /usr/local/etc/*_key /usr/local/etc/*.pub
-
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 RUN apt-get update && \
@@ -212,17 +209,17 @@ ENV TERM xterm
 ENV ZSH_THEME agnoster
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
-#install OpenSSH
+#install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
     tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
     cd openssh-${OPENSSH_VERSION} && \
     ./configure && \
     make && \
     make install && \
-    rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} && \
+    rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
     ssh -V
 
-#install ansible + azure-cli common requirements
+#install ansible common requirements + azure-cli
 RUN apt remove azure-cli -y || true && \
     pip3 install \
     ansible==${ANSIBLE_VERSION} \
