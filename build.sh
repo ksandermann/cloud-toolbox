@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-09-21_01"
+IMAGE_TAG="2022-09-22_01"
 UPSTREAM_TAG="latest"
 
 docker login
@@ -40,6 +40,7 @@ trivy image \
     --skip-files "/usr/local/bin/docker-init" \
     --skip-files "/usr/local/bin/docker-proxy" \
     --skip-files "/usr/local/bin/dockerd" \
+    --skip-files "/usr/local/bin/kubelogin" \
     --skip-dirs "/root/.azure/cliextensions/ssh/" \
     ksandermann/cloud-toolbox-private:$IMAGE_TAG
 
@@ -49,7 +50,7 @@ do
 done
 echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
 sleep 120
-echo hallo
+echo "proceeding with pushing the images"
 
 PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[0].digest')
 PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$IMAGE_TAG | yq '.manifests[1].digest')
@@ -58,7 +59,11 @@ docker manifest create ksandermann/cloud-toolbox:$IMAGE_TAG \
     --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_1 \
     --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_2
 
-docker manifest push ksandermann/cloud-toolbox:$IMAGE_TAG
+#docker manifest push ksandermann/cloud-toolbox:$IMAGE_TAG
+
+#remove current manifest to not ammend more images with same architecture but create a clean one
+docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG || true
+rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox-latest
 
 docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG \
     --amend ksandermann/cloud-toolbox-private@$PRIVATE_MANIFEST_DIGEST_1 \
