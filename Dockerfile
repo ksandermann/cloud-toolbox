@@ -34,6 +34,8 @@ ARG VELERO_VERSION="1.9.1"
 ARG SENTINEL_VERSION="0.18.12"
 #https://github.com/stern/stern/releases
 ARG STERN_VERSION="1.21.0"
+#https://github.com/Azure/kubelogin/releases
+ARG KUBELOGIN_VERSION="0.0.20"
 #apt-get update && apt-cache madison zsh | head -n 1
 ARG ZSH_VERSION="5.8-3ubuntu1.1"
 ARG MULTISTAGE_BUILDER_VERSION="2022-08-25"
@@ -54,10 +56,11 @@ ARG VAULT_VERSION
 ARG VELERO_VERSION
 ARG SENTINEL_VERSION
 ARG STERN_VERSION
+ARG KUBELOGIN_VERSION
 
-#download oc-cli
 WORKDIR /root/download
 
+#download oc-cli
 RUN mkdir -p oc_cli && \
     curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/$TARGETARCH/clients/ocp/stable/openshift-client-linux-$OC_CLI_VERSION.tar.gz && \
     tar xvf oc_cli.tar.gz -C oc_cli
@@ -120,6 +123,13 @@ RUN mkdir -p /root/download/stern && \
     tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
     mkdir -p /root/download/stern_binary && \
     mv /root/download/stern/stern /root/download/stern_binary/stern
+
+#download kubelogin
+RUN mkdir -p /root/download/kubelogin/binary && \
+    wget https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-${TARGETARCH}.zip -O /root/download/kubelogin/kubelogin.zip && \
+    unzip /root/download/kubelogin/kubelogin.zip -d /root/download/kubelogin/ && \
+    mv /root/download/kubelogin/bin/linux_${TARGETARCH}/kubelogin /root/download/kubelogin/binary/kubelogin
+
 
 ######################################################### IMAGE ########################################################
 
@@ -277,6 +287,8 @@ COPY --from=builder "/root/download/tcpping" "/usr/local/bin/tcpping"
 COPY --from=builder "/root/download/velero_binary/velero" "/usr/local/bin/velero"
 COPY --from=builder "/root/download/sentinel_binary/sentinel" "/usr/local/bin/sentinel"
 COPY --from=builder "/root/download/stern_binary/stern" "/usr/local/bin/stern"
+COPY --from=builder "/root/download/kubelogin/binary/kubelogin" "/usr/local/bin/kubelogin"
+
 
 RUN chmod -R +x /usr/local/bin && \
     helm version && \
@@ -294,7 +306,8 @@ RUN chmod -R +x /usr/local/bin && \
     tcpping && \
     velero --help && \
     stern --version && \
-    sentinel --version
+    sentinel --version && \
+    kubelogin --version
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
