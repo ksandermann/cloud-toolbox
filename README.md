@@ -22,8 +22,11 @@ All CAs placed inside ```~/ca-certificates``` on the host system will be mounted
 Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and have been tested on linux/amd64 and Macbook M1.
 
 # versioning
-Release tags will be build following pattern YYYY-MM-dd-version.
-Version 01 of a date will always contain the latest stable/official versions of tooling available.
+Release tags will be build following pattern YYYY-MM-dd_version.
+There is 2 version of toolbox available: *base* and *complete*.
+Version *base* will be build using tag *latest*, while *complete* is available through tag *complete*.
+Version *base* of a date will always contain the latest stable/official versions of tooling available of version *base*.
+Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*. 
 Other versions of a date can contain version combinations of the toolchain and will be documented in the version history
 below.
 

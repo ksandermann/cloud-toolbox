@@ -358,7 +358,7 @@ RUN chmod -R +x /usr/local/bin && \
     fi \
     if [[ -z "KUBELOGIN_VERSION" ]] ; then \
       kubelogin --version ; \
-    fi \
+    fi
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
