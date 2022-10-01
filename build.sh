@@ -13,7 +13,6 @@ while IFS= read -r line; do
    then buildargs_base+=(--build-arg "$line");
   fi
 done < "args_base.args"
-echo ${buildargs_base[@]}
 
 while IFS= read -r line; do
   if [[ "$line" != \#* ]];
@@ -30,6 +29,7 @@ docker buildx build \
     ${buildargs_base[@]} ${buildargs_optional[@]} \
     --platform linux/amd64,linux/arm64 \
     -t ksandermann/cloud-toolbox-private:complete-$IMAGE_TAG \
+    --no-cache \
     --push \
     .
 
@@ -91,6 +91,7 @@ docker buildx build \
     --pull \
     ${buildargs_base[@]} \
     --platform linux/amd64,linux/arm64 \
+    --no-cache \
     -t ksandermann/cloud-toolbox-private:$IMAGE_TAG \
     --push \
     .
