@@ -5,12 +5,28 @@ IFS=$'\n\t'
 IMAGE_TAG="2022-10-01_01"
 UPSTREAM_TAG="latest"
 
+#https://stackoverflow.com/a/62357213
+while IFS= read -r line; do
+  if [[ "$line" != \#* ]];
+   then buildargs_base+=(--build-arg "$line");
+  fi
+done < "args_base.args"
+echo ${buildargs_base[@]}
+
+while IFS= read -r line; do
+  if [[ "$line" != \#* ]];
+   then buildargs_optional+=(--build-arg "$line");
+  fi
+done < "args_optional.args"
+echo ${buildargs_optional[@]}
+
 docker login
 
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
 docker buildx build \
     --pull \
+    ${buildargs_base[@]} ${buildargs_optional[@]} \
     --platform linux/amd64,linux/arm64 \
     -t ksandermann/cloud-toolbox-private:$IMAGE_TAG \
     --push \

@@ -1,0 +1,26 @@
+UBUNTU_VERSION=20.04
+#https://docs.docker.com/engine/release-notes/
+DOCKER_VERSION=20.10.18
+#https://github.com/kubernetes/kubernetes/releases
+KUBECTL_VERSION=1.25.1
+#https://github.com/helm/helm/releases
+HELM_VERSION=3.9.4
+#https://github.com/hashicorp/terraform/releases
+TERRAFORM_VERSION=1.2.9
+#https://pypi.org/project/azure-cli/
+AZ_CLI_VERSION=2.40.0
+#https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
+OPENSSH_VERSION=9.0p1
+#https://github.com/kubernetes-sigs/cri-tools/releases
+CRICTL_VERSION=1.25.0
+#https://github.com/vmware-tanzu/velero/releases
+VELERO_VERSION=1.9.1
+#https://docs.hashicorp.com/sentinel/changelog
+SENTINEL_VERSION=0.18.12
+#https://github.com/stern/stern/releases
+STERN_VERSION=1.21.0
+#https://github.com/Azure/kubelogin/releases
+KUBELOGIN_VERSION=0.0.20
+#apt-get update && apt-cache madison zsh | head -n 1
+ZSH_VERSION=5.8-3ubuntu1.1
+MULTISTAGE_BUILDER_VERSION=2022-08-25
