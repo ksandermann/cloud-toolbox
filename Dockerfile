@@ -151,14 +151,23 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG TARGETARCH
 #tooling versions
-ARG OPENSSH_VERSION
+ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
+ARG OC_CLI_VERSION
+ARG HELM_VERSION
+ARG TERRAFORM_VERSION
+ARG AWS_CLI_VERSION
+ARG AZ_CLI_VERSION
+ARG GCLOUD_VERSION
 ARG ANSIBLE_VERSION
 ARG JINJA_VERSION
-ARG AZ_CLI_VERSION
-ARG AWS_CLI_VERSION
-ARG ZSH_VERSION
-ARG GCLOUD_VERSION
+ARG OPENSSH_VERSION
+ARG CRICTL_VERSION
+ARG VAULT_VERSION
+ARG VELERO_VERSION
+ARG SENTINEL_VERSION
+ARG STERN_VERSION
+ARG KUBELOGIN_VERSION
 
 #env
 ENV EDITOR nano
@@ -241,14 +250,14 @@ RUN if [[ -z "OPENSSH_VERSION" ]] ; then \
       make install && \
       rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
       ssh -V; \
-    fi \
+    fi
 
 #install common requirements
 RUN pip3 install \
     cryptography \
     hvac \
     jmespath \
-    netaddr \ \
+    netaddr \
     passlib \
     pbr \
     pip \
@@ -262,13 +271,13 @@ RUN if [[ -z "ANSIBLE_VERSION" && -z "JINJA_VERSION" ]] ; then \
       ansible==${ANSIBLE_VERSION} \
       ansible-lint \
       jinja2==${JINJA_VERSION}; \
-    fi \
+    fi
 
 #install azure-cli
 RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
       apt remove azure-cli -y || true && \
       pip3 install azure-cli==${AZ_CLI_VERSION}; \
-    fi \
+    fi
 
 #test azure-cli
 RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
@@ -285,13 +294,13 @@ RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
       az extension add --name k8s-extension && \
       az extension add --name k8s-configuration && \
       az extension add --name azure-firewall; \
-    fi \
+    fi
 
 #install AWS CLI
 RUN if [[ -z "$AWS_CLI_VERSION" ]] ; then \
       pip3 install awscli==$AWS_CLI_VERSION && \
       aws --version; \
-    fi \
+    fi
 
 #install gcloud
 RUN if [[ -z "GCLOUD_VERSION" ]] ; then \
@@ -299,7 +308,7 @@ RUN if [[ -z "GCLOUD_VERSION" ]] ; then \
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
       apt-get update && \
       apt-get install -y google-cloud-sdk=${GCLOUD_VERSION}; \
-    fi \
+    fi
 
 #copy binaries
 COPY --from=builder "/root/download/binaries/*" "/usr/local/bin/"
