@@ -324,7 +324,7 @@ RUN chmod -R +x /usr/local/bin && \
       helm version && \
       helm repo add stable https://charts.helm.sh/stable && \
       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
-      helm repo update &&; \
+      helm repo update; \
     fi \
     if [[ -z "KUBECTL_VERSION" ]] ; then \
       kubectl version --client=true; \
@@ -339,14 +339,14 @@ RUN chmod -R +x /usr/local/bin && \
       terraform version ; \
     fi \
     docker --version && \
-    yq --version && \
+    yq --version \
     if [[ -z "VAULT_VERSION" ]] ; then \
       vault -version; \
     fi \
     if [[ -z "GCLOUD_VERSION" ]] ; then \
       gcloud version; \
     fi \
-      tcpping && \
+      tcpping  \
     if [[ -z "VELERO_VERSION" ]] ; then \
       velero --help; \
     fi \
