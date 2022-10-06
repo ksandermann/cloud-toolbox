@@ -153,8 +153,6 @@ RUN echo $(ls -lah /root/download/binaries/)
 ######################################################### BASE-IMAGE ###################################################
 
 FROM ubuntu:$UBUNTU_VERSION as base-image
-MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
-LABEL maintainer="kevin.sandermann@gmail.com"
 
 ARG TARGETARCH
 ARG DOCKER_VERSION
@@ -177,7 +175,6 @@ ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
 
 #env
-ENV EDITOR nano
 ENV DEBIAN_FRONTEND noninteractive
 
 USER root
@@ -319,15 +316,40 @@ RUN if [[ -z ${GCLOUD_VERSION} ]] ; then \
 
 ######################################################### IMAGE ########################################################
 FROM base-image
+MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
+LABEL maintainer="kevin.sandermann@gmail.com"
+
+ARG TARGETARCH
+ARG DOCKER_VERSION
+ARG KUBECTL_VERSION
+ARG OC_CLI_VERSION
+ARG HELM_VERSION
+ARG TERRAFORM_VERSION
+ARG AWS_CLI_VERSION
+ARG AZ_CLI_VERSION
+ARG GCLOUD_VERSION
+ARG ANSIBLE_VERSION
+ARG JINJA_VERSION
+ARG OPENSSH_VERSION
+ARG CRICTL_VERSION
+ARG VAULT_VERSION
+ARG VELERO_VERSION
+ARG SENTINEL_VERSION
+ARG STERN_VERSION
+ARG KUBELOGIN_VERSION
+ARG ZSH_VERSION
+
+#env
+ENV EDITOR nano
 
 #copy binaries
-COPY --from=binary_downloader "/root/download/binaries/*" "/usr/local/bin/*"
+COPY --from=binary_downloader "/root/download/binaries/" "/usr/local/bin/"
 
 RUN chmod -R +x /usr/local/bin && ls -lah /usr/local/bin
-
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
 
+USER root
 WORKDIR /root/project
 CMD ["/bin/bash"]

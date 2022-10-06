@@ -28,6 +28,12 @@ done < "args_optional.args"
 
 docker login
 
+echo "removing cached images"
+#remove current manifest to not ammend more images with same architecture but create a clean one
+docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE || true
+docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE || true
+rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
+
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
 docker buildx build \
@@ -37,6 +43,7 @@ docker buildx build \
     -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE \
     --no-cache \
     --push \
+    --progress plan \
     .
 
 #scanning private image - skipping binaries where it is known we are already using the latest available version.
@@ -68,32 +75,36 @@ trivy image \
     ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE
 
 echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
-sleep 120
+#sleep 120
 echo "proceeding with pushing the images"
 
+echo "extracting image layer digests"
 COMPLETE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq '.manifests[0].digest')
 COMPLETE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq '.manifests[1].digest')
 
-#remove current manifest to not ammend more images with same architecture but create a clean one
-docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE || true
-docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE || true
-rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
+echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
+echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
 
-#create public tag with "date_complete"
+echo "creating image manifest with tag ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE"
 docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE \
     --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_1 \
     --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_2
 
 
-#create public tag with "complete"
+echo "creating image manifest with tag ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE"
 docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE \
-    --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_2
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE@$COMPLETE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE@$COMPLETE_PRIVATE_MANIFEST_DIGEST_2
 
 #push both images
 docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE
 
 ##BUILD LATEST IMAGE
+
+#remove current manifest to not ammend more images with same architecture but create a clean one
+docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE || true
+docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE || true
+rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
 
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
@@ -135,25 +146,20 @@ trivy image \
     ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE
 
 echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
-sleep 120
+#sleep 120
 echo "proceeding with pushing the images"
 
 BASE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq '.manifests[0].digest')
 BASE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq '.manifests[1].digest')
 
-#remove current manifest to not ammend more images with same architecture but create a clean one
-docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE || true
-docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE || true
-rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
-
 #create public tag with "date_latest"
 docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_2
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_2
 
 #create public tag with "latest"
 docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_BASE \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_2
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_2
 
 docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE ksandermann/cloud-toolbox:$TAG_PREFIX_BASE

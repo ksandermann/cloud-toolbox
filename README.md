@@ -41,3 +41,7 @@ complete -> 2022-10-06_complete
 ## [version history before 2022-10-05](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
 
 
+TODO
+uncomment sleep
+remove test tags
+add binary checks
