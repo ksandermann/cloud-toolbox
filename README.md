@@ -23,28 +23,21 @@ Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and
 
 # versioning
 Release tags will be build following pattern YYYY-MM-dd_version.
-There is 2 version of toolbox available: *base* and *complete*.
-Version *base* will be build using tag *latest*, while *complete* is available through tag *complete*.
+There is 2 versions of toolbox available: *base* and *complete*.
+The latest tag of version *base* will be built using tag *latest*, while the latest tag of version *complete* is available through tag *complete*.
 Version *base* of a date will always contain the latest stable/official versions of tooling available of version *base*.
-Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*. 
-Other versions of a date can contain version combinations of the toolchain and will be documented in the version history
-below.
+Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*.
+For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/args_optional.args)
 
 ## version history
-latest -> 2022-10-01_01
+latest -> 2022-10-06_base
+complete -> 2022-10-06_complete
 
-| RELEASE       | UBUNTU | DOCKER   | KUBECTL | OC CLI  | HELM   | TERRAFORM | AWS CLI | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT  | VELERO | SENTINEL |
-|---------------|--------|----------|---------|---------|--------|-----------|---------|--------|------------|---------|--------|---------|--------|--------|--------|----------|
-| 2022-10-01_01 | 20.04  | 20.10.18 | 1.25.2  | 4.11.5  | 3.10.0 | 1.3.1     | 1.25.85 | 2.40.0 | 404.0.0    | 6.4.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.4 | 1.9.2  | 0.18.12  |
-| 2022-09-22_01 | 20.04  | 20.10.18 | 1.25.1  | 4.11.4  | 3.9.4  | 1.2.9     | 1.25.77 | 2.40.0 | 402.0.0    | 6.4.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.12  |
-| 2022-09-21_01 | 20.04  | 20.10.18 | 1.25.1  | 4.11.4  | 3.9.4  | 1.2.9     | 1.25.77 | 2.40.0 | 402.0.0    | 6.4.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.12  |
-| 2022-09-14_01 | 20.04  | 20.10.18 | 1.25.0  | 4.11.1  | 3.9.4  | 1.2.9     | 1.25.73 | 2.40.0 | 402.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.11  |
-| 2022-08-25_01 | 20.04  | 20.10.17 | 1.25.0  | 4.11.0  | 3.9.4  | 1.2.8     | 1.25.60 | 2.39.0 | 399.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.2 | 1.9.1  | 0.18.11  |
-| 2022-07-30_01 | 20.04  | 20.10.17 | 1.24.3  | 4.10.23 | 3.9.2  | 1.2.6     | 1.25.41 | 2.38.0 | 395.0.0    | 6.1.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.1 | 1.9.0  | 0.18.11  |
-| 2022-07-13_01 | 20.04  | 20.10.17 | 1.24.2  | 4.10.20 | 3.9.0  | 1.2.5     | 1.25.28 | 2.38.0 | 393.0.0    | 6.1.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.0 | 1.9.0  | 0.18.11  |
-| 2022-06-16_01 | 20.04  | 20.10.17 | 1.24.1  | 4.10.17 | 3.9.0  | 1.2.3     | 1.25.9  | 2.37.0 | 390.0.0    | 5.9.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.10.4 | 1.8.1  | 0.18.11  |
-| 2022-05-02_01 | 20.04  | 20.10.14 | 1.23.6  | 4.10.10 | 3.8.2  | 1.1.9     | 1.23.4  | 2.36.0 | 383.0.1    | 5.7.0   | 3.1.2  | 9.0p1   | 1.23.0 | 1.10.2 | 1.8.1  | 0.18.9   |
-| 2022-04-26_01 | 20.04  | 20.10.14 | 1.23.6  | 4.10.9  | 3.8.2  | 1.1.9     | 1.23.0  | 2.36.0 | 382.0.0    | 5.6.0   | 3.1.1  | 9.0p1   | 1.23.0 | 1.10.1 | 1.8.1  | 0.18.9   |
-| 2022-03-17_01 | 20.04  | 20.10.13 | 1.23.5  | 4.10.3  | 3.8.1  | 1.1.7     | 1.22.76 | 2.34.1 | 377.0.0    | 5.5.0   | 3.0.3  | 8.9p1   | 1.23.0 | 1.9.4  | 1.8.1  | 0.18.7   |
+| RELEASE              | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI | AWS CLI | GCLOUD SDK  | ANSIBLE | JINJA2  | VAULT  |
+|----------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|--------|---------|-------------|---------|---------|--------|
+| 2022-10-06_complete  | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.1     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.12  | 1.22.0 | 0.0.20    | 4.11.6 | 1.25.88 | 402.0.0     | 6.4.0   | 3.1.2   | 1.11.4 |
 
-## [ version history before 2022-03-17](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
+## version history
+## [version history before 2022-10-05](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
+
+
