@@ -21,8 +21,8 @@ ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
 ARG MULTISTAGE_BUILDER_VERSION
 
-######################################################### BUILDER ######################################################
-FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as builder
+######################################################### BINARY-DOWNLOADER ############################################
+FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as binary_downloader
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -50,7 +50,7 @@ WORKDIR /root/download
 RUN mkdir -p /root/download/binaries
 
 #download oc-cli
-RUN if [[ -z "OC_CLI_VERSION" ]] ; then \
+RUN if [[ -z ${OC_CLI_VERSION} ]] ; then \
       mkdir -p oc_cli && \
       curl -SsL --retry 5 -o oc_cli.tar.gz https://mirror.openshift.com/pub/openshift-v4/$TARGETARCH/clients/ocp/stable/openshift-client-linux-$OC_CLI_VERSION.tar.gz && \
       tar xvf oc_cli.tar.gz -C oc_cli && \
@@ -58,13 +58,13 @@ RUN if [[ -z "OC_CLI_VERSION" ]] ; then \
     fi
 
 #download helm3-cli
-RUN if [[ -z "$HELM_VERSION" ]] ; then \
+RUN if [[ -z ${HELM_VERSION} ]] ; then \
       mkdir helm && curl -SsL --retry 5 "https://get.helm.sh/helm-v$HELM_VERSION-linux-$TARGETARCH.tar.gz" | tar xz -C ./helm && \
       mv "/root/download/helm/linux-${TARGETARCH}/helm" "/root/download/binaries/helm"; \
     fi
 
 #download terraform
-RUN if [[ -z "TERRAFORM_VERSION" ]] ; then \
+RUN if [[ -z ${TERRAFORM_VERSION} ]] ; then \
       wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
       unzip ./terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip -d terraform_cli && \
       mv "/root/download/terraform_cli/terraform" "/root/download/binaries/terraform"; \
@@ -73,7 +73,7 @@ RUN if [[ -z "TERRAFORM_VERSION" ]] ; then \
 #download docker
 #credits to https://github.com/docker-library/docker/blob/463595652d2367887b1ffe95ec30caa00179be72/18.09/Dockerfile
 #need to stick to uname since docker download link uses "aarch64" instead of "arm64"
-RUN if [[ -z "DOCKER_VERSION" ]] ; then \
+RUN if [[ -z ${DOCKER_VERSION} ]] ; then \
       mkdir -p /root/download/docker/bin && \
       set -eux; \
       arch="$(uname -m)"; \
@@ -89,13 +89,13 @@ RUN if [[ -z "DOCKER_VERSION" ]] ; then \
     fi
 
 #download kubectl
-RUN if [[ -z "$KUBECTL_VERSION" ]] ; then \
+RUN if [[ -z ${KUBECTL_VERSION} ]] ; then \
       wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl && \
       mv "/root/download/kubectl" "/root/download/binaries/kubectl"; \
     fi
 
 #download crictl
-RUN if [[ -z "$CRICTL_VERSION" ]] ; then \
+RUN if [[ -z ${CRICTL_VERSION} ]] ; then \
       mkdir -p /root/download/crictl && \
       wget "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-${TARGETARCH}.tar.gz" -O /root/download/crictl.tar.gz && \
       tar zxvf /root/download/crictl.tar.gz -C /root/download/crictl && \
@@ -107,7 +107,7 @@ RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linu
     mv "/root/download/yq" "/root/download/binaries/yq"
 
 #download vault
-RUN if [[ -z "VAULT_VERSION" ]] ; then \
+RUN if [[ -z ${VAULT_VERSION} ]] ; then \
       wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
       unzip ./vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
       mv "/root/download/vault" "/root/download/binaries/vault"; \
@@ -119,21 +119,21 @@ RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -
     mv "/root/download/tcpping" "/root/download/binaries/tcpping"
 
 #download velero CLI
-RUN if [[ -z "VELERO_VERSION" ]] ; then \
+RUN if [[ -z ${VELERO_VERSION} ]] ; then \
       wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
       tar -xvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
       mv velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero/root/download/binaries/velero; \
     fi
 
 #download terraform sentinel
-RUN if [[ -z "SENTINEL_VERSION" ]] ; then \
+RUN if [[ -z ${SENTINEL_VERSION} ]] ; then \
       curl https://releases.hashicorp.com/sentinel/${SENTINEL_VERSION}/sentinel_${SENTINEL_VERSION}_linux_${TARGETARCH}.zip --output ./sentinel.zip && \
       unzip ./sentinel.zip -d ./sentinel_binary && \
       mv "/root/download/sentinel_binary/sentinel" "/root/download/binaries/sentinel"; \
     fi
 
 #download stern
-RUN if [[ -z "STERN_VERSION" ]] ; then \
+RUN if [[ -z ${STERN_VERSION} ]] ; then \
       mkdir -p /root/download/stern && \
       wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -O /root/download/stern_arch.tar.gz && \
       tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
@@ -141,17 +141,18 @@ RUN if [[ -z "STERN_VERSION" ]] ; then \
     fi
 
 #download kubelogin
-RUN if [[ -z "KUBELOGIN_VERSION" ]] ; then \
+RUN if [[ -z ${KUBELOGIN_VERSION} ]] ; then \
       mkdir -p /root/download/kubelogin/binary && \
       wget https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-${TARGETARCH}.zip -O /root/download/kubelogin/kubelogin.zip && \
       unzip /root/download/kubelogin/kubelogin.zip -d /root/download/kubelogin/ && \
       mv /root/download/kubelogin/bin/linux_${TARGETARCH}/kubelogin "/root/download/binaries/kubelogin" ; \
     fi
 
+RUN echo $(ls -lah /root/download/binaries/)
 
-######################################################### IMAGE ########################################################
+######################################################### BASE-IMAGE ###################################################
 
-FROM ubuntu:$UBUNTU_VERSION
+FROM ubuntu:$UBUNTU_VERSION as base-image
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
@@ -238,7 +239,7 @@ RUN apt-get update && \
     apt-get install -y \
     fonts-powerline \
     powerline \
-    zsh=$ZSH_VERSION
+    zsh=${ZSH_VERSION}
 RUN git config --global --add safe.directory '*'
 
 
@@ -247,7 +248,7 @@ ENV ZSH_THEME agnoster
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
-RUN if [[ -z "OPENSSH_VERSION" ]] ; then \
+RUN if [[ -z ${OPENSSH_VERSION} ]] ; then \
       wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
       tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
       cd openssh-${OPENSSH_VERSION} && \
@@ -272,7 +273,7 @@ RUN pip3 install \
     setuptools
 
 #install ansible
-RUN if [[ -z "ANSIBLE_VERSION" && -z "JINJA_VERSION" ]] ; then \
+RUN if [[ -z ${ANSIBLE_VERSION} && -z ${JINJA_VERSION} ]] ; then \
       pip3 install \
       ansible==${ANSIBLE_VERSION} \
       ansible-lint \
@@ -280,13 +281,13 @@ RUN if [[ -z "ANSIBLE_VERSION" && -z "JINJA_VERSION" ]] ; then \
     fi
 
 #install azure-cli
-RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
+RUN if [[ -z ${AZ_CLI_VERSION} ]] ; then \
       apt remove azure-cli -y || true && \
       pip3 install azure-cli==${AZ_CLI_VERSION}; \
     fi
 
 #test azure-cli
-RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
+RUN if [[ -z ${AZ_CLI_VERSION} ]] ; then \
       az --version && \
       az extension add --name azure-devops && \
       az extension add --name ssh && \
@@ -303,62 +304,27 @@ RUN if [[ -z "AZ_CLI_VERSION" ]] ; then \
     fi
 
 #install AWS CLI
-RUN if [[ -z "$AWS_CLI_VERSION" ]] ; then \
+RUN if [[ -z ${AWS_CLI_VERSION} ]] ; then \
       pip3 install awscli==$AWS_CLI_VERSION && \
       aws --version; \
     fi
 
 #install gcloud
-RUN if [[ -z "GCLOUD_VERSION" ]] ; then \
+RUN if [[ -z ${GCLOUD_VERSION} ]] ; then \
       echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
       apt-get update && \
       apt-get install -y google-cloud-sdk=${GCLOUD_VERSION}; \
     fi
 
-#copy binaries
-COPY --from=builder "/root/download/binaries/*" "/usr/local/bin/"
+######################################################### IMAGE ########################################################
+FROM base-image
 
-RUN chmod -R +x /usr/local/bin && \
-    if [[ -z "HELM_VERSION" ]] ; then \
-      helm version && \
-      helm repo add stable https://charts.helm.sh/stable && \
-      helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
-      helm repo update; \
-    fi \
-    if [[ -z "KUBECTL_VERSION" ]] ; then \
-      kubectl version --client=true; \
-    fi \
-    if [[ -z "CRICTL_VERSION" ]] ; then \
-      crictl --version; \
-    fi \
-    if [[ -z "OC_CLI_VERSION" ]] ; then \
-      oc version --client; \
-    fi \
-    if [[ -z "TERRAFORM_VERSION" ]] ; then \
-      terraform version ; \
-    fi \
-    docker --version && \
-    yq --version \
-    if [[ -z "VAULT_VERSION" ]] ; then \
-      vault -version; \
-    fi \
-    if [[ -z "GCLOUD_VERSION" ]] ; then \
-      gcloud version; \
-    fi \
-      tcpping  \
-    if [[ -z "VELERO_VERSION" ]] ; then \
-      velero --help; \
-    fi \
-    if [[ -z "STERN_VERSION" ]] ; then \
-      stern --version; \
-    fi \
-    if [[ -z "SENTINEL_VERSION" ]] ; then \
-      sentinel --version; \
-    fi \
-    if [[ -z "KUBELOGIN_VERSION" ]] ; then \
-      kubelogin --version ; \
-    fi
+#copy binaries
+COPY --from=binary_downloader "/root/download/binaries/*" "/usr/local/bin/*"
+
+RUN chmod -R +x /usr/local/bin && ls -lah /usr/local/bin
+
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc
