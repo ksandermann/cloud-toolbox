@@ -4,11 +4,11 @@
  <p align="center">Get dynamically generated GitHub stats on your READMEs!</p>
 </p>
   <p align="center">
-    <a href="https://github.com/ksandermann/cloud-toolbox/graphs/contributors">
-      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/ksandermann/cloud-toolbox" />
+    <a href="https://github.com/ksandermann/cloud-toolbox/releases">
+      <img alt="GitHub Releases" src="https://img.shields.io/github/v/release/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
-    <a href="https://github.com/ksandermann/cloud-toolbox/issues">
-      <img alt="Issues" src="https://img.shields.io/github/issues/ksandermann/cloud-toolbox?color=0088ff" />
+    <a href="https://hub.docker.com/repository/docker/ksandermann/cloud-toolbox">
+      <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
     <a href="https://github.com/ksandermann/cloud-toolbox/pulls?q=is%3Apr+is%3Aclosed">
       <img alt="Closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/ksandermann/cloud-toolbox?color=0088ff" />
@@ -16,8 +16,11 @@
     <a href="https://github.com/ksandermann/cloud-toolbox/pulls">
       <img alt="Open pull requests" src="https://img.shields.io/github/issues-pr-raw/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
-    <a href="https://github.com/ksandermann/cloud-toolbox/pulls">
-      <img alt="Open pull requests" src="https://img.shields.io/docker/pulls/ksandermann/cloud-toolbox?color=0088ff" />
+    <a href="https://github.com/ksandermann/cloud-toolbox/issues">
+      <img alt="Issues" src="https://img.shields.io/github/issues/ksandermann/cloud-toolbox?color=0088ff" />
+    </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/graphs/contributors">
+      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/ksandermann/cloud-toolbox" />
     </a>
     <br />
     <br />
