@@ -11,7 +11,7 @@
       <img alt="Issues" src="https://img.shields.io/github/issues/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
     <a href="https://github.com/ksandermann/cloud-toolbox/pulls?q=is%3Apr+is%3Aclosed">
-      <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/ksandermann/cloud-toolbox?color=0088ff" />
+      <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
     <a href="https://github.com/ksandermann/cloud-toolbox/releases">
       <img alt="GitHub pull requests" src="https://img.shields.io/github/issues-pr/ksandermann/cloud-toolbox?color=0088ff" />
