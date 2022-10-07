@@ -85,10 +85,10 @@ COMPLETE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-t
 echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
 echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
 
-echo "creating image manifest with tag ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE"
-docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE \
-    --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$COMPLETE_PRIVATE_MANIFEST_DIGEST_2
+echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}"
+docker manifest create "ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}" \
+    --amend "ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1}" \
+    --amend "ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}"
 
 
 echo "creating image manifest with tag ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE"
