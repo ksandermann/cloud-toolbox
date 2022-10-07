@@ -3,7 +3,7 @@
  <h2 align="center">GitHub Readme Stats</h2>
  <p align="center">Get dynamically generated GitHub stats on your READMEs!</p>
 </p>
-  <p align="center">
+<p align="center">
     <a href="https://github.com/ksandermann/cloud-toolbox/releases">
       <img alt="GitHub Releases" src="https://img.shields.io/github/v/release/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
@@ -24,7 +24,7 @@
     </a>
     <br />
     <br />
-  </p>
+</p>
 
 
 
