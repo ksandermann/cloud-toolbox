@@ -1,5 +1,5 @@
 <p align="center">
- <img width="100px" src="https://res.cloudinary.com/anuraghazra/image/upload/v1594908242/logo_ccswme.svg" align="center" alt="GitHub Readme Stats" />
+ <img width="100px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Circle-icons-tools.svg/512px-Circle-icons-tools.svg" align="center" alt="Cloud Toolbox" />
  <h2 align="center">Cloud-Toolbox</h2>
  <p align="center">Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.</p>
  <p align="center">It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
