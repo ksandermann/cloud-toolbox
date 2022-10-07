@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-10-08"
+IMAGE_TAG="2022-10-07"
 TAG_PREFIX_COMPLETE="completetest"
 TAG_PREFIX_BASE="latesttest"
 UPSTREAM_TAG_COMPLETE="${IMAGE_TAG}_${TAG_PREFIX_COMPLETE}"
@@ -52,25 +52,26 @@ docker buildx build \
 trivy image \
     --ignore-unfixed \
     --severity HIGH,CRITICAL,MEDIUM \
-    --skip-files "/usr/local/bin/helm" \
-    --skip-files "/usr/local/bin/oc" \
-    --skip-files "/usr/local/bin/terraform" \
-    --skip-files "/usr/local/bin/kubectl" \
-    --skip-files "/usr/local/bin/crictl" \
-    --skip-files "/usr/local/bin/yq" \
-    --skip-files "/usr/local/bin/vault" \
-    --skip-files "/usr/local/bin/tcpping" \
-    --skip-files "/usr/local/bin/velero" \
-    --skip-files "/usr/local/bin/stern" \
-    --skip-files "/usr/local/bin/sentinel" \
     --skip-files "/usr/local/bin/containerd" \
     --skip-files "/usr/local/bin/containerd-shim" \
     --skip-files "/usr/local/bin/containerd-shim-runc-v2" \
+    --skip-files "/usr/local/bin/crictl" \
+    --skip-files "/usr/local/bin/ctr" \
     --skip-files "/usr/local/bin/docker" \
     --skip-files "/usr/local/bin/docker-init" \
     --skip-files "/usr/local/bin/docker-proxy" \
     --skip-files "/usr/local/bin/dockerd" \
+    --skip-files "/usr/local/bin/helm" \
+    --skip-files "/usr/local/bin/kubectl" \
     --skip-files "/usr/local/bin/kubelogin" \
+    --skip-files "/usr/local/bin/oc" \
+    --skip-files "/usr/local/bin/sentinel" \
+    --skip-files "/usr/local/bin/stern" \
+    --skip-files "/usr/local/bin/tcpping" \
+    --skip-files "/usr/local/bin/terraform" \
+    --skip-files "/usr/local/bin/vault" \
+    --skip-files "/usr/local/bin/velero" \
+    --skip-files "/usr/local/bin/yq" \
     --skip-dirs "/root/.azure/cliextensions/ssh/" \
     ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE
 
@@ -123,25 +124,26 @@ docker buildx build \
 trivy image \
     --ignore-unfixed \
     --severity HIGH,CRITICAL,MEDIUM \
-    --skip-files "/usr/local/bin/helm" \
-    --skip-files "/usr/local/bin/oc" \
-    --skip-files "/usr/local/bin/terraform" \
-    --skip-files "/usr/local/bin/kubectl" \
-    --skip-files "/usr/local/bin/crictl" \
-    --skip-files "/usr/local/bin/yq" \
-    --skip-files "/usr/local/bin/vault" \
-    --skip-files "/usr/local/bin/tcpping" \
-    --skip-files "/usr/local/bin/velero" \
-    --skip-files "/usr/local/bin/stern" \
-    --skip-files "/usr/local/bin/sentinel" \
     --skip-files "/usr/local/bin/containerd" \
     --skip-files "/usr/local/bin/containerd-shim" \
     --skip-files "/usr/local/bin/containerd-shim-runc-v2" \
+    --skip-files "/usr/local/bin/crictl" \
+    --skip-files "/usr/local/bin/ctr" \
     --skip-files "/usr/local/bin/docker" \
     --skip-files "/usr/local/bin/docker-init" \
     --skip-files "/usr/local/bin/docker-proxy" \
     --skip-files "/usr/local/bin/dockerd" \
+    --skip-files "/usr/local/bin/helm" \
+    --skip-files "/usr/local/bin/kubectl" \
     --skip-files "/usr/local/bin/kubelogin" \
+    --skip-files "/usr/local/bin/oc" \
+    --skip-files "/usr/local/bin/sentinel" \
+    --skip-files "/usr/local/bin/stern" \
+    --skip-files "/usr/local/bin/tcpping" \
+    --skip-files "/usr/local/bin/terraform" \
+    --skip-files "/usr/local/bin/vault" \
+    --skip-files "/usr/local/bin/velero" \
+    --skip-files "/usr/local/bin/yq" \
     --skip-dirs "/root/.azure/cliextensions/ssh/" \
     ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE
 
