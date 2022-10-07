@@ -1,7 +1,10 @@
 <p align="center">
  <img width="100px" src="https://res.cloudinary.com/anuraghazra/image/upload/v1594908242/logo_ccswme.svg" align="center" alt="GitHub Readme Stats" />
- <h2 align="center">GitHub Readme Stats</h2>
- <p align="center">Get dynamically generated GitHub stats on your READMEs!</p>
+ <h2 align="center">Cloud-Toolbox</h2>
+ <p align="center">Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.</p>
+ <p align="center">It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
+platform-independent development environment.</p>
+ <p align="center">Feel free to use/share/contribute.</p>
 </p>
 <p align="center">
     <a href="https://github.com/ksandermann/cloud-toolbox/releases">
@@ -25,14 +28,6 @@
     <br />
     <br />
 </p>
-
-
-
-# cloud-toolbox
-Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.
-It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
-platform-independent development environment.
-Feel free to use/share/contribute.
 
 # default shell & custom startup-script
 The default shell is sh.
