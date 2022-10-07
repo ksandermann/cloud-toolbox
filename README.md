@@ -16,6 +16,9 @@
     <a href="https://github.com/ksandermann/cloud-toolbox/pulls">
       <img alt="Open pull requests" src="https://img.shields.io/github/issues-pr-raw/ksandermann/cloud-toolbox?color=0088ff" />
     </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/pulls">
+      <img alt="Open pull requests" src="https://img.shields.io/docker/pulls/ksandermann/cloud-toolbox?color=0088ff" />
+    </a>
     <br />
     <br />
   </p>
