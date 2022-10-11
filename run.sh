@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="completetest"
+IMAGE_TAG="latest"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
 #functions
