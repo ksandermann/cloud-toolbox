@@ -6,14 +6,22 @@
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
-source <(kubectl completion bash)
-echo "kubectl bash completion installed!"
-source <(helm completion bash)
-echo "helm bash completion installed!"
-source <(oc completion bash)
-echo "oc bash completion installed!"
-terraform -install-autocomplete
-echo "terraform bash completion installed!"
+if [ -f /usr/local/bin/kubectl ] ; then
+  source <(kubectl completion bash)
+  echo "kubectl bash completion installed!"
+fi
+if [ -f /usr/local/bin/helm ] ; then
+  source <(helm completion bash)
+  echo "helm bash completion installed!"
+fi
+if [ -f /usr/local/bin/oc ] ; then
+  source <(oc completion bash)
+  echo "oc bash completion installed!"
+fi
+if [ -f /usr/local/bin/terraform ] ; then
+  terraform -install-autocomplete
+  echo "terraform bash completion installed!"
+fi
 
 ######################################################## SOURCE ########################################################
 sleep 1

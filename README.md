@@ -1,8 +1,33 @@
-# cloud-toolbox
-Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.
-It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
-platform-independent development environment.
-Feel free to use/share/contribute.
+<p align="center">
+ <img width="100px" src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Circle-icons-tools.svg/512px-Circle-icons-tools.svg.png" align="center" alt="Cloud Toolbox" />
+ <h2 align="center">Cloud-Toolbox</h2>
+ <p align="center">Docker Image to work with Azure, AWS, Google Cloud, Docker, Kubernetes, Openshift, Helm, Ansible, Terraform and HashiCorp Vault.</p>
+ <p align="center">It's the toolchain I'm working with on a daily basis, packed into a docker image with both zsh and bash to have a
+platform-independent development environment.</p>
+ <p align="center">Feel free to use/share/contribute.</p>
+</p>
+<p align="center">
+    <a href="https://github.com/ksandermann/cloud-toolbox/releases">
+      <img alt="GitHub Releases" src="https://img.shields.io/github/v/release/ksandermann/cloud-toolbox?color=B689B2" />
+    </a>
+    <a href="https://hub.docker.com/repository/docker/ksandermann/cloud-toolbox">
+      <img alt="Docker Pulls" src="https://img.shields.io/docker/pulls/ksandermann/cloud-toolbox?color=D9A0B9" />
+    </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/pulls?q=is%3Apr+is%3Aclosed">
+      <img alt="Closed pull requests" src="https://img.shields.io/github/issues-pr-closed-raw/ksandermann/cloud-toolbox?color=F2B8B9" />
+    </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/pulls">
+      <img alt="Open pull requests" src="https://img.shields.io/github/issues-pr-raw/ksandermann/cloud-toolbox?color=FBE3B0" />
+    </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/issues">
+      <img alt="Issues" src="https://img.shields.io/github/issues/ksandermann/cloud-toolbox?color=FCF8D9" />
+    </a>
+    <a href="https://github.com/ksandermann/cloud-toolbox/graphs/contributors">
+      <img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/ksandermann/cloud-toolbox?color=B6D8DB" />
+    </a>
+    <br />
+    <br />
+</p>
 
 # default shell & custom startup-script
 The default shell is sh.
@@ -15,32 +40,33 @@ The behaviour of run.sh is as follows:
 1. if so, attach to the container and start a new shell (/bin/bash) inside it.
 1. if not, pull latest tag and start a new interactive container and start a new shell (/bin/zsh) inside it.
 
-# custom ca certificates`
+# custom ca certificates
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
 # multi-platform support
 Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and have been tested on linux/amd64 and Macbook M1.
 
 # versioning
-Release tags will be build following pattern YYYY-MM-dd-version.
-Version 01 of a date will always contain the latest stable/official versions of tooling available.
-Other versions of a date can contain version combinations of the toolchain and will be documented in the version history
-below.
+Release tags will be build following pattern YYYY-MM-dd_version.
+
+There is 2 versions of toolbox available: *base* and *complete*.
+
+The latest tag of version *base* will be built using tag *latest*, while the latest tag of version *complete* is available through tag *complete*.
+
+Version *base* of a date will always contain the latest stable/official versions of tooling available of version *base*.
+
+Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*.
+
+For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/args_optional.args)
 
 ## version history
-latest -> 2022-09-21_01
+latest -> 2022-10-11_base
+project -> 2022-10-11_base
+complete -> 2022-10-11_complete
 
-| RELEASE       | UBUNTU | DOCKER   | KUBECTL | OC CLI  | HELM  | TERRAFORM | AWS CLI | AZ CLI | GCLOUD SDK | ANSIBLE | JINJA2 | OPENSSH | CRICTL | VAULT  | VELERO | SENTINEL |
-|---------------|--------|----------|---------|---------|-------|-----------|---------|--------|------------|---------|--------|---------|--------|--------|--------|----------|
-| 2022-09-22_01 | 20.04  | 20.10.18 | 1.25.1  | 4.11.4  | 3.9.4 | 1.2.9     | 1.25.77 | 2.40.0 | 402.0.0    | 6.4.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.12  |
-| 2022-09-21_01 | 20.04  | 20.10.18 | 1.25.1  | 4.11.4  | 3.9.4 | 1.2.9     | 1.25.77 | 2.40.0 | 402.0.0    | 6.4.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.12  |
-| 2022-09-14_01 | 20.04  | 20.10.18 | 1.25.0  | 4.11.1  | 3.9.4 | 1.2.9     | 1.25.73 | 2.40.0 | 402.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.25.0 | 1.11.3 | 1.9.1  | 0.18.11  |
-| 2022-08-25_01 | 20.04  | 20.10.17 | 1.25.0  | 4.11.0  | 3.9.4 | 1.2.8     | 1.25.60 | 2.39.0 | 399.0.0    | 6.3.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.2 | 1.9.1  | 0.18.11  |
-| 2022-07-30_01 | 20.04  | 20.10.17 | 1.24.3  | 4.10.23 | 3.9.2 | 1.2.6     | 1.25.41 | 2.38.0 | 395.0.0    | 6.1.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.1 | 1.9.0  | 0.18.11  |
-| 2022-07-13_01 | 20.04  | 20.10.17 | 1.24.2  | 4.10.20 | 3.9.0 | 1.2.5     | 1.25.28 | 2.38.0 | 393.0.0    | 6.1.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.11.0 | 1.9.0  | 0.18.11  |
-| 2022-06-16_01 | 20.04  | 20.10.17 | 1.24.1  | 4.10.17 | 3.9.0 | 1.2.3     | 1.25.9  | 2.37.0 | 390.0.0    | 5.9.0   | 3.1.2  | 9.0p1   | 1.24.2 | 1.10.4 | 1.8.1  | 0.18.11  |
-| 2022-05-02_01 | 20.04  | 20.10.14 | 1.23.6  | 4.10.10 | 3.8.2 | 1.1.9     | 1.23.4  | 2.36.0 | 383.0.1    | 5.7.0   | 3.1.2  | 9.0p1   | 1.23.0 | 1.10.2 | 1.8.1  | 0.18.9   |
-| 2022-04-26_01 | 20.04  | 20.10.14 | 1.23.6  | 4.10.9  | 3.8.2 | 1.1.9     | 1.23.0  | 2.36.0 | 382.0.0    | 5.6.0   | 3.1.1  | 9.0p1   | 1.23.0 | 1.10.1 | 1.8.1  | 0.18.9   |
-| 2022-03-17_01 | 20.04  | 20.10.13 | 1.23.5  | 4.10.3  | 3.8.1 | 1.1.7     | 1.22.76 | 2.34.1 | 377.0.0    | 5.5.0   | 3.0.3  | 8.9p1   | 1.23.0 | 1.9.4  | 1.8.1  | 0.18.7   |
+| RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI | AWS CLI | GCLOUD SDK | ANSIBLE | JINJA2  | VAULT  |
+|---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|--------|---------|------------|---------|---------|--------|
+| 2022-10-11_complete | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.2     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.11  | 1.22.0 | 0.0.20    | 4.11.7 | 1.25.90 | 405.0.0    | 6.4.0   | 3.1.2   | 1.11.4 |
 
-## [ version history before 2022-03-17](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
+## version history
+## [version history before 2022-10-10](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
