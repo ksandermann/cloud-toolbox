@@ -5,6 +5,7 @@ IFS=$'\n\t'
 IMAGE_TAG="2022-10-11"
 TAG_PREFIX_COMPLETE="completetest"
 TAG_PREFIX_BASE="latesttest"
+TAG_PREFIX_BASE2="projecttest"
 UPSTREAM_TAG_COMPLETE="${IMAGE_TAG}_${TAG_PREFIX_COMPLETE}"
 UPSTREAM_TAG_BASE="${IMAGE_TAG}_${TAG_PREFIX_BASE}"
 
@@ -87,10 +88,6 @@ echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
 echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
 
 echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}"
-echo "command:"
-echo "docker manifest create ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE} \
-          --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
-          --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}"
 docker manifest create ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE} \
     --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
     --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}
@@ -101,6 +98,7 @@ docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE \
     --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE@$COMPLETE_PRIVATE_MANIFEST_DIGEST_1 \
     --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE@$COMPLETE_PRIVATE_MANIFEST_DIGEST_2
 
+
 #push both images
 docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE
 
@@ -109,6 +107,7 @@ docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE ksanderman
 #remove current manifest to not ammend more images with same architecture but create a clean one
 docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE || true
 docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE || true
+docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2 || true
 rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
 
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
@@ -159,13 +158,22 @@ BASE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolb
 BASE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq -r '.manifests[1].digest')
 
 #create public tag with "date_latest"
+echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_BASE}"
 docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE \
-    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_2
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_2
 
 #create public tag with "latest"
+echo "creating image manifest with tag ksandermann/cloud-toolbox:${TAG_PREFIX_BASE}"
 docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_BASE \
-    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BAS@$BASE_PRIVATE_MANIFEST_DIGEST_2
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_2
 
-docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE ksandermann/cloud-toolbox:$TAG_PREFIX_BASE
+#create public tag with "project"
+echo "creating image manifest with tag ksandermann/cloud-toolbox:${TAG_PREFIX_BASE2}"
+docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
+    --amend ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE@$BASE_PRIVATE_MANIFEST_DIGEST_2
+
+echo "pushing images"
+docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE ksandermann/cloud-toolbox:$TAG_PREFIX_BASE ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2
