@@ -358,35 +358,34 @@ RUN chmod -R +x /usr/local/bin && \
     fi; \
     if [[ ! -z "KUBECTL_VERSION" ]] ; then \
       kubectl version --client=true; \
+    fi; \
+    if [[ ! -z "CRICTL_VERSION" ]] ; then \
+      crictl --version; \
+    fi; \
+    if [[ ! -z "OC_CLI_VERSION" ]] ; then \
+      oc version --client; \
+    fi; \
+    if [[ ! -z "TERRAFORM_VERSION" ]] ; then \
+      terraform version ; \
+    fi; \
+    if [[ ! -z "VAULT_VERSION" ]] ; then \
+      vault -version; \
+    fi; \
+    if [[ ! -z "GCLOUD_VERSION" ]] ; then \
+      gcloud version; \
+    fi; \
+    if [[ ! -z "VELERO_VERSION" ]] ; then \
+      velero version --client-only; \
+    fi; \
+    if [[ ! -z "STERN_VERSION" ]] ; then \
+      stern --version; \
+    fi; \
+    if [[ ! -z "SENTINEL_VERSION" ]] ; then \
+      sentinel --version; \
+    fi; \
+    if [[ ! -z "KUBELOGIN_VERSION" ]] ; then \
+      kubelogin --version ; \
     fi
-#    if [[ ! -z "CRICTL_VERSION" ]] ; then \
-#      crictl --version; \
-#    fi \
-#    if [[ ! -z "OC_CLI_VERSION" ]] ; then \
-#      oc version --client; \
-#    fi \
-#    if [[ ! -z "TERRAFORM_VERSION" ]] ; then \
-#      terraform version ; \
-#    fi \
-#    if [[ ! -z "VAULT_VERSION" ]] ; then \
-#      vault -version; \
-#    fi \
-#    if [[ ! -z "GCLOUD_VERSION" ]] ; then \
-#      gcloud version; \
-#    fi \
-#      tcpping  \
-#    if [[ ! -z "VELERO_VERSION" ]] ; then \
-#      velero --help; \
-#    fi \
-#    if [[ ! -z "STERN_VERSION" ]] ; then \
-#      stern --version; \
-#    fi \
-#    if [[ ! -z "SENTINEL_VERSION" ]] ; then \
-#      sentinel --version; \
-#    fi \
-#    if [[ ! -z "KUBELOGIN_VERSION" ]] ; then \
-#      kubelogin --version ; \
-#    fi
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc

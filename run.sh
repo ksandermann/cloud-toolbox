@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="latest"
+IMAGE_TAG="completetest"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
 #functions
@@ -28,6 +28,23 @@ function startNewToolbox {
 
 function attachToToolbox {
   docker exec -it toolbox /bin/bash
+}
+
+function testBinaries {
+  docker --version && \
+  yq --version && \
+  tcpping && \
+  helm version && \
+  kubectl version --client=true && \
+  crictl --version && \
+  terraform version  && \
+  velero version --client-only && \
+  sentinel --version && \
+  kubelogin --version && \
+  stern --version && \
+  oc version --client && \
+  vault -version && \
+  gcloud version
 }
 
 if [[ "$(docker ps -a | grep toolbox)" ]]
