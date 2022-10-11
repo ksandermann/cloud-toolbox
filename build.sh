@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-10-07"
+IMAGE_TAG="2022-10-11"
 TAG_PREFIX_COMPLETE="completetest"
 TAG_PREFIX_BASE="latesttest"
 UPSTREAM_TAG_COMPLETE="${IMAGE_TAG}_${TAG_PREFIX_COMPLETE}"
@@ -87,9 +87,13 @@ echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
 echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
 
 echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}"
-docker manifest create "ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}" \
-    --amend "ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1}" \
-    --amend "ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}"
+echo "command:"
+echo "docker manifest create ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE} \
+          --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
+          --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}"
+docker manifest create ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE} \
+    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
+    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}
 
 
 echo "creating image manifest with tag ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE"

@@ -47,6 +47,7 @@ ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
 
 WORKDIR /root/download
+
 RUN mkdir -p /root/download/binaries
 
 #download oc-cli
@@ -169,6 +170,9 @@ ARG STERN_VERSION
 ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
 
+#use bash during docker build
+SHELL ["/bin/bash", "-c"]
+
 #env
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -233,11 +237,6 @@ RUN apt-get update && \
     powerline \
     zsh=${ZSH_VERSION}
 RUN git config --global --add safe.directory '*'
-
-
-ENV TERM xterm
-ENV ZSH_THEME agnoster
-RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
@@ -309,6 +308,10 @@ RUN if [[ ! -z ${GCLOUD_VERSION} ]] ; then \
       apt-get install -y google-cloud-sdk=${GCLOUD_VERSION}; \
     fi
 
+ENV TERM xterm
+ENV ZSH_THEME agnoster
+RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh
+
 ######################################################### IMAGE ########################################################
 FROM base-image
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
@@ -334,6 +337,9 @@ ARG STERN_VERSION
 ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
 
+#use bash during docker build
+SHELL ["/bin/bash", "-c"]
+
 #env
 ENV EDITOR nano
 
@@ -343,44 +349,45 @@ COPY --from=binary_downloader "/root/download/binaries/*" "/usr/local/bin/"
 RUN chmod -R +x /usr/local/bin && \
     docker --version && \
     yq --version && \
-    tcpping && \
+    tcpping; \
     if [[ ! -z "HELM_VERSION" ]] ; then \
       helm version && \
       helm repo add stable https://charts.helm.sh/stable && \
       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
       helm repo update; \
-    fi \
-    if [[ ! -z "KUBECTL_VERSION" ]] ; then \
-      kubectl version --client=true; \
-    fi \
-    if [[ ! -z "CRICTL_VERSION" ]] ; then \
-      crictl --version; \
-    fi \
-    if [[ ! -z "OC_CLI_VERSION" ]] ; then \
-      oc version --client; \
-    fi \
-    if [[ ! -z "TERRAFORM_VERSION" ]] ; then \
-      terraform version ; \
-    fi \
-    if [[ ! -z "VAULT_VERSION" ]] ; then \
-      vault -version; \
-    fi \
-    if [[ ! -z "GCLOUD_VERSION" ]] ; then \
-      gcloud version; \
-    fi \
-      tcpping  \
-    if [[ ! -z "VELERO_VERSION" ]] ; then \
-      velero --help; \
-    fi \
-    if [[ ! -z "STERN_VERSION" ]] ; then \
-      stern --version; \
-    fi \
-    if [[ ! -z "SENTINEL_VERSION" ]] ; then \
-      sentinel --version; \
-    fi \
-    if [[ ! -z "KUBELOGIN_VERSION" ]] ; then \
-      kubelogin --version ; \
     fi
+
+#    if [[ ! -z "KUBECTL_VERSION" ]] ; then \
+#      kubectl version --client=true; \
+#    fi \
+#    if [[ ! -z "CRICTL_VERSION" ]] ; then \
+#      crictl --version; \
+#    fi \
+#    if [[ ! -z "OC_CLI_VERSION" ]] ; then \
+#      oc version --client; \
+#    fi \
+#    if [[ ! -z "TERRAFORM_VERSION" ]] ; then \
+#      terraform version ; \
+#    fi \
+#    if [[ ! -z "VAULT_VERSION" ]] ; then \
+#      vault -version; \
+#    fi \
+#    if [[ ! -z "GCLOUD_VERSION" ]] ; then \
+#      gcloud version; \
+#    fi \
+#      tcpping  \
+#    if [[ ! -z "VELERO_VERSION" ]] ; then \
+#      velero --help; \
+#    fi \
+#    if [[ ! -z "STERN_VERSION" ]] ; then \
+#      stern --version; \
+#    fi \
+#    if [[ ! -z "SENTINEL_VERSION" ]] ; then \
+#      sentinel --version; \
+#    fi \
+#    if [[ ! -z "KUBELOGIN_VERSION" ]] ; then \
+#      kubelogin --version ; \
+#    fi
 
 COPY .bashrc /root/.bashrc
 COPY .zshrc /root/.zshrc

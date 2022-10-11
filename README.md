@@ -58,9 +58,9 @@ For a list of tooling available in version *complete*, but not in *base*, please
 latest -> 2022-10-06_base
 complete -> 2022-10-06_complete
 
-| RELEASE              | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI | AWS CLI | GCLOUD SDK  | ANSIBLE | JINJA2  | VAULT  |
-|----------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|--------|---------|-------------|---------|---------|--------|
-| 2022-10-06_complete  | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.1     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.12  | 1.22.0 | 0.0.20    | 4.11.6 | 1.25.88 | 402.0.0     | 6.4.0   | 3.1.2   | 1.11.4 |
+| RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI | AWS CLI | GCLOUD SDK  | ANSIBLE | JINJA2  | VAULT  |
+|---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|--------|---------|-------------|---------|---------|--------|
+| 2022-10-11_complete | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.1     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.12  | 1.22.0 | 0.0.20    | 4.11.7 | 1.25.88 | 402.0.0     | 6.4.0   | 3.1.2   | 1.11.4 |
 
 ## version history
 ## [version history before 2022-10-05](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
@@ -73,3 +73,4 @@ add binary checks
 remove plain output
 update to current date
 change branch & PR
+add project tag in script
