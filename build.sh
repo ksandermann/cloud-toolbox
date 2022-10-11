@@ -80,8 +80,8 @@ echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sl
 echo "proceeding with pushing the images"
 
 echo "extracting image layer digests"
-COMPLETE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq '.manifests[0].digest')
-COMPLETE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq '.manifests[1].digest')
+COMPLETE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq -r '.manifests[0].digest')
+COMPLETE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq -r '.manifests[1].digest')
 
 echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
 echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
@@ -155,8 +155,8 @@ echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sl
 #sleep 120
 echo "proceeding with pushing the images"
 
-BASE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq '.manifests[0].digest')
-BASE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq '.manifests[1].digest')
+BASE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq -r '.manifests[0].digest')
+BASE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq -r '.manifests[1].digest')
 
 #create public tag with "date_latest"
 docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE \

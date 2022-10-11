@@ -355,11 +355,10 @@ RUN chmod -R +x /usr/local/bin && \
       helm repo add stable https://charts.helm.sh/stable && \
       helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx && \
       helm repo update; \
+    fi; \
+    if [[ ! -z "KUBECTL_VERSION" ]] ; then \
+      kubectl version --client=true; \
     fi
-
-#    if [[ ! -z "KUBECTL_VERSION" ]] ; then \
-#      kubectl version --client=true; \
-#    fi \
 #    if [[ ! -z "CRICTL_VERSION" ]] ; then \
 #      crictl --version; \
 #    fi \
