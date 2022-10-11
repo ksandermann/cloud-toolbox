@@ -65,7 +65,3 @@ complete -> 2022-10-11_complete
 
 ## version history
 ## [version history before 2022-10-10](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
-
-
-## TODO
-uncomment sleep
