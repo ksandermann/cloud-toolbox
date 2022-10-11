@@ -40,7 +40,7 @@ The behaviour of run.sh is as follows:
 1. if so, attach to the container and start a new shell (/bin/bash) inside it.
 1. if not, pull latest tag and start a new interactive container and start a new shell (/bin/zsh) inside it.
 
-# custom ca certificates`
+# custom ca certificates
 All CAs placed inside ```~/ca-certificates``` on the host system will be mounted into the container and trusted on startup.
 
 # multi-platform support
@@ -48,10 +48,15 @@ Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and
 
 # versioning
 Release tags will be build following pattern YYYY-MM-dd_version.
+
 There is 2 versions of toolbox available: *base* and *complete*.
+
 The latest tag of version *base* will be built using tag *latest*, while the latest tag of version *complete* is available through tag *complete*.
+
 Version *base* of a date will always contain the latest stable/official versions of tooling available of version *base*.
+
 Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*.
+
 For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/args_optional.args)
 
 ## version history
