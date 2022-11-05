@@ -1,5 +1,4 @@
 ######################################################### TOOLCHAIN VERSIONING #########################################
-#settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -243,6 +242,7 @@ RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
       wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
       tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
       cd openssh-${OPENSSH_VERSION} && \
+      apt-get update && apt-get install openssl -y && \
       ./configure && \
       make && \
       make install && \
@@ -302,10 +302,9 @@ RUN if [[ ! -z ${AWS_CLI_VERSION} ]] ; then \
 
 #install gcloud
 RUN if [[ ! -z ${GCLOUD_VERSION} ]] ; then \
-      echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
+      echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-      apt-get update && \
-      apt-get install -y google-cloud-sdk=${GCLOUD_VERSION}; \
+      apt-get update && apt-get install -y google-cloud-cli; \
     fi
 
 ENV TERM xterm
