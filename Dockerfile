@@ -1,5 +1,4 @@
 ######################################################### TOOLCHAIN VERSIONING #########################################
-#settings values here to be able to use dockerhub autobuild
 ARG UBUNTU_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION

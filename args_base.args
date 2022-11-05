@@ -22,5 +22,5 @@ STERN_VERSION=1.22.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.0.20
 #apt-get update && apt-cache madison zsh | head -n 1
-ZSH_VERSION=5.8.3-1
+ZSH_VERSION=5.8.1-1
 MULTISTAGE_BUILDER_VERSION=2022-08-25
