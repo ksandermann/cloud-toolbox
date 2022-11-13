@@ -57,17 +57,17 @@ Version *base* of a date will always contain the latest stable/official versions
 
 Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*.
 
-For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/args_optional.args)
+For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/args_optional.args)
 
 ## version history
 latest -> 2022-11-05_base
 project -> 2022-11-05_base
 complete -> 2022-11-05_complete
 
-| RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
-|---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|--------|---------|------------|---------|---------|--------|
-| 2022-11-05_complete | 20.04  | 20.10.20 | 1.25.3  | 3.10.1 | 1.3.4     | 2.42.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.11  | 1.22.0 | 0.0.20    | 4.11.9 | 1.27.3  | 408.0.1    | 6.5.0   | 3.1.2   | 1.12.1 |
-| 2022-10-11_complete | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.2     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.11  | 1.22.0 | 0.0.20    | 4.11.7 | 1.25.90 | 405.0.0    | 6.4.0   | 3.1.2   | 1.11.4 |
+| RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
+|---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|---------|---------|------------|---------|---------|--------|
+| 2022-11-13_complete | 20.04  | 20.10.21 | 1.25.4  | 3.10.2 | 1.3.4     | 2.42.0 | 9.1p1   | 1.25.0 | 1.9.3  | 0.18.13  | 1.22.0 | 0.0.20    | 4.11.12 | 1.27.8  | 409.0.0    | 6.6.0   | 3.1.2   | 1.12.1 |
+| 2022-11-05_complete | 22.04  | 20.10.20 | 1.25.3  | 3.10.1 | 1.3.4     | 2.42.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.11  | 1.22.0 | 0.0.20    | 4.11.9  | 1.27.3  | 408.0.1    | 6.5.0   | 3.1.2   | 1.12.1 |
+| 2022-10-11_complete | 20.04  | 20.10.18 | 1.25.2  | 3.10.0 | 1.3.2     | 2.40.0 | 9.1p1   | 1.25.0 | 1.9.2  | 0.18.11  | 1.22.0 | 0.0.20    | 4.11.7  | 1.25.90 | 405.0.0    | 6.4.0   | 3.1.2   | 1.11.4 |
 
-## version history
 ## [version history before 2022-10-10](https://github.com/ksandermann/cloud-toolbox/blob/master/docs/version_history.md)
