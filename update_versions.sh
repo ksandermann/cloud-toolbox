@@ -66,7 +66,6 @@ replace_version_in_args_file "JINJA_VERSION" $JINJA_VERSION "args_optional.args"
 VAULT_VERSION=$(github_get_latest_release "hashicorp/vault")
 replace_version_in_args_file "VAULT_VERSION" $VAULT_VERSION "args_optional.args"
 
-
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
 OC_CLI_VERSION=4.11.13
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
