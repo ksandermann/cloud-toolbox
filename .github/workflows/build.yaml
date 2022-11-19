@@ -16,4 +16,3 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: build images
         run: bash ./build.sh
-
