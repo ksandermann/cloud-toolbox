@@ -6,7 +6,7 @@ on:
       - master
 jobs:
   Build-Images:
-    timeout-minutes: 120
+    timeout-minutes: 180
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Login to Docker Hub
