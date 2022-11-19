@@ -3,7 +3,7 @@ run-name: ${{ github.actor }} is UPDATING 🚀
 on:
   schedule:
     #- cron: "30 4 * * 0"
-    - "35 * * * 6-7"
+    - "35 * * * 5-6"
 jobs:
   Create-Branch:
     runs-on: [self-hosted, Linux, X64]
