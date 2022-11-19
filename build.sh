@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2022-11-13"
+IMAGE_TAG="2022-11-19"
 TAG_PREFIX_COMPLETE="complete"
 TAG_PREFIX_BASE="latest"
 TAG_PREFIX_BASE2="project"
@@ -27,8 +27,6 @@ while IFS= read -r line; do
   fi
 done < "args_optional.args"
 
-docker login
-
 echo "removing cached images"
 #remove current manifest to not ammend more images with same architecture but create a clean one
 docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE || true
@@ -37,6 +35,7 @@ rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
 
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
+#ubuntu: docker buildx create --platform linux/amd64,linux/arm64 --use --bootstrap --name toolbox -> doesnt work, fixed with github action step
 docker buildx build \
     --pull \
     ${buildargs_base[@]} ${buildargs_optional[@]} \

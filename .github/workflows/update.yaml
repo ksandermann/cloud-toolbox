@@ -1,0 +1,52 @@
+name: GitHub Actions Demo
+run-name: ${{ github.actor }} is UPDATING 🚀
+on:
+  schedule:
+    #- cron: "30 4 * * 0"
+    - "00 22 * * 6"
+jobs:
+  Create-Branch:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Get current date
+        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+      - name: Create Branch with current Date
+        uses: peterjgrainger/action-create-branch@v2.2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          branch: '${{ env.RELEASE_DATE }}_automation'
+          sha: '${{ github.event.pull_request.head.sha }}'
+      - name: Checkout new branch in seperate folder
+        uses: actions/checkout@v3
+        with:
+          ref: '${{ env.RELEASE_DATE }}_automation'
+          path: './${{ env.RELEASE_DATE }}_automation/'
+      - name: Check for latest version and update versions
+        run: cd ./${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh
+      - name: Commit Changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Action
+          author_email: kevin.sandermann@gmail.com
+          message: 'Release ${{ env.RELEASE_DATE }}_automation'
+          cwd: './${{ env.RELEASE_DATE }}_automation/'
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: 'Release ${{ env.RELEASE_DATE }}'
+          committer: GitHub Actions <kevin.sandermann@gmail.com>
+          author: GitHub Actions <kevin.sandermann@gmail.com>
+          signoff: false
+          branch: '${{ env.RELEASE_DATE }}_automation'
+          delete-branch: true
+          title: 'Release ${{ env.RELEASE_DATE }}'
+          body: |
+            Release ${{ env.RELEASE_DATE }}
+          labels: |
+            automated pr
+          assignees: ksandermann
+          reviewers: ksandermann
+

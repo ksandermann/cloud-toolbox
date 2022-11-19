@@ -65,7 +65,7 @@ RUN if [[ ! -z ${HELM_VERSION} ]] ; then \
 
 #download terraform
 RUN if [[ ! -z ${TERRAFORM_VERSION} ]] ; then \
-      wget https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
+      wget -q https://releases.hashicorp.com/terraform/${TERRAFORM_VERSION}/terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip && \
       unzip ./terraform\_${TERRAFORM_VERSION}\_linux_${TARGETARCH}.zip -d terraform_cli && \
       mv "/root/download/terraform_cli/terraform" "/root/download/binaries/terraform"; \
     fi
@@ -77,7 +77,7 @@ RUN if [[ ! -z ${DOCKER_VERSION} ]] ; then \
       mkdir -p /root/download/docker/bin && \
       set -eux && \
       arch="$(uname -m)" && \
-      wget -O docker.tgz "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz" && \
+      wget -q -O docker.tgz "https://download.docker.com/linux/static/stable/${arch}/docker-${DOCKER_VERSION}.tgz" && \
       tar --extract \
           --file docker.tgz \
           --strip-components 1 \
@@ -87,14 +87,14 @@ RUN if [[ ! -z ${DOCKER_VERSION} ]] ; then \
 
 #download kubectl
 RUN if [[ ! -z ${KUBECTL_VERSION} ]] ; then \
-      wget https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl && \
+      wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl && \
       mv "/root/download/kubectl" "/root/download/binaries/kubectl"; \
     fi
 
 #download crictl
 RUN if [[ ! -z ${CRICTL_VERSION} ]] ; then \
       mkdir -p /root/download/crictl && \
-      wget "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-${TARGETARCH}.tar.gz" -O /root/download/crictl.tar.gz && \
+      wget -q "https://github.com/kubernetes-sigs/cri-tools/releases/download/v$CRICTL_VERSION/crictl-v$CRICTL_VERSION-linux-${TARGETARCH}.tar.gz" -O /root/download/crictl.tar.gz && \
       tar zxvf /root/download/crictl.tar.gz -C /root/download/crictl && \
       mv "/root/download/crictl/crictl" "/root/download/binaries/crictl"; \
     fi
@@ -105,19 +105,19 @@ RUN curl -Lo yq https://github.com/mikefarah/yq/releases/latest/download/yq_linu
 
 #download vault
 RUN if [[ ! -z ${VAULT_VERSION} ]] ; then \
-      wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
+      wget -q https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
       unzip ./vault_${VAULT_VERSION}_linux_${TARGETARCH}.zip && \
       mv "/root/download/vault" "/root/download/binaries/vault"; \
     fi
 
 #download tcpping
 #todo: switch to https://github.com/deajan/tcpping/blob/master/tcpping when ubuntu is supported
-RUN wget https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -O /root/download/tcpping && \
+RUN wget -q https://raw.githubusercontent.com/deajan/tcpping/original-1.8/tcpping -O /root/download/tcpping && \
     mv "/root/download/tcpping" "/root/download/binaries/tcpping"
 
 #download velero CLI
 RUN if [[ ! -z ${VELERO_VERSION} ]] ; then \
-      wget https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
+      wget -q https://github.com/vmware-tanzu/velero/releases/download/v${VELERO_VERSION}/velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
       tar -xvf velero-v${VELERO_VERSION}-linux-${TARGETARCH}.tar.gz && \
       mv velero-v${VELERO_VERSION}-linux-${TARGETARCH}/velero /root/download/binaries/velero; \
     fi
@@ -132,7 +132,7 @@ RUN if [[ ! -z ${SENTINEL_VERSION} ]] ; then \
 #download stern
 RUN if [[ ! -z ${STERN_VERSION} ]] ; then \
       mkdir -p /root/download/stern && \
-      wget https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -O /root/download/stern_arch.tar.gz && \
+      wget -q https://github.com/stern/stern/releases/download/v${STERN_VERSION}/stern_${STERN_VERSION}_linux_${TARGETARCH}.tar.gz -O /root/download/stern_arch.tar.gz && \
       tar zxvf /root/download/stern_arch.tar.gz -C /root/download/stern && \
       mv /root/download/stern/stern "/root/download/binaries/stern" ; \
     fi
@@ -140,7 +140,7 @@ RUN if [[ ! -z ${STERN_VERSION} ]] ; then \
 #download kubelogin
 RUN if [[ ! -z ${KUBELOGIN_VERSION} ]] ; then \
       mkdir -p /root/download/kubelogin/binary && \
-      wget https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-${TARGETARCH}.zip -O /root/download/kubelogin/kubelogin.zip && \
+      wget -q https://github.com/Azure/kubelogin/releases/download/v${KUBELOGIN_VERSION}/kubelogin-linux-${TARGETARCH}.zip -O /root/download/kubelogin/kubelogin.zip && \
       unzip /root/download/kubelogin/kubelogin.zip -d /root/download/kubelogin/ && \
       mv /root/download/kubelogin/bin/linux_${TARGETARCH}/kubelogin "/root/download/binaries/kubelogin" ; \
     fi
@@ -239,7 +239,7 @@ RUN git config --global --add safe.directory '*'
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
-      wget "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
+      wget -q "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
       tar xfz openssh-${OPENSSH_VERSION}.tar.gz && \
       cd openssh-${OPENSSH_VERSION} && \
       apt-get update && apt-get install openssl -y && \
@@ -309,7 +309,7 @@ RUN if [[ ! -z ${GCLOUD_VERSION} ]] ; then \
 
 ENV TERM xterm
 ENV ZSH_THEME agnoster
-RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh
+RUN wget -q https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh
 
 ######################################################### IMAGE ########################################################
 FROM base-image
