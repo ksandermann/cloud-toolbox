@@ -48,12 +48,16 @@ replace_version_in_args_file "STERN_VERSION" $STERN_VERSION "args_base.args"
 KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
 replace_version_in_args_file "KUBELOGIN_VERSION" $KUBELOGIN_VERSION "args_base.args"
 
-github_get_latest_release "openssh/openssh-portable" | awk '{print substr($0,0,1)}'
 
-##https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
-#OPENSSH_VERSION=9.1p1
-##https://docs.hashicorp.com/sentinel/changelog
-#SENTINEL_VERSION=0.18.13
+OPENSSH_MAJOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,3,1)}')
+OPENSSH_MINOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,5,1)}')
+OPENSSH_PATCH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,8,1)}')
+OPENSSH_VERSION="${OPENSSH_MAJOR_VERSION}.${OPENSSH_MINOR_VERSION}p${OPENSSH_PATCH_VERSION}"
+replace_version_in_args_file "OPENSSH_VERSION" $OPENSSH_VERSION "args_base.args"
+
+SENTINEL_VERSION=$(curl -sS "https://api.releases.hashicorp.com/v1/releases/sentinel/latest" | jq -r '.version')
+replace_version_in_args_file "SENTINEL_VERSION" $SENTINEL_VERSION "args_base.args"
+
 
 AWS_CLI_VERSION=$(pypi_get_latest_release "awscli")
 replace_version_in_args_file "AWS_CLI_VERSION" $AWS_CLI_VERSION "args_optional.args"
@@ -66,6 +70,8 @@ replace_version_in_args_file "JINJA_VERSION" $JINJA_VERSION "args_optional.args"
 
 VAULT_VERSION=$(github_get_latest_release "hashicorp/vault")
 replace_version_in_args_file "VAULT_VERSION" $VAULT_VERSION "args_optional.args"
+
+
 
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
 OC_CLI_VERSION=4.11.13
