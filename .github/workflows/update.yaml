@@ -2,8 +2,7 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is UPDATING 🚀
 on:
   schedule:
-    #- cron: "30 4 * * 0"
-    - '0 * * * *'
+    - '0 * * * *'      #- cron: "30 4 * * 0"
 jobs:
   Create-Branch:
     runs-on: [self-hosted, Linux, X64]
