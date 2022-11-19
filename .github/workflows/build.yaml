@@ -26,3 +26,4 @@ jobs:
           branch: '${{ env.RELEASE_DATE }}_automation'
           sha: '${{ github.event.pull_request.head.sha }}'
 
+
