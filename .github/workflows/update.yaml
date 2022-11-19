@@ -1,5 +1,5 @@
 name: GitHub Actions Demo
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: ${{ github.actor }} is UPDATING 🚀
 on:
   schedule:
     - cron: "30 4 * * 0"
