@@ -29,6 +29,6 @@ jobs:
           author_name: ACtion Automation Bot
           author_email: mail@example.com
           message: 'Your commit message'
-          cwd: './newbranch/
+          cwd: './newbranch/'
 
 
