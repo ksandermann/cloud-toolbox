@@ -35,7 +35,7 @@ rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
 
 #building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
 #https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
-#ubuntu: docker buildx create --platform linux/amd64,linux/arm64 --use --bootstrap --name toolbox
+#ubuntu: docker buildx create --platform linux/amd64,linux/arm64 --use --bootstrap --name toolbox -> doesnt work, fixed with github action step
 docker buildx build \
     --pull \
     ${buildargs_base[@]} ${buildargs_optional[@]} \

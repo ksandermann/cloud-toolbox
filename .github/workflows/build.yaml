@@ -6,7 +6,7 @@ on:
       - master
       - '2022-11-19'
 jobs:
-  build-images:
+  Build-Images:
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Login to Docker Hub
@@ -20,11 +20,7 @@ jobs:
         with:
           image: tonistiigi/binfmt:latest
           platforms: all
-      - name: checkout
+      - name: Git Checkout
         uses: actions/checkout@v3
-      - name: build images
-        run: |
-          whoami
-          pwd
-          ls -lah .
-          bash ./build.sh
+      - name: Build Images
+        run: bash ./build.sh
