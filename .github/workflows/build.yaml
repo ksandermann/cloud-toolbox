@@ -7,6 +7,7 @@ on:
       - '2022-11-19'
 jobs:
   Build-Images:
+    timeout-minutes: 120
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Login to Docker Hub
