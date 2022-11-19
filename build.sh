@@ -27,8 +27,6 @@ while IFS= read -r line; do
   fi
 done < "args_optional.args"
 
-docker login
-
 echo "removing cached images"
 #remove current manifest to not ammend more images with same architecture but create a clean one
 docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE || true
