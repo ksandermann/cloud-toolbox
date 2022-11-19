@@ -23,5 +23,7 @@ jobs:
     steps:
       - name: set release date
         run: |
-          echo hello
+          ls -lah
+          touch test123
+
 
