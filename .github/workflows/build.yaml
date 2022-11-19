@@ -21,4 +21,8 @@ jobs:
           image: tonistiigi/binfmt:latest
           platforms: all
       - name: build images
-        run: bash ./build.sh
+        run: |
+          whoami
+          pwd
+          ls -lah .
+          bash ./build.sh
