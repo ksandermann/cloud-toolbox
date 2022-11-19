@@ -60,9 +60,9 @@ Version *complete* will always contain the latest stable/official versions of to
 For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/args_optional.args)
 
 ## version history
-latest -> 2022-11-05_base
-project -> 2022-11-05_base
-complete -> 2022-11-05_complete
+latest -> 2022-11-19_base
+project -> 2022-11-19_base
+complete -> 2022-11-19_complete
 
 | RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
 |---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|---------|---------|------------|---------|---------|--------|
