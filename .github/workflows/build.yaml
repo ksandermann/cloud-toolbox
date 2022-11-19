@@ -22,12 +22,9 @@ jobs:
           ref: '${{ env.RELEASE_DATE }}_automation'
           path: './newbranch/'
       - name: testing
-        run: |
-          ls -lah ./newbranch/
-          touch ./newbranch/test123
-  Commit:
-    runs-on: [self-hosted, Linux, X64]
-    steps:
+        run: ls -lah ./newbranch/
+      - name: testing
+        run: touch ./newbranch/test123456
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
