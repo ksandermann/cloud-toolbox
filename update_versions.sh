@@ -48,6 +48,7 @@ replace_version_in_args_file "STERN_VERSION" $STERN_VERSION "args_base.args"
 KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
 replace_version_in_args_file "KUBELOGIN_VERSION" $KUBELOGIN_VERSION "args_base.args"
 
+github_get_latest_release "openssh/openssh-portable" | awk '{print substr($0,0,1)}'
 
 ##https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 #OPENSSH_VERSION=9.1p1
