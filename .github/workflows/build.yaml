@@ -18,8 +18,17 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: '${{ env.RELEASE_DATE }}_automation'
+          path: './newbranch/'
       - name: testing
         run: |
-          ls -lah
-          touch test123
+          ls -lah ./newbranch/
+          touch ./newbranch/test123
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: ACtion Automation Bot
+          author_email: mail@example.com
+          message: 'Your commit message'
+          cwd: './newbranch/
+
 
