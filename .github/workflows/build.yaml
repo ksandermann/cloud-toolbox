@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - master
-      - '2022-11-19'
 jobs:
   Build-Images:
     timeout-minutes: 120
