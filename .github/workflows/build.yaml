@@ -25,6 +25,9 @@ jobs:
         run: |
           ls -lah ./newbranch/
           touch ./newbranch/test123
+  Commit:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
       - name: Commit changes
         uses: EndBug/add-and-commit@v9
         with:
