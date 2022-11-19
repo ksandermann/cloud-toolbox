@@ -8,6 +8,20 @@ github_get_latest_release() {
   curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/v//g'
 }
 
+pypi_get_latest_release_remove_rcs() {
+  #get all releases by they keys(=version number) in order, starting with the highest release
+  RETURNEDLIST=$(curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | sort_by(.) | reverse | .[]')
+  #go through all releases and echo/return the first which does not alpha/beta/rc identifiers, then break loop
+  for version in $RETURNEDLIST
+  do
+    if [[ "${version}" != *"rc"* && "${version}" != *"b"* && "${version}" != *"a"* ]];
+      then
+        echo $version
+        break
+    fi
+  done
+}
+
 pypi_get_latest_release() {
   curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1
 }
@@ -15,11 +29,6 @@ pypi_get_latest_release() {
 replace_version_in_args_file() {
   sed -i "s/$1=.*/$1=$2/g" $3
 }
-
-
-#ABCDE=1.1.3
-#  sed -i "s/DOCKER_VERSION=.*/DOCKER_VERSION=${ABCDE}/g" args_base.args
-
 
 DOCKER_VERSION=$(github_get_latest_release "moby/moby")
 replace_version_in_args_file "DOCKER_VERSION" $DOCKER_VERSION "args_base.args"
@@ -62,7 +71,7 @@ replace_version_in_args_file "SENTINEL_VERSION" $SENTINEL_VERSION "args_base.arg
 AWS_CLI_VERSION=$(pypi_get_latest_release "awscli")
 replace_version_in_args_file "AWS_CLI_VERSION" $AWS_CLI_VERSION "args_optional.args"
 
-ANSIBLE_VERSION=$(pypi_get_latest_release "ansible")
+ANSIBLE_VERSION=$(pypi_get_latest_release_remove_rcs "ansible")
 replace_version_in_args_file "ANSIBLE_VERSION" $ANSIBLE_VERSION "args_optional.args"
 
 JINJA_VERSION=$(pypi_get_latest_release "Jinja2")
