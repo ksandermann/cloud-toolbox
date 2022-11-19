@@ -20,6 +20,8 @@ jobs:
         with:
           image: tonistiigi/binfmt:latest
           platforms: all
+      - name: checkout
+        uses: actions/checkout@v3
       - name: build images
         run: |
           whoami
