@@ -29,10 +29,11 @@ jobs:
 #         run: bash update_versions.sh
       - name: commit
         run: git commit -a -m "test"
-      - name: add token
-        run: git remote remove origin && git remote add origin https://${{ secrets.GH_PAT }}@github.com/ksandermann/cloud-toolbox
-      - name: push branch
-        run: git push --set-upstream origin ${{ env.RELEASE_DATE }}_automation
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ env.RELEASE_DATE }}_automation
       - name: create PR
         run: |
           curl \
