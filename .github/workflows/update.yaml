@@ -1,59 +1,29 @@
-name: GitHub Actions Demo
+name: Update Versions
 run-name: ${{ github.actor }} is UPDATING 🚀
-on:
-  schedule:
-    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '20 3 * * WED'
-    - cron: '20 3 * * SUN'
-    - cron: '59/15 * * * SUN'
+on: workflow_dispatch
+#   schedule:
+#     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+#     - cron: '20 3 * * WED'
+#     - cron: '20 3 * * SUN'
+#     - cron: '15/15 * * * SUN'
+
 jobs:
   Create-Branch:
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Create Branch with current Date
-        uses: peterjgrainger/action-create-branch@v2.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branch: '${{ env.RELEASE_DATE }}_automation'
-          sha: '${{ github.event.pull_request.head.sha }}'
-      - name: Checkout master in seperate folder
-        uses: actions/checkout@v3
-        with:
-          ref: 'master'
-          path: '~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          repository: 'ksandermann/cloud-toolbox'
-          clean: 'true'
-          fetch-depth: '0'
-      - name: Check for latest version and update versions
-        run: 'cd ~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
-      - name: Commit Changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: GitHub Action
-          author_email: kevin.sandermann@gmail.com
-          message: 'Release ${{ env.RELEASE_DATE }}_automation'
-          cwd: '~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          new_branch: '${{ env.RELEASE_DATE }}_automation/'
-          add: 'args_base.args args_optional.args'
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Release ${{ env.RELEASE_DATE }}'
-          committer: GitHub Actions <kevin.sandermann@gmail.com>
-          author: GitHub Actions <kevin.sandermann@gmail.com>
-          signoff: false
-          branch: '${{ env.RELEASE_DATE }}_automation'
-          delete-branch: true
-          title: 'Release ${{ env.RELEASE_DATE }}'
-          body: |
-            Release ${{ env.RELEASE_DATE }}
-          labels: |
-            automated pr
-          assignees: ksandermann
-          reviewers: ksandermann
-
+      - name: fetch
+        run: git fetch origin
+      - name: checkout
+        run: git checkout master
+      - name: pull origin
+        run: git pull origin master
+      - name: status
+        run: git status
+      - name: create branch
+        run: get checkout -b ${{ env.RELEASE_DATE }}_automation
+      - name: commit
+        run: git commit -a -m "test"
+      - name: push branch
+        run: git push

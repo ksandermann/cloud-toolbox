@@ -1,4 +1,4 @@
-name: GitHub Actions Demo
+name: Build Images
 run-name: ${{ github.actor }} is BUILDING 🚀
 on:
   push:
