@@ -5,7 +5,6 @@ on:
     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '20 3 * * WED'
     - cron: '20 3 * * SUN'
-
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]
