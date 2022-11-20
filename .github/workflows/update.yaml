@@ -22,7 +22,9 @@ jobs:
       - name: status
         run: git status
       - name: create branch
-        run: get checkout -b ${{ env.RELEASE_DATE }}_automation
+        run: git checkout -b ${{ env.RELEASE_DATE }}_automation
+      - name: update versions
+        run: bash update_versions.sh
       - name: commit
         run: git commit -a -m "test"
       - name: push branch
