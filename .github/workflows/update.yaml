@@ -37,7 +37,7 @@ jobs:
           author_email: kevin.sandermann@gmail.com
           message: 'Release ${{ env.RELEASE_DATE }}_automation'
           cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          new_branch: '${{ env.RELEASE_DATE }}_automation/'
+          new_branch: '${{ env.RELEASE_DATE }}_automation'
           add: 'args_base.args args_optional.args'
       - name: Create Pull Request
         id: cpr
