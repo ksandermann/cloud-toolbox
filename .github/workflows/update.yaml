@@ -28,7 +28,7 @@ jobs:
 #       - name: update versions
 #         run: bash update_versions.sh
       - name: commit
-        run: touch tmp && git commit -a -m "test"
+        run: git commit --allow-empty -a -m "test"
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
