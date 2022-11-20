@@ -13,56 +13,7 @@ jobs:
     steps:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Create Branch with current Date
-        uses: peterjgrainger/action-create-branch@v2.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          branch: '${{ env.RELEASE_DATE }}_automation'
-          sha: '${{ github.event.pull_request.head.sha }}'
-      - name: Checkout master in seperate folder
-        uses: actions/checkout@v3
-        with:
-          ref: 'master'
-          path: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          repository: 'ksandermann/cloud-toolbox'
-          clean: 'true'
-          fetch-depth: '0'
-      - name: Check for latest version and update versions
-        run: 'cd ./cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
-      - name: Commit Changes
-        uses: EndBug/add-and-commit@v9
-        with:
-          author_name: GitHub Action
-          author_email: kevin.sandermann@gmail.com
-          message: 'Release ${{ env.RELEASE_DATE }}_automation'
-          cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          new_branch: '${{ env.RELEASE_DATE }}_automation'
-          add: 'args_base.args args_optional.args'
       - name: Cleanup
-        run: rm -rf ./cloud-toolbox-gha
-  Create-PR:
-    needs: Create-Branch
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v4.2.0
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Release ${{ env.RELEASE_DATE }}'
-          committer: GitHub Actions <kevin.sandermann@gmail.com>
-          author: GitHub Actions <kevin.sandermann@gmail.com>
-          signoff: false
-          branch: '${{ env.RELEASE_DATE }}_automation'
-          base: 'master'
-          delete-branch: true
-          title: 'Release ${{ env.RELEASE_DATE }}'
-          body: |
-            Release ${{ env.RELEASE_DATE }}
-          labels: |
-            automated pr
-          assignees: ksandermann
-          reviewers: ksandermann
+        run: git status
+      - name: create branch
+        run: get checkout -b ${{ env.RELEASE_DATE }}_automation
