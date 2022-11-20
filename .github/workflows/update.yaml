@@ -13,13 +13,17 @@ jobs:
     steps:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Cleanup
-        run: git checkout master
-      - name: Cleanup
+      - name: fetch
         run: git fetch origin
-      - name: Cleanup
-        run: git pull
-      - name: Cleanup
+      - name: checkout
+        run: git checkout master
+      - name: pull origin
+        run: git pull origin master
+      - name: status
         run: git status
       - name: create branch
         run: get checkout -b ${{ env.RELEASE_DATE }}_automation
+      - name: commit
+        run: git commit -a -m "test"
+      - name: push branch
+        run: git push
