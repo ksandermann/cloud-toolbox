@@ -14,6 +14,12 @@ jobs:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
       - name: Cleanup
+        run: git checkout master
+      - name: Cleanup
+        run: git fetch origin
+      - name: Cleanup
+        run: git pull
+      - name: Cleanup
         run: git status
       - name: create branch
         run: get checkout -b ${{ env.RELEASE_DATE }}_automation
