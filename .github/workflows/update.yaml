@@ -29,7 +29,7 @@ jobs:
           clean: 'true'
           fetch-depth: '0'
       - name: Check for latest version and update versions
-        run: 'cd./cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
+        run: 'cd ./cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9
         with:
