@@ -5,7 +5,6 @@ on: workflow_dispatch
 #     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
 #     - cron: '20 3 * * WED'
 #     - cron: '20 3 * * SUN'
-#     - cron: '15/15 * * * SUN'
 
 jobs:
   Create-Branch:
@@ -13,6 +12,8 @@ jobs:
     steps:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+      - name: Git Checkout
+        uses: actions/checkout@v3
       - name: fetch
         run: git fetch origin
       - name: checkout
