@@ -39,22 +39,32 @@ jobs:
           cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
           new_branch: '${{ env.RELEASE_DATE }}_automation'
           add: 'args_base.args args_optional.args'
-      - name: Create Pull Request
-        id: cpr
-        uses: peter-evans/create-pull-request@v4
+#       - name: Create Pull Request
+#         id: cpr
+#         uses: peter-evans/create-pull-request@v4.2.0
+#         with:
+#           token: ${{ secrets.GITHUB_TOKEN }}
+#           commit-message: 'Release ${{ env.RELEASE_DATE }}'
+#           committer: 'GitHub Actions <kevin.sandermann@gmail.com>'
+#           author: 'GitHub Actions <kevin.sandermann@gmail.com>'
+#           signoff: 'false'
+#           branch: '${{ env.RELEASE_DATE }}_automation'
+#           base: 'master'
+#           delete-branch: 'true'
+#           title: 'Release ${{ env.RELEASE_DATE }}'
+#           body: |
+#             Release ${{ env.RELEASE_DATE }}
+#           labels: |
+#             automated pr
+#           assignees: 'ksandermann'
+#           reviewers: 'ksandermann'
+      - name: Create pull request
+        uses: paygoc6/action-pull-request-another-repo@v1.0.5
+        env:
+          API_TOKEN_GITHUB: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: 'Release ${{ env.RELEASE_DATE }}'
-          committer: GitHub Actions <kevin.sandermann@gmail.com>
-          author: GitHub Actions <kevin.sandermann@gmail.com>
-          signoff: false
-          branch: '${{ env.RELEASE_DATE }}_automation'
-          delete-branch: true
-          title: 'Release ${{ env.RELEASE_DATE }}'
-          body: |
-            Release ${{ env.RELEASE_DATE }}
-          labels: |
-            automated pr
-          assignees: ksandermann
-          reviewers: ksandermann
-
+          destination_repo: 'ksandermann/cloud-toolbox'
+          destination_base_branch: 'master'
+          destination_head_branch: 'Release ${{ env.RELEASE_DATE }}'
+          user_email: 'user-name@paygo.com.br'
+          user_name: 'user-name'
