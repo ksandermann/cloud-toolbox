@@ -1,11 +1,11 @@
 name: Update Versions
 run-name: ${{ github.actor }} is UPDATING 🚀
-on:
-  schedule:
-    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '20 3 * * WED'
-    - cron: '20 3 * * SUN'
-    - cron: '15/15 * * * SUN'
+on: workflow_dispatch
+#   schedule:
+#     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+#     - cron: '20 3 * * WED'
+#     - cron: '20 3 * * SUN'
+#     - cron: '15/15 * * * SUN'
 
 jobs:
   Create-Branch:
@@ -24,24 +24,29 @@ jobs:
         uses: actions/checkout@v3
         with:
           ref: 'master'
-          path: '~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
+          path: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
           repository: 'ksandermann/cloud-toolbox'
           clean: 'true'
           fetch-depth: '0'
       - name: Check for latest version and update versions
-        run: 'cd ~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
+        run: 'cd ./cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh'
       - name: Commit Changes
         uses: EndBug/add-and-commit@v9
         with:
           author_name: GitHub Action
           author_email: kevin.sandermann@gmail.com
           message: 'Release ${{ env.RELEASE_DATE }}_automation'
-          cwd: '~/cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
-          new_branch: '${{ env.RELEASE_DATE }}_automation/'
+          cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
+          new_branch: '${{ env.RELEASE_DATE }}_automation'
           add: 'args_base.args args_optional.args'
+  Create-PR:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Get current date
+        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
       - name: Create Pull Request
         id: cpr
-        uses: peter-evans/create-pull-request@v4
+        uses: peter-evans/create-pull-request@v4.2.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'Release ${{ env.RELEASE_DATE }}'
@@ -57,4 +62,3 @@ jobs:
             automated pr
           assignees: ksandermann
           reviewers: ksandermann
-
