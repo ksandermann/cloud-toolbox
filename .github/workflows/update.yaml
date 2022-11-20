@@ -25,8 +25,8 @@ jobs:
         run: git status
       - name: create branch
         run: git checkout -b ${{ env.RELEASE_DATE }}_automation
-      - name: update versions
-        run: bash update_versions.sh
+#       - name: update versions
+#         run: bash update_versions.sh
       - name: commit
         run: git commit -a -m "test"
       - name: add token
