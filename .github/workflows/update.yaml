@@ -54,6 +54,7 @@ jobs:
           author: GitHub Actions <kevin.sandermann@gmail.com>
           signoff: false
           branch: '${{ env.RELEASE_DATE }}_automation'
+          base: 'master'
           delete-branch: true
           title: 'Release ${{ env.RELEASE_DATE }}'
           body: |
