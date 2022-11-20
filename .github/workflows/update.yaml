@@ -39,7 +39,10 @@ jobs:
           cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
           new_branch: '${{ env.RELEASE_DATE }}_automation'
           add: 'args_base.args args_optional.args'
+      - name: Cleanup
+        run: rm -rf ./cloud-toolbox-gha
   Create-PR:
+    needs: Create-Branch
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Get current date
