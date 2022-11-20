@@ -1,11 +1,11 @@
 name: Update Versions
 run-name: ${{ github.actor }} is UPDATING 🚀
-on:
-  schedule:
-    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '20 3 * * WED'
-    - cron: '20 3 * * SUN'
-    - cron: '15/15 * * * SUN'
+on: workflow_dispatch
+#   schedule:
+#     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+#     - cron: '20 3 * * WED'
+#     - cron: '20 3 * * SUN'
+#     - cron: '15/15 * * * SUN'
 
 jobs:
   Create-Branch:
