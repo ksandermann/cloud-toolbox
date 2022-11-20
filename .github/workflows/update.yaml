@@ -39,6 +39,9 @@ jobs:
           cwd: './cloud-toolbox-gha/${{ env.RELEASE_DATE }}_automation/'
           new_branch: '${{ env.RELEASE_DATE }}_automation'
           add: 'args_base.args args_optional.args'
+  Create-PR:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v4.2.0
