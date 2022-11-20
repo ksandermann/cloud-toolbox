@@ -23,6 +23,9 @@ jobs:
         with:
           ref: '${{ env.RELEASE_DATE }}_automation'
           path: './${{ env.RELEASE_DATE }}_automation/'
+          repository: 'ksandermann/cloud-toolbox'
+          clean: 'true'
+          fetch-depth: '0'
       - name: Check for latest version and update versions
         run: cd ./${{ env.RELEASE_DATE }}_automation/ && bash update_versions.sh
       - name: Commit Changes
