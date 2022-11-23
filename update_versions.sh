@@ -101,9 +101,9 @@ replace_version_in_args_file "VAULT_VERSION" $VAULT_VERSION "args_optional.args"
 echo "Updating README.MD"
 RELEASE_DATE=$(date --rfc-3339=date)
 
-replace_version_in_args_file "latest" "${RELEASE_DATE}_base" "README.MD"
-replace_version_in_args_file "project" "${RELEASE_DATE}_base" "README.MD"
-replace_version_in_args_file "complete" "${RELEASE_DATE}_complete" "README.MD"
+replace_version_in_args_file "latest" "${RELEASE_DATE}_base" "README.md"
+replace_version_in_args_file "project" "${RELEASE_DATE}_base" "README.md"
+replace_version_in_args_file "complete" "${RELEASE_DATE}_complete" "README.md"
 
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
 OC_CLI_VERSION=4.11.13
