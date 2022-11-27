@@ -2,7 +2,7 @@ UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=20.10.21
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.23.14
+KUBECTL_VERSION=1.25.4
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.10.2
 #https://github.com/hashicorp/terraform/releases
