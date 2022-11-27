@@ -1,0 +1,49 @@
+FROM alpine:latest
+MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
+LABEL maintainer="kevin.sandermann@gmail.com"
+
+RUN mkdir -p /root/download/
+WORKDIR /root/download
+
+RUN apk upgrade --update-cache --available && \
+    apk add --no-cache --update \
+    bash \
+    bash-completion \
+    ca-certificates \
+    curl \
+    git \
+    libffi-dev \
+    make \
+    nano \
+    openssh \
+    openssl \
+    python3 \
+    python3-dev \
+    py3-pip \
+    jq \
+    wget \
+    yq \
+    zip \
+    zsh && \
+    rm -rf /var/cache/apk/*
+
+RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" && \
+    apk add --no-cache --update zsh-vcs && rm -rf /var/cache/apk/*
+
+RUN apk add --no-cache --update gcc libc-dev linux-headers && rm -rf /var/cache/apk/* && \
+    pip3 install --upgrade cffi && \
+    pip3 install azure-cli
+
+RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
+    install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+
+#GENERICS
+ENV EDITOR nano
+
+COPY .bashrc /root/.bashrc
+COPY .zshrc /root/.zshrc
+
+USER root
+WORKDIR /root/project
+CMD ["/bin/bash"]

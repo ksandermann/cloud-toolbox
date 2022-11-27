@@ -98,13 +98,16 @@ echo "Updating Vault version"
 VAULT_VERSION=$(github_get_latest_release "hashicorp/vault")
 replace_version_in_args_file "VAULT_VERSION" $VAULT_VERSION "args_optional.args"
 
-echo "Updating README.MD"
+echo "Updating README.MD & build.sh"
 RELEASE_DATE=$(date --rfc-3339=date)
 
 replace_version_in_args_file "latest" "${RELEASE_DATE}_base" "README.md"
 replace_version_in_args_file "project" "${RELEASE_DATE}_base" "README.md"
 replace_version_in_args_file "complete" "${RELEASE_DATE}_complete" "README.md"
 
+replace_version_in_args_file "IMAGE_TAG" "\"${RELEASE_DATE}\"" "build.sh"
+
+#TODO
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
 OC_CLI_VERSION=4.11.13
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
