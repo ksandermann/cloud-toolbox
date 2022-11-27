@@ -1,10 +1,13 @@
 name: Build Minimal Image
 run-name: ${{ github.actor }} is BUILDING Minimal Image 🚀
 on:
-  schedule:
-    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '19 3 * * WED'
-    - cron: '19 3 * * SUN'
+#  schedule:
+#    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+#    - cron: '19 3 * * WED'
+#    - cron: '19 3 * * SUN'
+  push:
+    branches:
+      - master
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]
