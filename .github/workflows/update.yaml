@@ -70,4 +70,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
-            -d '{"title":"Release ${{ env.RELEASE_DATE }}","body":"#Changelog","head":"${{ env.RELEASE_DATE }}_automation","base":"master"}'
+            -d '{"title":"Release ${{ env.RELEASE_DATE }}","body":"# Changelog","head":"${{ env.RELEASE_DATE }}_automation","base":"master"}'

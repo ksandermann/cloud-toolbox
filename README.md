@@ -49,15 +49,17 @@ Starting with release *2022-08-25_01*, arm64/aarch64 and amd64 are supported and
 # versioning
 Release tags will be build following pattern YYYY-MM-dd_version.
 
-There is 2 versions of toolbox available: *base* and *complete*.
+There is 3 versions of toolbox available: *base*, *complete* and *minimal*.
 
 The latest tag of version *base* will be built using tag *latest*, while the latest tag of version *complete* is available through tag *complete*.
 
-Version *base* of a date will always contain the latest stable/official versions of tooling available of version *base*.
+Version *base* of a date will always contain fix and documented versions, aiming for the latest stable/official versions of tooling available of version *base*.
 
-Version *complete* will always contain the latest stable/official versions of tooling available of version *complete*.
+Version *complete* will be built on top of*base*, with additional tooling only available in *complete*.
 
 For a list of tooling available in version *complete*, but not in *base*, please refer [here](https://github.com/ksandermann/cloud-toolbox/blob/master/args_optional.args)
+
+Version *image* is built on top of alpine and contains a minimal set of tools, meant to be used within automation with minimal vulnerabilities.
 
 ## version history
 latest=2022-11-27_base

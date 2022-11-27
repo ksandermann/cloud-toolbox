@@ -1,6 +1,10 @@
-name: Build Images
-run-name: ${{ github.actor }} is BUILDING Base and Complete Images 🚀
+name: Build Minimal Image
+run-name: ${{ github.actor }} is BUILDING Minimal Image 🚀
 on:
+#  schedule:
+#    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
+#    - cron: '19 3 * * WED'
+#    - cron: '19 3 * * SUN'
   push:
     branches:
       - master
@@ -21,7 +25,7 @@ jobs:
       - name: Pull origin
         run: git pull origin master
   Build-Images:
-    timeout-minutes: 180
+    timeout-minutes: 90
     needs: Clean-Repo
     runs-on: [self-hosted, Linux, X64]
     steps:
@@ -37,4 +41,4 @@ jobs:
           image: tonistiigi/binfmt:latest
           platforms: all
       - name: Build Images
-        run: bash ./build.sh
+        run: bash ./build_minmal.sh
