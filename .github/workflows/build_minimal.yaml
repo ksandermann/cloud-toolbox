@@ -41,4 +41,4 @@ jobs:
           image: tonistiigi/binfmt:latest
           platforms: all
       - name: Build Images
-        run: bash ./build_minmal.sh
+        run: bash ./build_minimal.sh
