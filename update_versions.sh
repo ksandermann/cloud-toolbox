@@ -109,6 +109,6 @@ replace_version_in_args_file "IMAGE_TAG" "\"${RELEASE_DATE}\"" "build.sh"
 
 #TODO
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=4.11.13
+OC_CLI_VERSION=1
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
-GCLOUD_VERSION=410.0.0-0
+GCLOUD_VERSION=1
