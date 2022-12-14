@@ -62,9 +62,9 @@ For a list of tooling available in version *complete*, but not in *base*, please
 Version *image* is built on top of alpine and contains a minimal set of tools, meant to be used within automation with minimal vulnerabilities.
 
 ## version history
-latest=2022-12-11_base
-project=2022-12-11_base
-complete=2022-12-11_complete
+latest=2022-12-14_base
+project=2022-12-14_base
+complete=2022-12-14_complete
 
 | RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
 |---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|---------|---------|------------|---------|---------|--------|
