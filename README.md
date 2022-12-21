@@ -62,12 +62,13 @@ For a list of tooling available in version *complete*, but not in *base*, please
 Version *image* is built on top of alpine and contains a minimal set of tools, meant to be used within automation with minimal vulnerabilities.
 
 ## version history
-latest=2022-12-20_base
-project=2022-12-20_base
-complete=2022-12-20_complete
+latest=2022-12-21_base
+project=2022-12-21_base
+complete=2022-12-21_complete
 
 | RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
 |---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|---------|---------|------------|---------|---------|--------|
+| 2022-12-21_complete | 20.04  | 20.10.22 | 1.26.0  | 3.10.3 | 1.3.6     | 2.43.0 | 9.1p1   | 1.26.0 | 1.10.0 | 0.19.1   | 1.22.0 | 0.0.24    | 4.11.18 | 1.27.34 | 412.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2022-12-20_complete | 20.04  | 20.10.22 | 1.26.0  | 3.10.3 | 1.3.6     | 2.43.0 | 9.1p1   | 1.26.0 | 1.10.0 | 0.19.1   | 1.22.0 | 0.0.24    | 4.11.18 | 1.27.29 | 412.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2022-12-14_complete | 20.04  | 20.10.21 | 1.26.0  | 3.10.2 | 1.3.6     | 2.43.0 | 9.1p1   | 1.25.0 | 1.10.0 | 0.19.0   | 1.22.0 | 0.0.24    | 4.11.18 | 1.27.29 | 412.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2022-12-11_complete | 20.04  | 20.10.21 | 1.26.0  | 3.10.2 | 1.3.6     | 2.43.0 | 9.1p1   | 1.25.0 | 1.10.0 | 0.19.0   | 1.22.0 | 0.0.24    | 4.11.17 | 1.27.27 | 411.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
