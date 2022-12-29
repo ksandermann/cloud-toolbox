@@ -10,16 +10,16 @@ echo "removing cached images"
 #remove current manifest to not ammend more images with same architecture but create a clean one
 docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_MINIMAL || true
 rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
-#
-#docker buildx build \
-#    --pull \
-#    --platform linux/amd64,linux/arm64 \
-#    -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_MINIMAL \
-#    --no-cache \
-#    --push \
-#    --progress plain \
-#    -f Dockerfile.minimal \
-#    .
+
+docker buildx build \
+    --pull \
+    --platform linux/amd64,linux/arm64 \
+    -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_MINIMAL \
+    --no-cache \
+    --push \
+    --progress plain \
+    -f Dockerfile.minimal \
+    .
 
 trivy image \
     --severity HIGH,CRITICAL,MEDIUM \
