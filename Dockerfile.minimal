@@ -10,6 +10,7 @@ RUN apk upgrade --update-cache --available && \
     bash \
     bash-completion \
     ca-certificates \
+    coreutils \
     curl \
     git \
     libffi-dev \
