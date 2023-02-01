@@ -2,7 +2,7 @@ UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=20.10.23
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.24.10
+KUBECTL_VERSION=1.26.1
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.11.0
 #https://github.com/hashicorp/terraform/releases
@@ -14,7 +14,7 @@ OPENSSH_VERSION=9.1p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.26.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=1.9.5
+VELERO_VERSION=1.10.0
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.19.2
 #https://github.com/stern/stern/releases
