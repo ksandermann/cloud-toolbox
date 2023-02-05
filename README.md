@@ -62,15 +62,16 @@ For a list of tooling available in version *complete*, but not in *base*, please
 Version *minimal* is built on top of alpine and contains a minimal set of tools, meant to be used within automation with minimal vulnerabilities.
 
 ## version history
-latest=2023-02-01_base
+latest=2023-02-05_base
 
-project=2023-02-01_base
+project=2023-02-05_base
 
-complete=2023-02-01_complete
+complete=2023-02-05_complete
 
 
 | RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
 |---------------------|--------|----------|---------|--------|-----------|--------|---------|--------|--------|----------|--------|-----------|---------|---------|------------|---------|---------|--------|
+| 2023-02-05_complete | 20.04  | 23.0.0   | 1.26.1  | 3.11.0 | 1.3.7     | 2.44.1 | 9.2p1   | 1.26.0 | 1.10.0 | 0.19.3   | 1.23.0 | 0.0.25    | 4.12.0  | 1.27.64 | 416.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2023-02-01_complete | 20.04  | 20.10.23 | 1.26.1  | 3.11.0 | 1.3.7     | 2.44.1 | 9.1p1   | 1.26.0 | 1.10.0 | 0.19.2   | 1.23.0 | 0.0.25    | 4.12.0  | 1.27.61 | 416.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2023-01-29_complete | 20.04  | 20.10.23 | 1.26.1  | 3.11.0 | 1.3.7     | 2.44.1 | 9.1p1   | 1.26.0 | 1.10.0 | 0.19.2   | 1.22.0 | 0.0.25    | 4.12.0  | 1.27.59 | 415.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
 | 2023-01-22_complete | 20.04  | 20.10.23 | 1.26.1  | 3.11.0 | 1.3.7     | 2.44.1 | 9.1p1   | 1.26.0 | 1.10.0 | 0.19.1   | 1.22.0 | 0.0.25    | 4.12.0  | 1.27.54 | 414.0.0    | 6.7.0   | 3.1.2   | 1.12.2 |
