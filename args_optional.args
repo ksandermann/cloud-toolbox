@@ -5,7 +5,7 @@ AWS_CLI_VERSION=1.27.71
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
 GCLOUD_VERSION=417.0.1-0
 #https://pypi.org/project/ansible/
-ANSIBLE_VERSION=7.2.0
+ANSIBLE_VERSION=6.7.0
 #https://pypi.org/project/Jinja2/
 JINJA_VERSION=3.1.2
 #https://github.com/hashicorp/vault/releases
