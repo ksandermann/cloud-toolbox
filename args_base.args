@@ -20,7 +20,7 @@ SENTINEL_VERSION=0.20.0
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.23.0
 #https://github.com/Azure/kubelogin/releases
-KUBELOGIN_VERSION=0.0.26
+KUBELOGIN_VERSION=0.0.27
 #apt-get update && apt-cache madison zsh | head -n 1
 ZSH_VERSION=5.8-3ubuntu1.1
 MULTISTAGE_BUILDER_VERSION=2022-12-21
