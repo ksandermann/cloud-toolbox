@@ -3,8 +3,8 @@ run-name: ${{ github.actor }} is UPDATING 🚀
 on:
   schedule:
     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '20 3 * * WED'
-    - cron: '20 3 * * SUN'
+    - cron: '20 3 * * MON'
+    - cron: '20 3 * * FRI'
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]
