@@ -1,12 +1,12 @@
 UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=23.0.1
+DOCKER_VERSION=23.0.2
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.26.3
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.11.2
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.4.2
+TERRAFORM_VERSION=1.4.4
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.46.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
