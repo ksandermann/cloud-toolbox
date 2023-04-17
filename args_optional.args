@@ -10,4 +10,3 @@ ANSIBLE_VERSION=6.7.0
 JINJA_VERSION=3.1.2
 #https://github.com/hashicorp/vault/releases
 VAULT_VERSION=1.13.1
-Í
