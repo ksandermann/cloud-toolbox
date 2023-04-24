@@ -1,6 +1,6 @@
 UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=23.0.3
+DOCKER_VERSION=23.0.4
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.27.1
 #https://github.com/helm/helm/releases
@@ -12,9 +12,9 @@ AZ_CLI_VERSION=2.47.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.3p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
-CRICTL_VERSION=1.26.1
+CRICTL_VERSION=1.27.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=1.10.2
+VELERO_VERSION=1.11.0
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.21.0
 #https://github.com/stern/stern/releases
