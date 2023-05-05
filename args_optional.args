@@ -1,9 +1,9 @@
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=4.12.13
+OC_CLI_VERSION=4.12.14
 #https://pypi.org/project/awscli/
-AWS_CLI_VERSION=1.27.122
+AWS_CLI_VERSION=1.27.127
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
-GCLOUD_VERSION=428.0.0-0
+GCLOUD_VERSION=429.0.0-0
 #https://pypi.org/project/ansible/
 ANSIBLE_VERSION=6.7.0
 #https://pypi.org/project/Jinja2/
