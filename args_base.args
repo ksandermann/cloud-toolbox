@@ -16,7 +16,7 @@ CRICTL_VERSION=1.27.0
 #https://github.com/vmware-tanzu/velero/releases
 VELERO_VERSION=1.11.0
 #https://docs.hashicorp.com/sentinel/changelog
-SENTINEL_VERSION=0.21.0
+SENTINEL_VERSION=0.21.1
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.25.0
 #https://github.com/Azure/kubelogin/releases
