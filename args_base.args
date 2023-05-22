@@ -1,6 +1,6 @@
 UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=24.0.0
+DOCKER_VERSION=24.0.1
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.25.10
 #https://github.com/helm/helm/releases
