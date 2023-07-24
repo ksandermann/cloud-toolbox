@@ -2,7 +2,7 @@ UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=24.0.4
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.27.3
+KUBECTL_VERSION=1.24.16
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.12.2
 #https://github.com/hashicorp/terraform/releases
@@ -10,7 +10,7 @@ TERRAFORM_VERSION=1.5.3
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.50.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
-OPENSSH_VERSION=9.3p1
+OPENSSH_VERSION=9.3p2
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.27.1
 #https://github.com/vmware-tanzu/velero/releases
@@ -20,7 +20,7 @@ SENTINEL_VERSION=0.22.1
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.25.0
 #https://github.com/Azure/kubelogin/releases
-KUBELOGIN_VERSION=0.0.30
+KUBELOGIN_VERSION=0.0.31
 #apt-get update && apt-cache madison zsh | head -n 1
 ZSH_VERSION=5.8-3ubuntu1.1
 MULTISTAGE_BUILDER_VERSION=2022-12-21
