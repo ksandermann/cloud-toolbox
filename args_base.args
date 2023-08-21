@@ -18,7 +18,7 @@ VELERO_VERSION=1.11.1
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.22.1
 #https://github.com/stern/stern/releases
-STERN_VERSION=1.25.0
+STERN_VERSION=1.26.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.0.31
 #apt-get update && apt-cache madison zsh | head -n 1
