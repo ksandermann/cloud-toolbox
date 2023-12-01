@@ -62,11 +62,11 @@ For a list of tooling available in version *complete*, but not in *base*, please
 Version *minimal* is built on top of alpine and contains a minimal set of tools, meant to be used within automation with minimal vulnerabilities.
 
 ## version history
-latest=2023-11-27_base
+latest=2023-12-01_base
 
-project=2023-11-27_base
+project=2023-12-01_base
 
-complete=2023-11-27_complete
+complete=2023-12-01_complete
 
 
 | RELEASE             | UBUNTU | DOCKER   | KUBECTL | HELM   | TERRAFORM | AZ CLI | OPENSSH | CRICTL | VELERO | SENTINEL | STERN  | KUBELOGIN | OC CLI  | AWS CLI | GCLOUD CLI | ANSIBLE | JINJA2  | VAULT  |
