@@ -250,6 +250,9 @@ RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
       ssh -V; \
     fi
 
+# upgrade pip 
+RUN pip3 install --upgrade pip 
+
 #install common requirements
 RUN pip3 install \
     cryptography \
