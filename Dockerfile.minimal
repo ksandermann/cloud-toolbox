@@ -32,7 +32,7 @@ RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/too
     apk add --no-cache --update zsh-vcs && rm -rf /var/cache/apk/*
 
 RUN apk add --no-cache --update gcc libc-dev linux-headers && rm -rf /var/cache/apk/* && \
-    pip3 install --upgrade cffi && \
+    pip3 install --upgrade pip cffi && \
     pip3 install azure-cli
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
