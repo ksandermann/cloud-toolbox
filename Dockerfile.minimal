@@ -36,7 +36,8 @@ RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/too
 
 RUN apk add --no-cache --update gcc libc-dev linux-headers pipx && rm -rf /var/cache/apk/*
 
-RUN pipx install azure-cli
+RUN pipx install azure-cli && \
+    pipx ensurepath
 
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
