@@ -281,7 +281,6 @@ RUN if [[ ! -z ${ANSIBLE_VERSION} && ! -z ${JINJA_VERSION} ]] ; then \
 
 #install azure-cli
 RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
-      apt remove azure-cli -y || true && \
       pipx install azure-cli==${AZ_CLI_VERSION}; \
     fi
 
