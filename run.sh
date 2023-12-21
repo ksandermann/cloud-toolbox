@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="minimal"
+IMAGE_TAG="latest"
 PULL_SETTINGS="always" #"always"|"missing"|"never"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
