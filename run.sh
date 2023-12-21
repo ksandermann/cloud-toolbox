@@ -48,9 +48,8 @@ function testBinaries {
   gcloud version
 }
 
-if [[ "$(docker ps -a | grep toolbox)" ]]
-then
-    attachToToolbox
+if docker ps -q --filter "name=toolbox" | grep -q . ; then
+  attachToToolbox
 else
-    startNewToolbox
+  startNewToolbox
 fi

@@ -5,8 +5,6 @@ LABEL maintainer="kevin.sandermann@gmail.com"
 RUN mkdir -p /root/download/
 WORKDIR /root/download
 
-ENV PATH="venv/bin:$PATH"
-
 RUN apk upgrade --update-cache --available && \
     apk add --no-cache --update \
     bash \
@@ -23,7 +21,6 @@ RUN apk upgrade --update-cache --available && \
     python3 \
     python3-dev \
     py3-pip \
-    pipx \
     jq \
     wget \
     yq \
@@ -34,15 +31,12 @@ RUN apk upgrade --update-cache --available && \
 RUN sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" && \
     apk add --no-cache --update zsh-vcs && rm -rf /var/cache/apk/*
 
-RUN apk add --no-cache --update gcc libc-dev linux-headers pipx && rm -rf /var/cache/apk/*
+RUN apk add --no-cache --update gcc libc-dev linux-headers && rm -rf /var/cache/apk/*
 
-RUN pipx install azure-cli && \
-    pipx ensurepath
-
+RUN pip install azure-cli --break-system-packages
 
 RUN curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && \
     install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-
 
 #GENERICS
 ENV EDITOR nano
