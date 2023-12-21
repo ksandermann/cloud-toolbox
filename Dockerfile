@@ -266,11 +266,6 @@ RUN pip3 install \
     pyvmomi \
     setuptools
 
-# replace pip with pipx for azurecli
-RUN pip3 install --user pipx
-
-ENV PATH="$PATH:$HOME/.local/bin"
-
 #install ansible
 RUN if [[ ! -z ${ANSIBLE_VERSION} && ! -z ${JINJA_VERSION} ]] ; then \
       pip3 install \
@@ -281,7 +276,7 @@ RUN if [[ ! -z ${ANSIBLE_VERSION} && ! -z ${JINJA_VERSION} ]] ; then \
 
 #install azure-cli
 RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
-      pipx install azure-cli==${AZ_CLI_VERSION}; \
+      pip3 install --no-cache-dir --ignore-installed azure-cli==${AZ_CLI_VERSION}; \
     fi
 
 #test azure-cli

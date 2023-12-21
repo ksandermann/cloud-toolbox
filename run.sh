@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="latest"
+IMAGE_TAG="minimal"
 PULL_SETTINGS="always" #"always"|"missing"|"never"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
@@ -48,9 +48,8 @@ function testBinaries {
   gcloud version
 }
 
-if [[ "$(docker ps -a | grep toolbox)" ]]
-then
-    attachToToolbox
+if docker ps -q --filter "name=toolbox" | grep -q . ; then
+  attachToToolbox
 else
-    startNewToolbox
+  startNewToolbox
 fi
