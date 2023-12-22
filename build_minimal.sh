@@ -2,8 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-#IMAGE_TAG=$(date --rfc-3339=date)
-IMAGE_TAG="testrurrur"
+IMAGE_TAG=$(date --rfc-3339=date)
 TAG_PREFIX_MINIMAL="minimal"
 UPSTREAM_TAG_MINIMAL="${IMAGE_TAG}_${TAG_PREFIX_MINIMAL}"
 
