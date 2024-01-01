@@ -2,7 +2,7 @@ UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=24.0.7
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.28.5
+KUBECTL_VERSION=1.26.12
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.13.3
 #https://github.com/hashicorp/terraform/releases
@@ -20,7 +20,7 @@ SENTINEL_VERSION=0.24.0
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.27.0
 #https://github.com/Azure/kubelogin/releases
-KUBELOGIN_VERSION=0.0.34
+KUBELOGIN_VERSION=0.1.0
 #apt-get update && apt-cache madison zsh | head -n 1
 ZSH_VERSION=5.8-3ubuntu1.1
 MULTISTAGE_BUILDER_VERSION=2022-12-21
