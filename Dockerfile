@@ -1,4 +1,5 @@
 ######################################################### TOOLCHAIN VERSIONING #########################################
+ARG MULTISTAGE_BUILDER_VERSION
 ARG UBUNTU_VERSION
 ARG DOCKER_VERSION
 ARG KUBECTL_VERSION
@@ -18,10 +19,9 @@ ARG SENTINEL_VERSION
 ARG STERN_VERSION
 ARG KUBELOGIN_VERSION
 ARG ZSH_VERSION
-ARG MULTISTAGE_BUILDER_VERSION
 
 ######################################################### BINARY-DOWNLOADER ############################################
-FROM ksandermann/multistage-builder:2022-12-21 as binary_downloader
+FROM ksandermann/multistage-builder:$MULTISTAGE_BUILDER_VERSION as binary_downloader
 MAINTAINER Kevin Sandermann <kevin.sandermann@gmail.com>
 LABEL maintainer="kevin.sandermann@gmail.com"
 
