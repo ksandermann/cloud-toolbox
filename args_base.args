@@ -3,9 +3,9 @@ UBUNTU_VERSION=20.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=25.0.3
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.29.1
+KUBECTL_VERSION=1.29.2
 #https://github.com/helm/helm/releases
-HELM_VERSION=3.14.0
+HELM_VERSION=3.14.1
 #https://github.com/hashicorp/terraform/releases
 TERRAFORM_VERSION=1.7.3
 #https://pypi.org/project/azure-cli/
