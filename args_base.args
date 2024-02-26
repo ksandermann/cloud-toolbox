@@ -21,6 +21,6 @@ SENTINEL_VERSION=0.24.3
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.28.0
 #https://github.com/Azure/kubelogin/releases
-KUBELOGIN_VERSION=0.1.0
+KUBELOGIN_VERSION=0.1.1
 #apt-get update && apt-cache madison zsh | head -n 1
 ZSH_VERSION=5.8-3ubuntu1.1
