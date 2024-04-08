@@ -9,7 +9,7 @@ HELM_VERSION=3.14.3
 #https://github.com/hashicorp/terraform/releases
 TERRAFORM_VERSION=1.7.5
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.58.0
+AZ_CLI_VERSION=2.59.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.7p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
