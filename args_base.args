@@ -1,5 +1,5 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
-UBUNTU_VERSION=20.04
+UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=26.0.1
 #https://github.com/kubernetes/kubernetes/releases
@@ -23,4 +23,4 @@ STERN_VERSION=1.28.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.1.1
 #apt-get update && apt-cache madison zsh | head -n 1
-ZSH_VERSION=5.8-3ubuntu1.1
+ZSH_VERSION=5.8.1-1
