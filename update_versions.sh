@@ -107,8 +107,9 @@ replace_version_in_args_file "complete" "${RELEASE_DATE}_complete" "README.md"
 
 replace_version_in_args_file "IMAGE_TAG" "\"${RELEASE_DATE}\"" "build.sh"
 
+OC_CLI_VERSION=$(curl -s https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/ | grep -o 'openshift-client-linux-[0-9]*\.[0-9]*\.[0-9]*\.tar\.gz' | sort -V | tail -1 | sed 's/openshift-client-linux-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
+replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.args"
+
 #TODO
-#https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=1
 #https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
 GCLOUD_VERSION=1
