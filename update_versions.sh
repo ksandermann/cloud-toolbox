@@ -119,6 +119,7 @@ replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.arg
 GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
 
+
 ######## README.md #######
 table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
 offset=1
