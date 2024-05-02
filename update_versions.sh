@@ -30,6 +30,12 @@ replace_version_in_args_file() {
   sed -i "s/$1=.*/$1=$2/g" $3
 }
 
+fetch_latest_gcloud_version() {
+    html_content=$(curl -sL "https://cloud.google.com/sdk/docs/release-notes")
+    latest_version=$(echo "$html_content" | grep -oP '\b[0-9]+\.[0-9]+\.[0-9]+\b' | sort -V | tail -1)
+    echo "$latest_version"
+}
+
 ########BASE########
 echo "Starting with base versions contained in versions base and complete...."
 echo "Updating Docker version"
@@ -110,6 +116,8 @@ replace_version_in_args_file "IMAGE_TAG" "\"${RELEASE_DATE}\"" "build.sh"
 OC_CLI_VERSION=$(curl -s https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/ | grep -o 'openshift-client-linux-[0-9]*\.[0-9]*\.[0-9]*\.tar\.gz' | sort -V | tail -1 | sed 's/openshift-client-linux-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
 replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.args"
 
+GCLOUD_VERSION=$(fetch_latest_gcloud_version)
+replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
+
+
 #TODO
-#https://console.cloud.google.com/storage/browser/cloud-sdk-release;tab=objects
-GCLOUD_VERSION=1
