@@ -120,4 +120,16 @@ GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
 
 
+######## README.md #######
+table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
+offset=1
+insert_line=$((table_start_line + offset))
+
+# Construct the new lines with updated versions
+new_lines="| ${RELEASE_DATE}_complete | $UBUNTU_VERSION  | $DOCKER_VERSION | $KUBECTL_VERSION  | $HELM_VERSION | $TERRAFORM_VERSION     | $AZ_CLI_VERSION | $OPENSSH_VERSION   | $CRICTL_VERSION | $VELERO_VERSION | $SENTINEL_VERSION   | $STERN_VERSION | $KUBELOGIN_VERSION     | $OC_CLI_VERSION  | $AWS_CLI_VERSION  | $GCLOUD_VERSION    | $ANSIBLE_VERSION   | $JINJA_VERSION  | $VAULT_VERSION |"
+
+sed -i "${insert_line}a\\
+${new_lines}" README.md
+
+
 #TODO
