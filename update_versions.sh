@@ -39,7 +39,7 @@ fetch_latest_gcloud_version() {
 ########BASE########
 echo "Starting with base versions contained in versions base and complete...."
 
-UBUNTU_VERSION="your_ubuntu_version_here"
+UBUNTU_VERSION="22.04"
 # Replace Ubuntu version in args file
 replace_version_in_args_file "UBUNTU_VERSION" $UBUNTU_VERSION "args_base.args"
 
