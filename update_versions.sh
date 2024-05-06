@@ -40,7 +40,7 @@ fetch_latest_gcloud_version() {
 echo "Starting with base versions contained in versions base and complete...."
 
 UBUNTU_VERSION="22.04"
-# Replace Ubuntu version in args file
+# Manually set ubuntu version above
 replace_version_in_args_file "UBUNTU_VERSION" $UBUNTU_VERSION "args_base.args"
 
 echo "Updating Docker version"
