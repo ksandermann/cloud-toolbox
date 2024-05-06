@@ -1,7 +1,7 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
 UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=26.1.0
+DOCKER_VERSION=26.1.1
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.30.0
 #https://github.com/helm/helm/releases
@@ -9,7 +9,7 @@ HELM_VERSION=3.14.4
 #https://github.com/hashicorp/terraform/releases
 TERRAFORM_VERSION=1.8.2
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.59.0
+AZ_CLI_VERSION=2.60.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.7p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
@@ -19,7 +19,7 @@ VELERO_VERSION=1.13.2
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.25.1
 #https://github.com/stern/stern/releases
-STERN_VERSION=1.28.0
+STERN_VERSION=1.29.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.1.3
 #apt-get update && apt-cache madison zsh | head -n 1
