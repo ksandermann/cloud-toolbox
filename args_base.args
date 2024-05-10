@@ -1,13 +1,13 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
 UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=26.1.1
+DOCKER_VERSION=26.1.2
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.30.0
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.14.4
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.8.2
+TERRAFORM_VERSION=1.8.3
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.60.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
