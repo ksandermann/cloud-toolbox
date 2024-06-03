@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2024-05-31"
+IMAGE_TAG="2024-06-03"
 TAG_PREFIX_COMPLETE="complete"
 TAG_PREFIX_BASE="latest"
 TAG_PREFIX_BASE2="project"
