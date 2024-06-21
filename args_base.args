@@ -15,9 +15,9 @@ OPENSSH_VERSION=9.7p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.30.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=1.13.2
+VELERO_VERSION=1.14.0
 #https://docs.hashicorp.com/sentinel/changelog
-SENTINEL_VERSION=0.26.1
+SENTINEL_VERSION=0.26.2
 #https://github.com/stern/stern/releases
 STERN_VERSION=1.30.0
 #https://github.com/Azure/kubelogin/releases
