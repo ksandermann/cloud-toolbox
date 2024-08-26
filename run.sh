@@ -3,7 +3,6 @@ set -euo pipefail
 IFS=$'\n\t'
 
 IMAGE_TAG="latest"
-PULL_SETTINGS="always" #"always"|"missing"|"never"
 TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
 
 #functions
@@ -22,7 +21,6 @@ function startNewToolbox {
     -v ~/ca-certificates:/usr/local/share/ca-certificates/extra \
     -v /var/run/docker.sock:/var/run/docker.sock \
     --env-file <(env | grep -i proxy) \
-    --pull $PULL_SETTINGS \
     ksandermann/cloud-toolbox:$IMAGE_TAG \
     /bin/zsh
 }
