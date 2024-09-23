@@ -87,7 +87,8 @@ RUN if [[ ! -z ${DOCKER_VERSION} ]] ; then \
 
 #download kubectl
 RUN if [[ ! -z ${KUBECTL_VERSION} ]] ; then \
-      wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl && \
+      #wget -q https://storage.googleapis.com/kubernetes-release/release/v$KUBECTL_VERSION/bin/linux/${TARGETARCH}/kubectl -O /root/download/kubectl && \
+      wget -q dl.k8s.io/v$KUBECTL_VERSION/kubernetes-client-linux-386.tar.gz -O /root/download/kubectl && \
       mv "/root/download/kubectl" "/root/download/binaries/kubectl"; \
     fi
 
