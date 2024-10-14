@@ -5,11 +5,11 @@ DOCKER_VERSION=27.3.1
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.31.1
 #https://github.com/helm/helm/releases
-HELM_VERSION=3.16.1
+HELM_VERSION=3.16.2
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.9.6
+TERRAFORM_VERSION=1.9.7
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.64.0
+AZ_CLI_VERSION=2.65.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.9p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
@@ -19,7 +19,7 @@ VELERO_VERSION=1.14.1
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.28.0
 #https://github.com/stern/stern/releases
-STERN_VERSION=1.30.0
+STERN_VERSION=1.31.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.1.4
 #apt-get update && apt-cache madison zsh | head -n 1
