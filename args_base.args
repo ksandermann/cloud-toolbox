@@ -3,13 +3,13 @@ UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=27.5.1
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.32.1
+KUBECTL_VERSION=1.32.2
 #https://github.com/helm/helm/releases
-HELM_VERSION=3.17.0
+HELM_VERSION=3.17.1
 #https://github.com/hashicorp/terraform/releases
 TERRAFORM_VERSION=1.10.5
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.68.0
+AZ_CLI_VERSION=2.69.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.9p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
