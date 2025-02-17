@@ -178,6 +178,9 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 WORKDIR /root
 
+#Issue 17.02.2025
+RUN apt-get update && apt-get install -y --reinstall libc-bin
+
 RUN DEBIAN_FRONTEND=noninteractive dpkg --configure -a
 
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
