@@ -181,7 +181,7 @@ WORKDIR /root
 #Issue 17.02.2025
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
-RUN apt-get update && apt-mark hold libc-bin && apt-get upgrade -y
+RUN apt-get update && apt-get install -y --no-install-recommends libc-bin
 
 RUN apt-get install -y \
     apt-utils \
