@@ -178,9 +178,11 @@ ENV DEBIAN_FRONTEND noninteractive
 USER root
 WORKDIR /root
 
+RUN DEBIAN_FRONTEND=noninteractive dpkg --configure -a
+
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
-RUN apt-get update && apt-get dist-upgrade -y
+RUN apt-get update && apt-get upgrade -y
 
 RUN apt-get install -y \
     apt-utils \
