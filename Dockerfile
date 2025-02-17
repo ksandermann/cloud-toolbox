@@ -180,16 +180,17 @@ WORKDIR /root
 
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
-RUN apt-get update && \
-    apt-get dist-upgrade -y && \
-    apt-get upgrade -y && \
-    apt-get install -y \
+RUN apt-get update && apt-get dist-upgrade -y
+
+RUN apt-get install -y \
     apt-utils \
     apt-transport-https \
     bash-completion \
     bc \
     build-essential \
-    ca-certificates \
+    ca-certificates
+
+RUN apt-get install -y \
     curl \
     dnsutils \
     fping \
@@ -197,7 +198,9 @@ RUN apt-get update && \
     gnupg \
     gnupg2 \
     groff \
-    iputils-ping \
+    iputils-ping
+
+RUN apt-get install -y \
     jq \
     less \
     libssl-dev \
@@ -207,13 +210,17 @@ RUN apt-get update && \
     net-tools \
     netcat \
     nmap \
-    openssl \
+    openssl
+
+RUN apt-get install -y \
     python3 \
     python3-dev \
     python3-pip \
     software-properties-common \
     sudo \
-    telnet \
+    telnet
+
+RUN apt-get install -y \
     tcptraceroute \
     traceroute \
     unzip \
@@ -221,8 +228,9 @@ RUN apt-get update && \
     vim \
     wget \
     zip \
-    zlib1g-dev &&\
-    apt-get clean -y && \
+    zlib1g-dev
+
+RUN apt-get clean -y && \
     apt-get autoclean -y && \
     apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists/* && \
