@@ -181,7 +181,6 @@ WORKDIR /root
 #Issue 17.02.2025
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
-RUN apt-get update && apt-get install -y --no-install-recommends libc-bin
 
 RUN apt-get install -y \
     apt-utils \
@@ -245,8 +244,6 @@ RUN apt-get update && \
     powerline \
     zsh=${ZSH_VERSION}
 RUN git config --global --add safe.directory '*'
-
-RUN apt-mark unhold libc-bin
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
