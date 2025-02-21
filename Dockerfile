@@ -182,7 +182,7 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
     apt-transport-https \
     bash-completion \
@@ -190,7 +190,7 @@ RUN apt-get install -y \
     build-essential \
     ca-certificates
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     dnsutils \
     fping \
@@ -200,7 +200,7 @@ RUN apt-get install -y \
     groff \
     iputils-ping
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     less \
     libssl-dev \
@@ -212,7 +212,7 @@ RUN apt-get install -y \
     nmap \
     openssl
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-dev \
     python3-pip \
@@ -220,7 +220,7 @@ RUN apt-get install -y \
     sudo \
     telnet
 
-RUN apt-get install -y \
+RUN apt-get update && apt-get install -y --no-install-recommends \
     tcptraceroute \
     traceroute \
     unzip \
