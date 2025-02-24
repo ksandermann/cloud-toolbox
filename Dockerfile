@@ -245,6 +245,11 @@ RUN apt-get update && \
     zsh=${ZSH_VERSION}
 RUN git config --global --add safe.directory '*'
 
+RUN apt-get update && apt-get install -y \
+    gcc \
+    make \
+    openssl
+
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
       wget -q "https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
