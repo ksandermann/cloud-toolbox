@@ -251,15 +251,16 @@ RUN apt-get update && apt-get install -y \
     openssl
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
-RUN if [[ ! -z ${OPENSSH_VERSION} ]] ; then \
+RUN if [ ! -z "${OPENSSH_VERSION}" ]; then \
       wget -q "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
+      ls -lh openssh-${OPENSSH_VERSION}.tar.gz && \
       tar -xzf openssh-${OPENSSH_VERSION}.tar.gz && \
       cd openssh-${OPENSSH_VERSION} && \
-      apt-get update && apt-get install openssl -y && \
+      apt-get update && apt-get install -y openssl && \
       ./configure && \
-      make && \
+      make -j$(nproc) && \
       make install && \
-      rm -rf ../openssh-${OPENSSH_VERSION}.tar.gz ../openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
+      cd .. && rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
       ssh -V; \
     fi
 
