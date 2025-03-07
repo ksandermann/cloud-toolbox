@@ -7,9 +7,9 @@ KUBECTL_VERSION=1.32.2
 #https://github.com/helm/helm/releases
 HELM_VERSION=3.17.1
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.11.0
+TERRAFORM_VERSION=1.11.1
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.69.0
+AZ_CLI_VERSION=2.70.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=9.9p2
 #https://github.com/kubernetes-sigs/cri-tools/releases
