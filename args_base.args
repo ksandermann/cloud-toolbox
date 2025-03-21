@@ -11,7 +11,7 @@ TERRAFORM_VERSION=1.11.2
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.70.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
-OPENSSH_VERSION=9.9p2
+OPENSSH_VERSION=9.6.p1
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.32.0
 #https://github.com/vmware-tanzu/velero/releases
