@@ -182,23 +182,22 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 
-ARG OPENSSH_VERSION=9.6p1
-
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    ca-certificates wget curl build-essential zlib1g-dev libssl-dev \
-    libpam0g-dev libselinux1-dev libedit-dev libwrap0-dev
-
-RUN curl -fsSL --retry 5 --retry-delay 3 -o openssh-${OPENSSH_VERSION}.tar.gz \
-    https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz && \
-    tar -xzvf openssh-${OPENSSH_VERSION}.tar.gz
-
-RUN cd openssh-${OPENSSH_VERSION} && ./configure && make -j$(nproc)
-RUN cd openssh-${OPENSSH_VERSION} && make install
-
-RUN rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub || true
-
-RUN /usr/local/bin/ssh -V || ssh -V || true
-
+RUN set -euxo pipefail && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates wget curl build-essential zlib1g-dev libssl-dev \
+        libpam0g-dev libselinux1-dev libedit-dev libwrap0-dev && \
+    curl -fsSL --retry 5 --retry-delay 3 \
+        -o openssh-${OPENSSH_VERSION}.tar.gz \
+        https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz && \
+    tar -xzf openssh-${OPENSSH_VERSION}.tar.gz && \
+    cd openssh-${OPENSSH_VERSION} && \
+    ./configure && \
+    make -j"$(nproc)" && \
+    make install && \
+    cd .. && \
+    rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
+    /usr/local/bin/ssh -V || ssh -V
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
