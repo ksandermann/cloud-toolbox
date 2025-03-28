@@ -182,7 +182,6 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 
-
 RUN set -euxo pipefail && \
     apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -199,7 +198,6 @@ RUN set -euxo pipefail && \
     cd .. && \
     rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
     /usr/local/bin/ssh -V || ssh -V
-
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
