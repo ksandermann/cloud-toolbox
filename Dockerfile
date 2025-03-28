@@ -182,22 +182,13 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 
+## Temporary solution, since arm64 fails in qemu
 RUN set -euxo pipefail && \
     apt-get update && \
-    apt-get install -y --no-install-recommends \
-        ca-certificates wget curl build-essential zlib1g-dev libssl-dev \
-        libpam0g-dev libselinux1-dev libedit-dev libwrap0-dev && \
-    curl -fsSL --retry 5 --retry-delay 3 \
-        -o openssh-${OPENSSH_VERSION}.tar.gz \
-        https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz && \
-    tar -xzf openssh-${OPENSSH_VERSION}.tar.gz && \
-    cd openssh-${OPENSSH_VERSION} && \
-    ./configure && \
-    make -j2 && \
-    make install && \
-    cd .. && \
-    rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
-    /usr/local/bin/ssh -V || ssh -V
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        openssh-client openssh-server && \
+    rm -rf /var/lib/apt/lists/* && \
+    ssh -V
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     apt-utils \
