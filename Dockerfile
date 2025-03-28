@@ -251,27 +251,29 @@ RUN apt-get update && apt-get install -y \
     openssl
 
 #install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
-#install OpenSSH & remove ssh key files (this is only reasonable here since they are generated here)
 RUN if [ ! -z "${OPENSSH_VERSION}" ]; then \
-      apt-get update && apt-get install -y --no-install-recommends \
-        wget \
-        build-essential \
-        zlib1g-dev \
-        libssl-dev \
-        libpam0g-dev \
-        libselinux1-dev \
-        libedit-dev \
-        libwrap0-dev && \
-      wget -q "https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz" --no-check-certificate && \
-      ls -lh openssh-${OPENSSH_VERSION}.tar.gz && \
-      tar -xzf openssh-${OPENSSH_VERSION}.tar.gz && \
-      cd openssh-${OPENSSH_VERSION} && \
-      ./configure && \
-      make -j$(nproc) && \
-      make install && \
-      cd .. && rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
-      ssh -V; \
-    fi
+  apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    wget \
+    curl \
+    build-essential \
+    zlib1g-dev \
+    libssl-dev \
+    libpam0g-dev \
+    libselinux1-dev \
+    libedit-dev \
+    libwrap0-dev && \
+  curl -fsSL --retry 5 --retry-delay 3 -o openssh-${OPENSSH_VERSION}.tar.gz \
+    https://cdn.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz && \
+  ls -lh openssh-${OPENSSH_VERSION}.tar.gz && \
+  tar -xzvf openssh-${OPENSSH_VERSION}.tar.gz && \
+  cd openssh-${OPENSSH_VERSION} && \
+  ./configure && \
+  make -j$(nproc) && \
+  make install && \
+  cd .. && rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
+  ssh -V; \
+fi
 
 # upgrade pip 
 RUN pip3 install --upgrade pip 
