@@ -193,8 +193,7 @@ RUN set -euxo pipefail && \
     tar -xzf openssh-${OPENSSH_VERSION}.tar.gz && \
     cd openssh-${OPENSSH_VERSION} && \
     ./configure && \
-    make -j"$(nproc)" && \
-    make install && \
+    make -j2 && \
     cd .. && \
     rm -rf openssh-${OPENSSH_VERSION}.tar.gz openssh-${OPENSSH_VERSION} /usr/local/etc/*_key /usr/local/etc/*.pub && \
     /usr/local/bin/ssh -V || ssh -V
