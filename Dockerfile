@@ -288,19 +288,12 @@ RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
     fi
 
 #test azure-cli
-RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
+RUN if [[ ! -z ${AZ_CLI_VERSION} ]]; then \
       az --version && \
       az extension add --name azure-devops && \
       az extension add --name ssh && \
-      az extension add --name serial-console && \
-      az extension add --name sentinel && \
-      az extension add --name resource-mover && \
       az extension add --name resource-graph && \
       az extension add --name quota && \
-      az extension add --name portal && \
-      az extension add --name k8sconfiguration && \
-      az extension add --name k8s-extension && \
-      az extension add --name k8s-configuration && \
       az extension add --name azure-firewall; \
     fi
 
