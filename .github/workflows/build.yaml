@@ -40,3 +40,38 @@ jobs:
           platforms: all
       - name: Build Images
         run: bash ./build.sh
+  Create-Release:
+    needs: Build-Images
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get current date
+        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+
+      - name: Generate Release Notes from changes
+        run: |
+          echo "${{ env.RELEASE_DATE }}" > release_notes.md
+          echo "" >> release_notes.md
+          echo "Changelog" >> release_notes.md
+
+          # Only diff args_base.args and args_optional.args
+          git fetch origin master
+          if git diff HEAD^ HEAD -- args_base.args args_optional.args | grep '^+'; then
+            git diff HEAD^ HEAD -- args_base.args args_optional.args | grep '^+' | grep '=' | sed 's/^+/- /' >> release_notes.md
+          else
+            echo "- No version changes detected." >> release_notes.md
+          fi
+
+      - name: Display Release Notes (for debug)
+        run: cat release_notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_DATE }}
+          name: Release ${{ env.RELEASE_DATE }}
+          body_path: release_notes.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
