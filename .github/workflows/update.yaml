@@ -63,6 +63,19 @@ jobs:
     steps:
       - name: Get current date
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+
+      - name: Prepare PR body
+        run: |
+          if [ -f changed_versions.txt ]; then
+            BODY="# Changelog%0A"
+            while IFS= read -r line; do
+              BODY="${BODY}- ${line}%0A"
+            done < changed_versions.txt
+            echo "BODY=${BODY}" >> $GITHUB_ENV
+          else
+            echo "BODY=# Changelog%0A(no version changes)%0A" >> $GITHUB_ENV
+          fi
+
       - name: create PR
         run: |
           curl \
@@ -70,4 +83,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
-            -d '{"title":"Release ${{ env.RELEASE_DATE }}","body":"# Changelog","head":"${{ env.RELEASE_DATE }}_automation","base":"master"}'
+            -d "{\"title\":\"Release ${{ env.RELEASE_DATE }}\",\"body\":\"${{ env.BODY }}\",\"head\":\"${{ env.RELEASE_DATE }}_automation\",\"base\":\"master\"}"

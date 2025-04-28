@@ -26,9 +26,19 @@ pypi_get_latest_release() {
   curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1
 }
 
-replace_version_in_args_file() {
-  sed -i "s/$1=.*/$1=$2/g" $3
-}
+mkdir -p releases
+RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
+
+{
+  echo "${RELEASE_DATE}"
+  echo ""
+  echo "Changelog"
+  for entry in "${changed_versions[@]}"; do
+    echo "$entry"
+  done
+} > "${RELEASE_NOTES_FILE}"
+
+echo "Release notes created at ${RELEASE_NOTES_FILE}"
 
 fetch_latest_gcloud_version() {
     html_content=$(curl -sL "https://cloud.google.com/sdk/docs/release-notes")
@@ -136,5 +146,13 @@ new_lines="| ${RELEASE_DATE}_complete | $UBUNTU_VERSION  | $DOCKER_VERSION   | $
 sed -i "${insert_line}a\\
 ${new_lines}" README.md
 
+## Automatically push detected changes to PR
+if [ ${#changed_versions[@]} -eq 0 ]; then
+  echo "No version changes detected."
+  exit 0
+fi
+
+# Save changes to a temporary file
+printf "%s\n" "${changed_versions[@]}" > changed_versions.txt
 
 #TODO
