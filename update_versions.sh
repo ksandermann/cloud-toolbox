@@ -2,6 +2,9 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+echo "Updating README.MD & build.sh"
+RELEASE_DATE=$(date --rfc-3339=date)
+
 #This script only works on Linux, not on MacOs. On MacOS, run it inside the toolbox itself.
 
 github_get_latest_release() {
@@ -118,9 +121,6 @@ replace_version_in_args_file "JINJA_VERSION" $JINJA_VERSION "args_optional.args"
 echo "Updating Vault version"
 VAULT_VERSION=$(github_get_latest_release "hashicorp/vault")
 replace_version_in_args_file "VAULT_VERSION" $VAULT_VERSION "args_optional.args"
-
-echo "Updating README.MD & build.sh"
-RELEASE_DATE=$(date --rfc-3339=date)
 
 replace_version_in_args_file "latest" "${RELEASE_DATE}_base" "README.md"
 replace_version_in_args_file "project" "${RELEASE_DATE}_base" "README.md"
