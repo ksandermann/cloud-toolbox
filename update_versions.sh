@@ -108,9 +108,9 @@ STERN_VERSION=$(github_get_latest_release "stern/stern")
 replace_version_in_args_file "STERN_VERSION" $STERN_VERSION "args_base.args"
 
 echo "Updating Kubelogin version"
-KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
+#KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
+KUBELOGIN_VERSION="0.1.9"
 replace_version_in_args_file "KUBELOGIN_VERSION" $KUBELOGIN_VERSION "args_base.args"
-
 
 ########OPTIONAL########
 echo "Starting with optional versions contained in version complete...."
