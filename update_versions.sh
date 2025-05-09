@@ -177,8 +177,23 @@ fi
     # Optionally skip README.md
     [[ "$file" == "README.md" ]] && continue
     echo ""
-    echo "**$file**"
-    echo "${grouped_changes[$file]}"
+    case "$file" in
+      args_base.args)
+        echo "### 🧱 Base Args (\`$file\`)"
+        ;;
+      args_optional.args)
+        echo "### 🧩 Optional Args (\`$file\`)"
+        ;;
+      build.sh)
+        echo "### 🔧 Build (\`$file\`)"
+        ;;
+      *)
+        echo "### 📁 Other (\`$file\`)"
+        ;;
+    esac
+    
+    echo "${grouped_changes[$file]}" | sed 's/^/- `/; s/ updated /` updated /; s/ to /` → `/'
+    echo ""
   done
 } > changed_versions.txt
 
