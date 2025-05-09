@@ -194,8 +194,8 @@ fi
 
     while IFS= read -r line; do
       key=$(echo "$line" | cut -d' ' -f1)
-      from=$(echo "$line" | grep -oP 'from \K[^ ]+')
-      to=$(echo "$line" | grep -oP 'to \K[^ ]+')
+      from=$(echo "$line" | grep -oP 'from \K[^ ]+' || echo "unknown")
+      to=$(echo "$line" | grep -oP 'to \K[^ ]+' || echo "unknown")
       echo "- \`$key\` updated from \`$from\` → \`$to\`"
     done <<< "${grouped_changes[$file]}"
 
