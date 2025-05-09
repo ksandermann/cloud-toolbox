@@ -10,7 +10,21 @@ changed_versions=()
 #This script only works on Linux, not on MacOs. On MacOS, run it inside the toolbox itself.
 
 github_get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/v//g'
+  local repo="$1"
+  local token="${GITHUB_TOKEN:-}"  # fallback to unauthenticated if env missing
+
+  local release
+  release=$(curl -s -H "Authorization: token $token" \
+    "https://api.github.com/repos/${repo}/releases/latest" \
+    | jq -r '.tag_name // empty' | sed 's/^v//')
+
+  if [[ -z "$release" ]]; then
+    release=$(curl -s -H "Authorization: token $token" \
+      "https://api.github.com/repos/${repo}/tags" \
+      | jq -r '.[0].name // empty' | sed 's/^v//')
+  fi
+
+  echo "$release"
 }
 
 pypi_get_latest_release_remove_rcs() {
