@@ -26,13 +26,29 @@ pypi_get_latest_release_remove_rcs() {
     fi
   done
 }
+
 replace_version_in_args_file() {
   local key="$1"
-  local version="$2"
+  local new_version="$2"
   local file="$3"
 
-  echo "Replacing $key with $version in $file"
-  sed -i "s|^${key}=.*|${key}=${version}|" "$file" || true
+  echo "Replacing $key with $new_version in $file"
+
+  # Extract the current version if the key exists
+  if grep -q "^${key}=" "$file"; then
+    local current_version
+    current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
+
+    # If it's different, replace and log it
+    if [[ "$current_version" != "$new_version" ]]; then
+      sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
+      changed_versions+=("${file}: ${key} updated from ${current_version} to ${new_version}")
+    fi
+  else
+    # If key not found, append it and log it
+    echo "${key}=${new_version}" >> "$file"
+    changed_versions+=("${file}: ${key} added with value ${new_version}")
+  fi
 }
 
 pypi_get_latest_release() {
