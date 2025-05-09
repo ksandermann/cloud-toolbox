@@ -102,12 +102,12 @@ echo "Updating Azure-CLI version"
 AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
 replace_version_in_args_file "AZ_CLI_VERSION" $AZ_CLI_VERSION "args_base.args"
 
-echo "Updating OpenSSH version"
-OPENSSH_MAJOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,3,1)}')
-OPENSSH_MINOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,5,1)}')
-OPENSSH_PATCH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,8,1)}')
-OPENSSH_VERSION="${OPENSSH_MAJOR_VERSION}.${OPENSSH_MINOR_VERSION}p${OPENSSH_PATCH_VERSION}"
-replace_version_in_args_file "OPENSSH_VERSION" $OPENSSH_VERSION "args_base.args"
+OPENSSH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" \
+  | jq -r '.[0].name' \
+  | sed -E 's/^V_([0-9]+)_([0-9]+)(_P([0-9]+))?$/\1.\2p\4/' \
+  | sed 's/p$//')  # handles missing patch
+
+replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args"
 
 echo "Updating CRICTL version"
 CRICTL_VERSION=$(github_get_latest_release "kubernetes-sigs/cri-tools")
