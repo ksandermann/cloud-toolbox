@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - master
+    paths-ignore:
+      - '.github/workflows/update.yaml'
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]
