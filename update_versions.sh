@@ -69,10 +69,10 @@ RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
 
 echo "Release notes created at ${RELEASE_NOTES_FILE}"
 
-fetch_latest_gcloud_version() {
-    html_content=$(curl -sL "https://cloud.google.com/sdk/docs/release-notes")
-    latest_version=$(echo "$html_content" | grep -oP '\b[0-9]+\.[0-9]+\.[0-9]+\b' | sort -V | tail -1)
-    echo "$latest_version"
+get_latest_gcloud_version() {
+  curl -sL "https://cloud.google.com/sdk/docs/release-notes" \
+    | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+    | sort -V | tail -1
 }
 
 ########BASE########
@@ -99,7 +99,8 @@ TERRAFORM_VERSION=$(github_get_latest_release "hashicorp/terraform")
 replace_version_in_args_file "TERRAFORM_VERSION" $TERRAFORM_VERSION "args_base.args"
 
 echo "Updating Azure-CLI version"
-AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+#AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+AZ_CLI_VERSION="2.72.0"
 replace_version_in_args_file "AZ_CLI_VERSION" $AZ_CLI_VERSION "args_base.args"
 
 OPENSSH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" \
