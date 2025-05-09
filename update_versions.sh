@@ -2,6 +2,13 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+declare -A grouped_changes
+log_change() {
+  local file="$1"
+  local msg="$2"
+  grouped_changes["$file"]+="$msg"$'\n'
+}
+
 echo "Updating README.MD & build.sh"
 RELEASE_DATE=$(date --rfc-3339=date)
 
@@ -34,20 +41,17 @@ replace_version_in_args_file() {
 
   echo "Replacing $key with $new_version in $file"
 
-  # Extract the current version if the key exists
   if grep -q "^${key}=" "$file"; then
     local current_version
     current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
 
-    # If it's different, replace and log it
     if [[ "$current_version" != "$new_version" ]]; then
       sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
-      changed_versions+=("${file}: ${key} updated from ${current_version} to ${new_version}")
+      log_change "$file" "- $key updated from $current_version to $new_version"
     fi
   else
-    # If key not found, append it and log it
     echo "${key}=${new_version}" >> "$file"
-    changed_versions+=("${file}: ${key} added with value ${new_version}")
+    log_change "$file" "- $key added with value $new_version"
   fi
 }
 
@@ -160,6 +164,25 @@ replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.arg
 
 GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
+
+if [[ ${#grouped_changes[@]} -eq 0 ]]; then
+  echo "No version changes detected."
+  exit 0
+fi
+
+# Write grouped changelog
+{
+  echo "# Changelog"
+  for file in "${!grouped_changes[@]}"; do
+    # Optionally skip README.md
+    [[ "$file" == "README.md" ]] && continue
+    echo ""
+    echo "**$file**"
+    echo "${grouped_changes[$file]}"
+  done
+} > changed_versions.txt
+
+echo "✅ Changelog written to changed_versions.txt"
 
 
 ######## README.md #######
