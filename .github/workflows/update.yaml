@@ -69,13 +69,15 @@ jobs:
       - name: Prepare PR body
         run: |
           if [ -f changed_versions.txt ]; then
-            BODY="# Changelog%0A"
+            BODY="# Changelog"$'\n'
             while IFS= read -r line; do
-              BODY="${BODY}- ${line}%0A"
+              BODY+="- ${line}"$'\n'
             done < changed_versions.txt
-            echo "BODY=${BODY}" >> $GITHUB_ENV
+            echo "BODY<<EOF" >> $GITHUB_ENV
+            echo "$BODY" >> $GITHUB_ENV
+            echo "EOF" >> $GITHUB_ENV
           else
-            echo "BODY=# Changelog%0A(no version changes)%0A" >> $GITHUB_ENV
+            echo "BODY=# Changelog"$'\n'"(no version changes)" >> $GITHUB_ENV
           fi
 
       - name: create PR
