@@ -69,7 +69,7 @@ RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
 
 echo "Release notes created at ${RELEASE_NOTES_FILE}"
 
-get_latest_gcloud_version() {
+fetch_latest_gcloud_version() {
   curl -sL "https://cloud.google.com/sdk/docs/release-notes" \
     | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -V | tail -1
