@@ -24,6 +24,14 @@ pypi_get_latest_release_remove_rcs() {
     fi
   done
 }
+replace_version_in_args_file() {
+  local key="$1"
+  local version="$2"
+  local file="$3"
+
+  echo "Replacing $key with $version in $file"
+  sed -i "s|^${key}=.*|${key}=${version}|" "$file" || true
+}
 
 pypi_get_latest_release() {
   curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1
