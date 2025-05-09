@@ -172,11 +172,11 @@ fi
 
 # Write grouped changelog
 {
-  echo "# Changelog"
+  echo "## 🔄 Version Update Changelog"
   for file in "${!grouped_changes[@]}"; do
-    # Optionally skip README.md
     [[ "$file" == "README.md" ]] && continue
     echo ""
+
     case "$file" in
       args_base.args)
         echo "### 🧱 Base Args (\`$file\`)"
@@ -191,8 +191,14 @@ fi
         echo "### 📁 Other (\`$file\`)"
         ;;
     esac
-    
-    echo "${grouped_changes[$file]}" | sed 's/^/- `/; s/ updated /` updated /; s/ to /` → `/'
+
+    while IFS= read -r line; do
+      key=$(echo "$line" | cut -d' ' -f1)
+      from=$(echo "$line" | grep -oP 'from \K[^ ]+')
+      to=$(echo "$line" | grep -oP 'to \K[^ ]+')
+      echo "- \`$key\` updated from \`$from\` → \`$to\`"
+    done <<< "${grouped_changes[$file]}"
+
     echo ""
   done
 } > changed_versions.txt
