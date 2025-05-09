@@ -5,6 +5,8 @@ IFS=$'\n\t'
 echo "Updating README.MD & build.sh"
 RELEASE_DATE=$(date --rfc-3339=date)
 
+changed_versions=()
+
 #This script only works on Linux, not on MacOs. On MacOS, run it inside the toolbox itself.
 
 github_get_latest_release() {
