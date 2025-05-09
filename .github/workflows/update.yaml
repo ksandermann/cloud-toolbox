@@ -73,12 +73,14 @@ jobs:
             while IFS= read -r line; do
               BODY+="- ${line}"$'\n'
             done < changed_versions.txt
-            echo "BODY<<EOF" >> $GITHUB_ENV
-            echo "$BODY" >> $GITHUB_ENV
-            echo "EOF" >> $GITHUB_ENV
           else
-            echo "BODY=# Changelog"$'\n'"(no version changes)" >> $GITHUB_ENV
+            BODY="# Changelog"$'\n'"(no version changes)"
           fi
+      
+          # Write the multi-line body safely to GITHUB_ENV
+          echo "BODY<<EOF" >> $GITHUB_ENV
+          echo "$BODY" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: create PR
         run: |
