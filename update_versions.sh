@@ -2,8 +2,17 @@
 set -euo pipefail
 IFS=$'\n\t'
 
+declare -A grouped_changes
+log_change() {
+  local file="$1"
+  local msg="$2"
+  grouped_changes["$file"]+="$msg"$'\n'
+}
+
 echo "Updating README.MD & build.sh"
 RELEASE_DATE=$(date --rfc-3339=date)
+
+changed_versions=()
 
 #This script only works on Linux, not on MacOs. On MacOS, run it inside the toolbox itself.
 
@@ -25,6 +34,27 @@ pypi_get_latest_release_remove_rcs() {
   done
 }
 
+replace_version_in_args_file() {
+  local key="$1"
+  local new_version="$2"
+  local file="$3"
+
+  echo "Replacing $key with $new_version in $file"
+
+  if grep -q "^${key}=" "$file"; then
+    local current_version
+    current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
+
+    if [[ "$current_version" != "$new_version" ]]; then
+      sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
+      log_change "$file" "- $key updated from $current_version to $new_version"
+    fi
+  else
+    echo "${key}=${new_version}" >> "$file"
+    log_change "$file" "- $key added with value $new_version"
+  fi
+}
+
 pypi_get_latest_release() {
   curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1
 }
@@ -44,9 +74,9 @@ RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
 echo "Release notes created at ${RELEASE_NOTES_FILE}"
 
 fetch_latest_gcloud_version() {
-    html_content=$(curl -sL "https://cloud.google.com/sdk/docs/release-notes")
-    latest_version=$(echo "$html_content" | grep -oP '\b[0-9]+\.[0-9]+\.[0-9]+\b' | sort -V | tail -1)
-    echo "$latest_version"
+  curl -sL "https://cloud.google.com/sdk/docs/release-notes" \
+    | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
+    | sort -V | tail -1
 }
 
 ########BASE########
@@ -73,15 +103,16 @@ TERRAFORM_VERSION=$(github_get_latest_release "hashicorp/terraform")
 replace_version_in_args_file "TERRAFORM_VERSION" $TERRAFORM_VERSION "args_base.args"
 
 echo "Updating Azure-CLI version"
-AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+#AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+AZ_CLI_VERSION="2.72.0"
 replace_version_in_args_file "AZ_CLI_VERSION" $AZ_CLI_VERSION "args_base.args"
 
-echo "Updating OpenSSH version"
-OPENSSH_MAJOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,3,1)}')
-OPENSSH_MINOR_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,5,1)}')
-OPENSSH_PATCH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" | jq -r '.[0].name' | awk '{print substr($0,8,1)}')
-OPENSSH_VERSION="${OPENSSH_MAJOR_VERSION}.${OPENSSH_MINOR_VERSION}p${OPENSSH_PATCH_VERSION}"
-replace_version_in_args_file "OPENSSH_VERSION" $OPENSSH_VERSION "args_base.args"
+OPENSSH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" \
+  | jq -r '.[0].name' \
+  | sed -E 's/^V_([0-9]+)_([0-9]+)(_P([0-9]+))?$/\1.\2p\4/' \
+  | sed 's/p$//')  # handles missing patch
+
+replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args"
 
 echo "Updating CRICTL version"
 CRICTL_VERSION=$(github_get_latest_release "kubernetes-sigs/cri-tools")
@@ -100,9 +131,9 @@ STERN_VERSION=$(github_get_latest_release "stern/stern")
 replace_version_in_args_file "STERN_VERSION" $STERN_VERSION "args_base.args"
 
 echo "Updating Kubelogin version"
-KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
+#KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
+KUBELOGIN_VERSION="0.1.9"
 replace_version_in_args_file "KUBELOGIN_VERSION" $KUBELOGIN_VERSION "args_base.args"
-
 
 ########OPTIONAL########
 echo "Starting with optional versions contained in version complete...."
@@ -133,6 +164,46 @@ replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.arg
 
 GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
+
+if [[ ${#grouped_changes[@]} -eq 0 ]]; then
+  echo "No version changes detected."
+  exit 0
+fi
+
+# Write grouped changelog
+{
+  echo "## 🔄 Version Update Changelog"
+  for file in "${!grouped_changes[@]}"; do
+    [[ "$file" == "README.md" ]] && continue
+    echo ""
+
+    case "$file" in
+      args_base.args)
+        echo "### 🧱 Base Args (\`$file\`)"
+        ;;
+      args_optional.args)
+        echo "### 🧩 Optional Args (\`$file\`)"
+        ;;
+      build.sh)
+        echo "### 🔧 Build (\`$file\`)"
+        ;;
+      *)
+        echo "### 📁 Other (\`$file\`)"
+        ;;
+    esac
+
+    while IFS= read -r line; do
+      key=$(echo "$line" | cut -d' ' -f1)
+      from=$(echo "$line" | grep -oP 'from \K[^ ]+' || echo "unknown")
+      to=$(echo "$line" | grep -oP 'to \K[^ ]+' || echo "unknown")
+      echo "- \`$key\` updated from \`$from\` → \`$to\`"
+    done <<< "${grouped_changes[$file]}"
+
+    echo ""
+  done
+} > changed_versions.txt
+
+echo "✅ Changelog written to changed_versions.txt"
 
 
 ######## README.md #######

@@ -5,6 +5,8 @@ on:
     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
     - cron: '20 3 * * MON'
     - cron: '20 3 * * FRI'
+    - cron: '0 7 * * FRI'
+  workflow_dispatch:
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]
@@ -19,8 +21,8 @@ jobs:
         run: git checkout master
       - name: Delete local branches
         run: git checkout -b "tmp" || true  && git checkout master && git for-each-ref --format '%(refname:short)' refs/heads | grep -v "master\|main" | xargs git branch -D
-      - name: Pull origin
-        run: git pull origin master
+      - name: Pull origin (allow unrelated histories)
+        run: git pull origin master --allow-unrelated-histories || true
   Create-Branch:
     needs: Clean-Repo
     runs-on: [self-hosted, Linux, X64]
@@ -78,7 +80,10 @@ jobs:
 
       - name: create PR
         run: |
-          curl \
+          echo "PR BODY:"
+          echo "$BODY"
+      
+          RESPONSE=$(curl -s -w "%{http_code}" -o pr_response.txt \
             -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \

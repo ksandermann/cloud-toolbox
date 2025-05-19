@@ -2,182 +2,147 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-IMAGE_TAG="2025-04-04"
-TAG_PREFIX_COMPLETE="complete"
-TAG_PREFIX_BASE="latest"
-TAG_PREFIX_BASE2="project"
-UPSTREAM_TAG_COMPLETE="${IMAGE_TAG}_${TAG_PREFIX_COMPLETE}"
-UPSTREAM_TAG_BASE="${IMAGE_TAG}_${TAG_PREFIX_BASE}"
+RELEASE_DATE=$(date --rfc-3339=date)
 
-echo "building complete image with specific tag $UPSTREAM_TAG_COMPLETE and general tag $TAG_PREFIX_COMPLETE"
-echo "building base image with specific tag $UPSTREAM_TAG_BASE and general tag $TAG_PREFIX_BASE"
+# Array to track changed versions
+changed_versions=()
 
-##BUILD COMPLETE IMAGE
+# Utility functions
+github_get_latest_release() {
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/^v//'
+}
 
-#https://stackoverflow.com/a/62357213
-while IFS= read -r line; do
-  if [[ "$line" != \#* ]];
-   then buildargs_base+=(--build-arg "$line");
+pypi_get_latest_release_remove_rcs() {
+  RETURNEDLIST=$(curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | sort_by(.) | reverse | .[]')
+  for version in $RETURNEDLIST; do
+    if [[ "$version" != *"rc"* && "$version" != *"b"* && "$version" != *"a"* ]]; then
+      echo $version
+      break
+    fi
+  done
+}
+
+pypi_get_latest_release() {
+  curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1
+}
+
+fetch_latest_gcloud_version() {
+  html_content=$(curl -sL "https://cloud.google.com/sdk/docs/release-notes")
+  echo "$html_content" | grep -oE '\b[0-9]+\.[0-9]+\.[0-9]+\b' | sort -V | tail -1
+}
+
+replace_version_in_args_file() {
+  local key="$1"
+  local new_version="$2"
+  local file="$3"
+
+  if grep -q "^${key}=" "$file"; then
+    old_version=$(grep "^${key}=" "$file" | cut -d'=' -f2)
+    if [[ "$old_version" != "$new_version" ]]; then
+      sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
+      changed_versions+=("${key} updated from ${old_version} to ${new_version}")
+    fi
   fi
-done < "args_base.args"
+}
 
-while IFS= read -r line; do
-  if [[ "$line" != \#* ]];
-   then buildargs_optional+=(--build-arg "$line");
-  fi
-done < "args_optional.args"
+mkdir -p releases
+RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
 
-echo "removing cached images"
-#remove current manifest to not ammend more images with same architecture but create a clean one
-docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE || true
-docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE || true
-rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
+######## BASE ########
+echo "Starting with base versions contained in versions base and complete...."
 
-#building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
-#https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
-#ubuntu: docker buildx create --platform linux/amd64,linux/arm64 --use --bootstrap --name toolbox -> doesnt work, fixed with github action step
-docker buildx build \
-    --pull \
-    ${buildargs_base[@]} ${buildargs_optional[@]} \
-    --platform linux/amd64,linux/arm64 \
-    -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE \
-    --no-cache \
-    --push \
-    --progress plain \
-    .
+UBUNTU_VERSION="22.04"
+replace_version_in_args_file "UBUNTU_VERSION" "$UBUNTU_VERSION" "args_base.args"
 
-#scanning private image - skipping binaries where it is known we are already using the latest available version.
-#ssh keys get removed in the step they get generated
-#azure-cli ssh extension triggers a false-positive string being recognized as Alibaba access token
-trivy image \
-    --ignore-unfixed \
-    --severity HIGH,CRITICAL,MEDIUM \
-    --skip-files "/usr/local/bin/containerd" \
-    --skip-files "/usr/local/bin/containerd-shim" \
-    --skip-files "/usr/local/bin/containerd-shim-runc-v2" \
-    --skip-files "/usr/local/bin/crictl" \
-    --skip-files "/usr/local/bin/ctr" \
-    --skip-files "/usr/local/bin/docker" \
-    --skip-files "/usr/local/bin/docker-init" \
-    --skip-files "/usr/local/bin/docker-proxy" \
-    --skip-files "/usr/local/bin/dockerd" \
-    --skip-files "/usr/local/bin/helm" \
-    --skip-files "/usr/local/bin/kubectl" \
-    --skip-files "/usr/local/bin/kubelogin" \
-    --skip-files "/usr/local/bin/oc" \
-    --skip-files "/usr/local/bin/sentinel" \
-    --skip-files "/usr/local/bin/stern" \
-    --skip-files "/usr/local/bin/tcpping" \
-    --skip-files "/usr/local/bin/terraform" \
-    --skip-files "/usr/local/bin/vault" \
-    --skip-files "/usr/local/bin/velero" \
-    --skip-files "/usr/local/bin/yq" \
-    --skip-dirs "/root/.azure/cliextensions/ssh/" \
-    ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE
+DOCKER_VERSION=$(github_get_latest_release "moby/moby")
+replace_version_in_args_file "DOCKER_VERSION" "$DOCKER_VERSION" "args_base.args"
 
-echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
-sleep 120
-echo "proceeding with pushing the images"
+KUBECTL_VERSION=$(github_get_latest_release "kubernetes/kubernetes")
+replace_version_in_args_file "KUBECTL_VERSION" "$KUBECTL_VERSION" "args_base.args"
 
-echo "extracting image layer digests"
-COMPLETE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq -r '.manifests[0].digest')
-COMPLETE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE | jq -r '.manifests[1].digest')
+HELM_VERSION=$(github_get_latest_release "helm/helm")
+replace_version_in_args_file "HELM_VERSION" "$HELM_VERSION" "args_base.args"
 
-echo "found digest 1: $COMPLETE_PRIVATE_MANIFEST_DIGEST_1"
-echo "found digest 2: $COMPLETE_PRIVATE_MANIFEST_DIGEST_2"
+TERRAFORM_VERSION=$(github_get_latest_release "hashicorp/terraform")
+replace_version_in_args_file "TERRAFORM_VERSION" "$TERRAFORM_VERSION" "args_base.args"
 
-echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE}"
-docker manifest create ksandermann/cloud-toolbox:${UPSTREAM_TAG_COMPLETE} \
-    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
-    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}
+AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+replace_version_in_args_file "AZ_CLI_VERSION" "$AZ_CLI_VERSION" "args_base.args"
 
+OPENSSH_VERSION="10.0p2"
+replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args"
 
-echo "creating image manifest with tag ksandermann/cloud-toolbox:${TAG_PREFIX_COMPLETE}"
-docker manifest create ksandermann/cloud-toolbox:${TAG_PREFIX_COMPLETE} \
-    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_1} \
-    --amend ksandermann/cloud-toolbox-private@${COMPLETE_PRIVATE_MANIFEST_DIGEST_2}
+CRICTL_VERSION=$(github_get_latest_release "kubernetes-sigs/cri-tools")
+replace_version_in_args_file "CRICTL_VERSION" "$CRICTL_VERSION" "args_base.args"
 
+VELERO_VERSION=$(github_get_latest_release "vmware-tanzu/velero")
+replace_version_in_args_file "VELERO_VERSION" "$VELERO_VERSION" "args_base.args"
 
-#push both images
-echo "pushing images"
-docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_COMPLETE
-docker manifest push ksandermann/cloud-toolbox:$TAG_PREFIX_COMPLETE
+SENTINEL_VERSION=$(curl -sS "https://api.releases.hashicorp.com/v1/releases/sentinel/latest" | jq -r '.version')
+replace_version_in_args_file "SENTINEL_VERSION" "$SENTINEL_VERSION" "args_base.args"
 
-##BUILD LATEST IMAGE
+STERN_VERSION=$(github_get_latest_release "stern/stern")
+replace_version_in_args_file "STERN_VERSION" "$STERN_VERSION" "args_base.args"
 
-#remove current manifest to not ammend more images with same architecture but create a clean one
-docker manifest rm ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE || true
-docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE || true
-docker manifest rm ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2 || true
-rm -rf ~/.docker/manifests/docker.io_ksandermann_cloud-toolbox*
+KUBELOGIN_VERSION=$(github_get_latest_release "Azure/kubelogin")
+replace_version_in_args_file "KUBELOGIN_VERSION" "$KUBELOGIN_VERSION" "args_base.args"
 
-#building image and pushing to private registry since it might still contain secrets/ssh keys or vulnerabilities
-#https://blog.jaimyn.dev/how-to-build-multi-architecture-docker-images-on-an-m1-mac/
-docker buildx build \
-    --pull \
-    ${buildargs_base[@]} \
-    --platform linux/amd64,linux/arm64 \
-    --no-cache \
-    -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE \
-    --progress plain \
-    --push \
-    .
+######## OPTIONAL ########
+echo "Starting with optional versions contained in version complete...."
 
-#scanning private image - skipping binaries where it is known we are already using the latest available version.
-#ssh keys get removed in the step they get generated
-#azure-cli ssh extension triggers a false-positive string being recognized as Alibaba access token
-trivy image \
-    --ignore-unfixed \
-    --severity HIGH,CRITICAL,MEDIUM \
-    --skip-files "/usr/local/bin/containerd" \
-    --skip-files "/usr/local/bin/containerd-shim" \
-    --skip-files "/usr/local/bin/containerd-shim-runc-v2" \
-    --skip-files "/usr/local/bin/crictl" \
-    --skip-files "/usr/local/bin/ctr" \
-    --skip-files "/usr/local/bin/docker" \
-    --skip-files "/usr/local/bin/docker-init" \
-    --skip-files "/usr/local/bin/docker-proxy" \
-    --skip-files "/usr/local/bin/dockerd" \
-    --skip-files "/usr/local/bin/helm" \
-    --skip-files "/usr/local/bin/kubectl" \
-    --skip-files "/usr/local/bin/kubelogin" \
-    --skip-files "/usr/local/bin/oc" \
-    --skip-files "/usr/local/bin/sentinel" \
-    --skip-files "/usr/local/bin/stern" \
-    --skip-files "/usr/local/bin/tcpping" \
-    --skip-files "/usr/local/bin/terraform" \
-    --skip-files "/usr/local/bin/vault" \
-    --skip-files "/usr/local/bin/velero" \
-    --skip-files "/usr/local/bin/yq" \
-    --skip-dirs "/root/.azure/cliextensions/ssh/" \
-    ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE
+AWS_CLI_VERSION=$(pypi_get_latest_release "awscli")
+replace_version_in_args_file "AWS_CLI_VERSION" "$AWS_CLI_VERSION" "args_optional.args"
 
-echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
-sleep 120
-echo "proceeding with pushing the images"
+ANSIBLE_VERSION=$(pypi_get_latest_release_remove_rcs "ansible")
+replace_version_in_args_file "ANSIBLE_VERSION" "$ANSIBLE_VERSION" "args_optional.args"
 
-BASE_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq -r '.manifests[0].digest')
-BASE_PRIVATE_MANIFEST_DIGEST_2=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE | jq -r '.manifests[1].digest')
+JINJA_VERSION=$(pypi_get_latest_release "Jinja2")
+replace_version_in_args_file "JINJA_VERSION" "$JINJA_VERSION" "args_optional.args"
 
-#create public tag with "date_latest"
-echo "creating image manifest with tag ksandermann/cloud-toolbox:${UPSTREAM_TAG_BASE}"
-docker manifest create ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_2
+VAULT_VERSION=$(github_get_latest_release "hashicorp/vault")
+replace_version_in_args_file "VAULT_VERSION" "$VAULT_VERSION" "args_optional.args"
 
-#create public tag with "latest"
-echo "creating image manifest with tag ksandermann/cloud-toolbox:${TAG_PREFIX_BASE}"
-docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_BASE \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_2
+replace_version_in_args_file "latest" "${RELEASE_DATE}_base" "README.md"
+replace_version_in_args_file "project" "${RELEASE_DATE}_base" "README.md"
+replace_version_in_args_file "complete" "${RELEASE_DATE}_complete" "README.md"
 
-#create public tag with "project"
-echo "creating image manifest with tag ksandermann/cloud-toolbox:${TAG_PREFIX_BASE2}"
-docker manifest create ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_1 \
-    --amend ksandermann/cloud-toolbox-private@$BASE_PRIVATE_MANIFEST_DIGEST_2
+replace_version_in_args_file "IMAGE_TAG" "\"${RELEASE_DATE}\"" "build.sh"
 
-echo "pushing images"
-docker manifest push ksandermann/cloud-toolbox:$UPSTREAM_TAG_BASE
-docker manifest push ksandermann/cloud-toolbox:$TAG_PREFIX_BASE
-docker manifest push ksandermann/cloud-toolbox:$TAG_PREFIX_BASE2
+OC_CLI_VERSION=$(curl -s https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/ | grep -o 'openshift-client-linux-[0-9]*\.[0-9]*\.[0-9]*\.tar\.gz' | sort -V | tail -1 | sed 's/openshift-client-linux-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
+replace_version_in_args_file "OC_CLI_VERSION" "$OC_CLI_VERSION" "args_optional.args"
+
+GCLOUD_VERSION=$(fetch_latest_gcloud_version)
+replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
+
+######## README Update Table ########
+table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
+offset=1
+insert_line=$((table_start_line + offset))
+
+new_lines="| ${RELEASE_DATE}_complete | $UBUNTU_VERSION  | $DOCKER_VERSION   | $KUBECTL_VERSION  | $HELM_VERSION | $TERRAFORM_VERSION     | $AZ_CLI_VERSION | $OPENSSH_VERSION   | $CRICTL_VERSION | $VELERO_VERSION | $SENTINEL_VERSION   | $STERN_VERSION | $KUBELOGIN_VERSION     | $OC_CLI_VERSION | $AWS_CLI_VERSION  | $GCLOUD_VERSION    | $ANSIBLE_VERSION   | $JINJA_VERSION  | $VAULT_VERSION |"
+
+sed -i "${insert_line}a\\
+${new_lines}" README.md
+
+######## Changelog Output ########
+if [[ ${#changed_versions[@]} -eq 0 ]]; then
+  echo "No version changes detected."
+  exit 0
+fi
+
+{
+  echo "Changelog"
+  echo ""
+  echo "Version updates:"
+  echo ""
+  for line in "${changed_versions[@]}"; do
+    key=$(echo "$line" | awk '{print $1}' | sed 's/_VERSION//' | tr '[:upper:]' '[:lower:]')
+    from=$(echo "$line" | awk '{for (i=1; i<=NF; i++) if ($i == "from") print $(i+1)}')
+    to=$(echo "$line" | awk '{for (i=1; i<=NF; i++) if ($i == "to") print $(i+1)}')
+    if [[ -n "$key" && -n "$from" && -n "$to" ]]; then
+      echo "$key from $from → $to"
+    fi
+  done
+} > changed_versions.txt
+
+echo "✅ Changelog written to changed_versions.txt"
