@@ -69,20 +69,16 @@ jobs:
       - name: Prepare PR body
         run: |
           if [ -f changed_versions.txt ]; then
-            BODY="# Changelog"$'\n'
+            BODY="# Changelog%0A"
             while IFS= read -r line; do
-              BODY+="- ${line}"$'\n'
+              BODY="${BODY}- ${line}%0A"
             done < changed_versions.txt
+            echo "BODY=${BODY}" >> $GITHUB_ENV
           else
-            BODY="# Changelog"$'\n'"(no version changes)"
+            echo "BODY=# Changelog%0A(no version changes)%0A" >> $GITHUB_ENV
           fi
-      
-          # Write the multi-line body safely to GITHUB_ENV
-          echo "BODY<<EOF" >> $GITHUB_ENV
-          echo "$BODY" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
 
-      - name: Create PR
+      - name: create PR
         run: |
           echo "PR BODY:"
           echo "$BODY"
@@ -92,17 +88,4 @@ jobs:
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
-            -d "$(jq -nc \
-                --arg title "Release $RELEASE_DATE" \
-                --arg body "$BODY" \
-                --arg head "${RELEASE_DATE}_automation" \
-                --arg base "master" \
-                '{title: $title, body: $body, head: $head, base: $base}')")
-      
-          cat pr_response.txt
-          echo "HTTP status code: $RESPONSE"
-      
-          if [[ "$RESPONSE" != "201" ]]; then
-            echo "❌ Failed to create PR"
-            exit 1
-          fi
+            -d "{\"title\":\"Release ${{ env.RELEASE_DATE }}\",\"body\":\"${{ env.BODY }}\",\"head\":\"${{ env.RELEASE_DATE }}_automation\",\"base\":\"master\"}"
