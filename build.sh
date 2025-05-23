@@ -145,4 +145,4 @@ fi
   done
 } > changed_versions.txt
 
-echo "✅ Changelog written to changed_versions.txt"
+echo "✅ Changelog written to changed_versions.txt"IMAGE_TAG="2025-05-23"
