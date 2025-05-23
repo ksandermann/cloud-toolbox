@@ -67,25 +67,34 @@ jobs:
         run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
 
       - name: Prepare PR body
+        id: prep_pr
         run: |
           if [ -f changed_versions.txt ]; then
-            BODY="# Changelog%0A"
-            while IFS= read -r line; do
-              BODY="${BODY}- ${line}%0A"
-            done < changed_versions.txt
-            echo "BODY=${BODY}" >> $GITHUB_ENV
+            echo "✅ Generating changelog from changed_versions.txt"
+            {
+              echo "# Changelog"
+              echo ""
+              cat changed_versions.txt
+            } > pr_body.md
           else
-            echo "BODY=# Changelog%0A(no version changes)%0A" >> $GITHUB_ENV
+            echo "# Changelog" > pr_body.md
+            echo "" >> pr_body.md
+            echo "(no version changes)" >> pr_body.md
           fi
 
-      - name: create PR
+          # Encode PR body in base64 to safely pass it to the next step
+          ENCODED_BODY=$(base64 -w 0 pr_body.md)
+          echo "ENCODED_BODY=$ENCODED_BODY" >> $GITHUB_ENV
+
+      - name: Create PR
         run: |
-          echo "PR BODY:"
-          echo "$BODY"
-      
-          RESPONSE=$(curl -s -w "%{http_code}" -o pr_response.txt \
-            -X POST \
+          curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
-            -d "{\"title\":\"Release ${{ env.RELEASE_DATE }}\",\"body\":\"${{ env.BODY }}\",\"head\":\"${{ env.RELEASE_DATE }}_automation\",\"base\":\"master\"}"
+            -d "$(jq -n \
+              --arg title "Release ${{ env.RELEASE_DATE }}" \
+              --arg body "$(echo "${{ env.ENCODED_BODY }}" | base64 -d)" \
+              --arg head "${{ env.RELEASE_DATE }}_automation" \
+              --arg base "master" \
+              '{title: $title, body: $body, head: $head, base: $base}')"
