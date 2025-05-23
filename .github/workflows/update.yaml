@@ -88,13 +88,18 @@ jobs:
 
       - name: Create PR
         run: |
+          BODY=$(echo "$ENCODED_BODY" | base64 -d)
+
           curl -X POST \
             -H "Accept: application/vnd.github+json" \
             -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
             -d "$(jq -n \
-              --arg title "Release ${{ env.RELEASE_DATE }}" \
-              --arg body "$(echo "${{ env.ENCODED_BODY }}" | base64 -d)" \
-              --arg head "${{ env.RELEASE_DATE }}_automation" \
+              --arg title "Release $RELEASE_DATE" \
+              --arg body "$BODY" \
+              --arg head "${RELEASE_DATE}_automation" \
               --arg base "master" \
               '{title: $title, body: $body, head: $head, base: $base}')"
+        env:
+          ENCODED_BODY: ${{ env.ENCODED_BODY }}
+          RELEASE_DATE: ${{ env.RELEASE_DATE }}
