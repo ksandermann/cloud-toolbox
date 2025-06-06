@@ -12,8 +12,6 @@ log_change() {
 echo "Updating README.MD & build.sh"
 RELEASE_DATE=$(date --rfc-3339=date)
 
-changed_versions=()
-
 #This script only works on Linux, not on MacOs. On MacOS, run it inside the toolbox itself.
 
 github_get_latest_release() {
@@ -66,9 +64,6 @@ RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
   echo "${RELEASE_DATE}"
   echo ""
   echo "Changelog"
-  for entry in "${changed_versions[@]}"; do
-    echo "$entry"
-  done
 } > "${RELEASE_NOTES_FILE}"
 
 echo "Release notes created at ${RELEASE_NOTES_FILE}"
@@ -216,14 +211,3 @@ new_lines="| ${RELEASE_DATE}_complete | $UBUNTU_VERSION  | $DOCKER_VERSION   | $
 
 sed -i "${insert_line}a\\
 ${new_lines}" README.md
-
-## Automatically push detected changes to PR
-if [ ${#changed_versions[@]} -eq 0 ]; then
-  echo "No version changes detected."
-  exit 0
-fi
-
-# Save changes to a temporary file
-printf "%s\n" "${changed_versions[@]}" > changed_versions.txt
-
-#TODO
