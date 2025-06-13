@@ -165,7 +165,6 @@ if [[ ${#grouped_changes[@]} -eq 0 ]]; then
   exit 0
 fi
 
-# Write grouped changelog
 {
   echo "## 🔄 Version Update Changelog"
   for file in "${!grouped_changes[@]}"; do
@@ -188,10 +187,18 @@ fi
     esac
 
     while IFS= read -r line; do
-      key=$(echo "$line" | cut -d' ' -f1)
-      from=$(echo "$line" | grep -oP 'from \K[^ ]+' || echo "unknown")
-      to=$(echo "$line" | grep -oP 'to \K[^ ]+' || echo "unknown")
-      echo "- \`$key\` updated from \`$from\` → \`$to\`"
+      if [[ "$line" =~ -?[[:space:]]*([A-Za-z0-9_]+)[[:space:]]+updated[[:space:]]+from[[:space:]]+(.+)[[:space:]]+to[[:space:]]+(.+) ]]; then
+        key="${BASH_REMATCH[1]}"
+        from="${BASH_REMATCH[2]}"
+        to="${BASH_REMATCH[3]}"
+        echo "- \`$key\` updated from \`$from\` → \`$to\`"
+      elif [[ "$line" =~ -?[[:space:]]*([A-Za-z0-9_]+)[[:space:]]+added[[:space:]]+with[[:space:]]+value[[:space:]]+(.+) ]]; then
+        key="${BASH_REMATCH[1]}"
+        value="${BASH_REMATCH[2]}"
+        echo "- \`$key\` added with value \`$value\`"
+      else
+        echo "- $line"
+      fi
     done <<< "${grouped_changes[$file]}"
 
     echo ""
