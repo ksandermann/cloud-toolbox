@@ -27,8 +27,10 @@ jobs:
     needs: Clean-Repo
     runs-on: [self-hosted, Linux, X64]
     steps:
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
+      - name: Sync remote branch (if exists)
+        run: |
+          git fetch origin
+          git checkout -B "${RELEASE_DATE}_automation" "origin/${RELEASE_DATE}_automation" || git checkout -b "${RELEASE_DATE}_automation"
       - name: Create branch
         run: git checkout -b ${{ env.RELEASE_DATE }}_automation
   Update-Versions:
