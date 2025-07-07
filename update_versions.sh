@@ -39,12 +39,12 @@ replace_version_in_args_file() {
 
   echo "Replacing $key with $new_version in $file"
 
+  local current_version=""
   if grep -q "^${key}=" "$file"; then
-    local current_version
     current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
     if [[ "$current_version" != "$new_version" ]]; then
       sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
-      log_change "$file" "$key from $current_version to $new_version"
+      [[ -n "$current_version" ]] && log_change "$file" "$key updated from $current_version → $new_version"
     fi
   else
     echo "${key}=${new_version}" >> "$file"
