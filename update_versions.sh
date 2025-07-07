@@ -98,8 +98,8 @@ TERRAFORM_VERSION=$(github_get_latest_release "hashicorp/terraform")
 replace_version_in_args_file "TERRAFORM_VERSION" $TERRAFORM_VERSION "args_base.args"
 
 echo "Updating Azure-CLI version"
-#AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
-AZ_CLI_VERSION="2.72.0"
+AZ_CLI_VERSION=$(pypi_get_latest_release "azure-cli")
+#AZ_CLI_VERSION="2.72.0"
 replace_version_in_args_file "AZ_CLI_VERSION" $AZ_CLI_VERSION "args_base.args"
 
 OPENSSH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" \
@@ -166,43 +166,22 @@ if [[ ${#grouped_changes[@]} -eq 0 ]]; then
 fi
 
 {
-  echo "## 🔄 Version Update Changelog"
-  for file in "${!grouped_changes[@]}"; do
-    [[ "$file" == "README.md" ]] && continue
-    echo ""
+  echo "args_base:"
+  while IFS= read -r line; do
+    [[ -n "$line" && "$line" =~ args_base\.args ]] && {
+      version_change=$(echo "$line" | sed -E 's/.*- ([A-Z_]+) updated from (.+) to (.+)/- \1 from \2 to \3/')
+      echo "$version_change"
+    }
+  done <<< "$(printf "%s\n" "${grouped_changes[@]}")"
 
-    case "$file" in
-      args_base.args)
-        echo "### 🧱 Base Args (\`$file\`)"
-        ;;
-      args_optional.args)
-        echo "### 🧩 Optional Args (\`$file\`)"
-        ;;
-      build.sh)
-        echo "### 🔧 Build (\`$file\`)"
-        ;;
-      *)
-        echo "### 📁 Other (\`$file\`)"
-        ;;
-    esac
-
-    while IFS= read -r line; do
-      if [[ "$line" =~ -?[[:space:]]*([A-Za-z0-9_]+)[[:space:]]+updated[[:space:]]+from[[:space:]]+(.+)[[:space:]]+to[[:space:]]+(.+) ]]; then
-        key="${BASH_REMATCH[1]}"
-        from="${BASH_REMATCH[2]}"
-        to="${BASH_REMATCH[3]}"
-        echo "- \`$key\` updated from \`$from\` → \`$to\`"
-      elif [[ "$line" =~ -?[[:space:]]*([A-Za-z0-9_]+)[[:space:]]+added[[:space:]]+with[[:space:]]+value[[:space:]]+(.+) ]]; then
-        key="${BASH_REMATCH[1]}"
-        value="${BASH_REMATCH[2]}"
-        echo "- \`$key\` added with value \`$value\`"
-      else
-        echo "- $line"
-      fi
-    done <<< "${grouped_changes[$file]}"
-
-    echo ""
-  done
+  echo ""
+  echo "args_optional:"
+  while IFS= read -r line; do
+    [[ -n "$line" && "$line" =~ args_optional\.args ]] && {
+      version_change=$(echo "$line" | sed -E 's/.*- ([A-Z_]+) updated from (.+) to (.+)/- \1 from \2 to \3/')
+      echo "$version_change"
+    }
+  done <<< "$(printf "%s\n" "${grouped_changes[@]}")"
 } > changed_versions.txt
 
 echo "✅ Changelog written to changed_versions.txt"
