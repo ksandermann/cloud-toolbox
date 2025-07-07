@@ -15,11 +15,11 @@ OPENSSH_VERSION=10.0p2
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.33.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=null
+VELERO_VERSION=1.16.1
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.40.0
 #https://github.com/stern/stern/releases
-STERN_VERSION=null
+STERN_VERSION=1.32.0
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.1.9
 #apt-get update && apt-cache madison zsh | head -n 1
