@@ -44,6 +44,8 @@ jobs:
     needs: Create-Branch
     runs-on: [self-hosted, Linux, X64]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: update versions
         run: bash update_versions.sh
   Commit:
