@@ -27,14 +27,19 @@ jobs:
     needs: Clean-Repo
     runs-on: [self-hosted, Linux, X64]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set RELEASE_DATE
+        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
+
       - name: Sync remote branch (if exists)
         run: |
+          echo "Branch = ${RELEASE_DATE}_automation"
           git fetch origin
           git checkout -B "${RELEASE_DATE}_automation" "origin/${RELEASE_DATE}_automation" || git checkout -b "${RELEASE_DATE}_automation"
         env:
           RELEASE_DATE: ${{ env.RELEASE_DATE }}
-      - name: Create branch
-        run: git checkout -b ${{ env.RELEASE_DATE }}_automation
   Update-Versions:
     needs: Create-Branch
     runs-on: [self-hosted, Linux, X64]
