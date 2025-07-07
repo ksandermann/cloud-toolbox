@@ -8,14 +8,17 @@ RELEASE_DATE=$(date --rfc-3339=date)
 CHANGELOG_FILE="changed_versions.txt"
 echo "" > "$CHANGELOG_FILE"
 
+# store version changes grouped by file
+declare -A grouped_changes
+
 log_change() {
   local file="$1"
   local msg="$2"
-  echo "$file: $msg" >> "$CHANGELOG_FILE"
+  grouped_changes["$file"]+="$msg"$'\n'
 }
 
 github_get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/v//g'
+  curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/^v//g'
 }
 
 pypi_get_latest_release_remove_rcs() {
@@ -44,11 +47,11 @@ replace_version_in_args_file() {
     current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
     if [[ "$current_version" != "$new_version" ]]; then
       sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
-      [[ -n "$current_version" ]] && log_change "$file" "$key updated from $current_version → $new_version"
+      log_change "$file" "- \`${key}\` updated from \`${current_version}\` → \`${new_version}\`"
     fi
   else
     echo "${key}=${new_version}" >> "$file"
-    log_change "$file" "$key added with value $new_version"
+    log_change "$file" "- \`${key}\` added with value \`${new_version}\`"
   fi
 }
 
@@ -56,10 +59,9 @@ mkdir -p releases
 RELEASE_NOTES_FILE="releases/${RELEASE_DATE}.md"
 
 {
-  echo "${RELEASE_DATE}"
+  echo "# Version Update Changelog"
   echo ""
-  echo "Changelog"
-} > "${RELEASE_NOTES_FILE}"
+} > "$RELEASE_NOTES_FILE"
 
 fetch_latest_gcloud_version() {
   curl -sL "https://cloud.google.com/sdk/docs/release-notes" \
@@ -67,9 +69,7 @@ fetch_latest_gcloud_version() {
     | sort -V | tail -1
 }
 
-######## BASE ########
 echo "Starting with base versions contained in versions base and complete...."
-
 replace_version_in_args_file "UBUNTU_VERSION" "22.04" "args_base.args"
 replace_version_in_args_file "DOCKER_VERSION" "$(github_get_latest_release "moby/moby")" "args_base.args"
 replace_version_in_args_file "KUBECTL_VERSION" "$(github_get_latest_release "kubernetes/kubernetes")" "args_base.args"
@@ -87,13 +87,9 @@ replace_version_in_args_file "CRICTL_VERSION" "$(github_get_latest_release "kube
 replace_version_in_args_file "VELERO_VERSION" "$(github_get_latest_release "vmware-tanzu/velero")" "args_base.args"
 replace_version_in_args_file "SENTINEL_VERSION" "$(curl -sS "https://api.releases.hashicorp.com/v1/releases/sentinel/latest" | jq -r '.version')" "args_base.args"
 replace_version_in_args_file "STERN_VERSION" "$(github_get_latest_release "stern/stern")" "args_base.args"
-
-# Pinned on purpose
 replace_version_in_args_file "KUBELOGIN_VERSION" "0.1.9" "args_base.args"
 
-######## OPTIONAL ########
 echo "Starting with optional versions contained in version complete...."
-
 replace_version_in_args_file "AWS_CLI_VERSION" "$(pypi_get_latest_release "awscli")" "args_optional.args"
 replace_version_in_args_file "ANSIBLE_VERSION" "$(pypi_get_latest_release_remove_rcs "ansible")" "args_optional.args"
 replace_version_in_args_file "JINJA_VERSION" "$(pypi_get_latest_release "Jinja2")" "args_optional.args"
@@ -113,14 +109,24 @@ replace_version_in_args_file "OC_CLI_VERSION" "$OC_CLI_VERSION" "args_optional.a
 replace_version_in_args_file "GCLOUD_VERSION" "$(fetch_latest_gcloud_version)" "args_optional.args"
 
 ######## OUTPUT ########
-if [[ -s "$CHANGELOG_FILE" ]]; then
-  echo "✅ Changelog written to $CHANGELOG_FILE"
-else
+if [[ ${#grouped_changes[@]} -eq 0 ]]; then
   echo "No version changes detected."
   exit 0
 fi
 
-# Optional: Append to README version table
+{
+  echo ""
+  for file in "${!grouped_changes[@]}"; do
+    name=$(basename "$file")
+    echo "### ${name}"
+    echo "${grouped_changes[$file]}"
+    echo ""
+  done
+} >> "$RELEASE_NOTES_FILE"
+
+echo "✅ Changelog written to $RELEASE_NOTES_FILE"
+
+# Insert into README version table (optional)
 table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
 offset=1
 insert_line=$((table_start_line + offset))
