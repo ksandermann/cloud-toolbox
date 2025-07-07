@@ -9,17 +9,17 @@ HELM_VERSION=3.18.3
 #https://github.com/hashicorp/terraform/releases
 TERRAFORM_VERSION=1.12.2
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.72.0
+AZ_CLI_VERSION=2.75.0
 #https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
 OPENSSH_VERSION=10.0p2
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.33.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=1.16.1
+VELERO_VERSION=null
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.40.0
 #https://github.com/stern/stern/releases
-STERN_VERSION=1.32.0
+STERN_VERSION=null
 #https://github.com/Azure/kubelogin/releases
 KUBELOGIN_VERSION=0.1.9
 #apt-get update && apt-cache madison zsh | head -n 1
