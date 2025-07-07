@@ -160,7 +160,8 @@ replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.arg
 GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
 
-if [[ ${#grouped_changes[@]:-0} -eq 0 ]]; then
+# Only proceed if something was actually changed
+if [[ "${#grouped_changes[@]}" -eq 0 ]]; then
   echo "No version changes detected."
   exit 0
 fi
@@ -168,24 +169,17 @@ fi
 {
   echo "args_base:"
   while IFS= read -r line; do
-    [[ -n "$line" && "$line" =~ args_base\.args ]] && {
-      version_change=$(echo "$line" | sed -E 's/.*- ([A-Z_]+) updated from (.+) to (.+)/- \1 from \2 to \3/')
-      echo "$version_change"
-    }
-  done <<< "$(printf "%s\n" "${grouped_changes[@]}")"
+    [[ -n "$line" ]] && echo "- $line"
+  done <<< "${grouped_changes[args_base.args]:-}"
 
   echo ""
   echo "args_optional:"
   while IFS= read -r line; do
-    [[ -n "$line" && "$line" =~ args_optional\.args ]] && {
-      version_change=$(echo "$line" | sed -E 's/.*- ([A-Z_]+) updated from (.+) to (.+)/- \1 from \2 to \3/')
-      echo "$version_change"
-    }
-  done <<< "$(printf "%s\n" "${grouped_changes[@]}")"
+    [[ -n "$line" ]] && echo "- $line"
+  done <<< "${grouped_changes[args_optional.args]:-}"
 } > changed_versions.txt
 
 echo "✅ Changelog written to changed_versions.txt"
-
 
 ######## README.md #######
 table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
