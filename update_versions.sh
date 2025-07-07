@@ -160,7 +160,7 @@ replace_version_in_args_file "OC_CLI_VERSION" $OC_CLI_VERSION "args_optional.arg
 GCLOUD_VERSION=$(fetch_latest_gcloud_version)
 replace_version_in_args_file "GCLOUD_VERSION" "$GCLOUD_VERSION" "args_optional.args"
 
-if [[ ${#grouped_changes[@]} -eq 0 ]]; then
+if [[ ${#grouped_changes[@]:-0} -eq 0 ]]; then
   echo "No version changes detected."
   exit 0
 fi
