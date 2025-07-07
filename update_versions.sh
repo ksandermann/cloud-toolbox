@@ -17,21 +17,36 @@ log_change() {
   grouped_changes["$group"]+=$'- '"$msg"$'\n'
 }
 
+safe_jq() {
+  local input="$1"
+  local filter="$2"
+  echo "$input" | jq -r "$filter" 2>/dev/null || echo ""
+}
+
 github_get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | jq -r '.tag_name' | sed 's/^v//' || echo ""
+  local repo="$1"
+  local result
+  result=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" || echo "")
+  safe_jq "$result" '.tag_name' | sed 's/^v//' || echo ""
 }
 
 pypi_get_latest_release_remove_rcs() {
-  curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | sort_by(.) | reverse | .[]' \
+  local package="$1"
+  local result
+  result=$(curl -fsSL "https://pypi.org/pypi/$package/json" || echo "")
+  echo "$result" | jq -r '.releases | keys | sort_by(.) | reverse | .[]' 2>/dev/null \
     | grep -Ev 'a|b|rc' | head -n 1 || echo ""
 }
 
 pypi_get_latest_release() {
-  curl -s "https://pypi.org/pypi/$1/json" | jq -r '.releases | keys | .[]' | sort -V | tail -n 1 || echo ""
+  local package="$1"
+  local result
+  result=$(curl -fsSL "https://pypi.org/pypi/$package/json" || echo "")
+  echo "$result" | jq -r '.releases | keys | .[]' 2>/dev/null | sort -V | tail -n 1 || echo ""
 }
 
 fetch_latest_gcloud_version() {
-  curl -sL "https://cloud.google.com/sdk/docs/release-notes" \
+  curl -fsSL "https://cloud.google.com/sdk/docs/release-notes" \
     | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
     | sort -V | tail -1 || echo ""
 }
@@ -43,17 +58,17 @@ replace_version_in_args_file() {
   local group="$4"
   local current_version=""
 
+  if [[ -z "$new_version" ]]; then return; fi
+
   if grep -q "^${key}=" "$file"; then
     current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
-    if [[ "$current_version" != "$new_version" && "$new_version" != "" ]]; then
+    if [[ "$current_version" != "$new_version" ]]; then
       sed -i "s|^${key}=.*|${key}=${new_version}|" "$file"
       log_change "$group" "$key updated from $current_version to $new_version"
     fi
   else
-    if [[ "$new_version" != "" ]]; then
-      echo "${key}=${new_version}" >> "$file"
-      log_change "$group" "$key added with value $new_version"
-    fi
+    echo "${key}=${new_version}" >> "$file"
+    log_change "$group" "$key added with value $new_version"
   fi
 }
 
@@ -71,15 +86,16 @@ replace_version_in_args_file "KUBECTL_VERSION" "$(github_get_latest_release kube
 replace_version_in_args_file "HELM_VERSION" "$(github_get_latest_release helm/helm)" "args_base.args" "Base"
 replace_version_in_args_file "TERRAFORM_VERSION" "$(github_get_latest_release hashicorp/terraform)" "args_base.args" "Base"
 replace_version_in_args_file "AZ_CLI_VERSION" "$(pypi_get_latest_release azure-cli)" "args_base.args" "Base"
-OPENSSH_VERSION=$(curl -s "https://api.github.com/repos/openssh/openssh-portable/tags" \
-  | jq -r '.[0].name' \
-  | sed -E 's/^V_([0-9]+)_([0-9]+)(_P([0-9]+))?$/\1.\2p\4/' | sed 's/p$//')
+OPENSSH_VERSION=$(curl -fsSL "https://api.github.com/repos/openssh/openssh-portable/tags" \
+  | jq -r '.[0].name' 2>/dev/null \
+  | sed -E 's/^V_([0-9]+)_([0-9]+)(_P([0-9]+))?$/\1.\2p\4/' \
+  | sed 's/p$//')
 replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args" "Base"
 replace_version_in_args_file "CRICTL_VERSION" "$(github_get_latest_release kubernetes-sigs/cri-tools)" "args_base.args" "Base"
 replace_version_in_args_file "VELERO_VERSION" "$(github_get_latest_release vmware-tanzu/velero)" "args_base.args" "Base"
-replace_version_in_args_file "SENTINEL_VERSION" "$(curl -s "https://api.releases.hashicorp.com/v1/releases/sentinel/latest" | jq -r .version)" "args_base.args" "Base"
+replace_version_in_args_file "SENTINEL_VERSION" "$(curl -fsSL "https://api.releases.hashicorp.com/v1/releases/sentinel/latest" | jq -r .version 2>/dev/null)" "args_base.args" "Base"
 replace_version_in_args_file "STERN_VERSION" "$(github_get_latest_release stern/stern)" "args_base.args" "Base"
-replace_version_in_args_file "KUBELOGIN_VERSION" "0.1.9" "args_base.args" "Base"
+replace_version_in_args_file "KUBELOGIN_VERSION" "0.1.9" "args_base.args" "Base" # pinned
 
 # OPTIONAL
 replace_version_in_args_file "AWS_CLI_VERSION" "$(pypi_get_latest_release awscli)" "args_optional.args" "Optional"
@@ -87,7 +103,7 @@ replace_version_in_args_file "ANSIBLE_VERSION" "$(pypi_get_latest_release_remove
 replace_version_in_args_file "JINJA_VERSION" "$(pypi_get_latest_release Jinja2)" "args_optional.args" "Optional"
 replace_version_in_args_file "VAULT_VERSION" "$(github_get_latest_release hashicorp/vault)" "args_optional.args" "Optional"
 
-OC_CLI_VERSION=$(curl -s https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/ \
+OC_CLI_VERSION=$(curl -fsSL https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/ \
   | grep -o 'openshift-client-linux-[0-9]*\.[0-9]*\.[0-9]*\.tar\.gz' \
   | sort -V | tail -1 \
   | sed 's/openshift-client-linux-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
@@ -100,7 +116,7 @@ sed -i "s/project=.*/project=${RELEASE_DATE}_base/" README.md
 sed -i "s/complete=.*/complete=${RELEASE_DATE}_complete/" README.md
 sed -i "s/IMAGE_TAG=.*/IMAGE_TAG=\"${RELEASE_DATE}\"/" build.sh
 
-# Final changelog output
+# Final changelog
 if [[ ${#grouped_changes[@]} -gt 0 ]]; then
   echo "### Version Changes:" >> "$RELEASE_NOTES_FILE"
   echo "" >> "$RELEASE_NOTES_FILE"
