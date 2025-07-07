@@ -31,6 +31,8 @@ jobs:
         run: |
           git fetch origin
           git checkout -B "${RELEASE_DATE}_automation" "origin/${RELEASE_DATE}_automation" || git checkout -b "${RELEASE_DATE}_automation"
+        env:
+          RELEASE_DATE: ${{ env.RELEASE_DATE }}
       - name: Create branch
         run: git checkout -b ${{ env.RELEASE_DATE }}_automation
   Update-Versions:
