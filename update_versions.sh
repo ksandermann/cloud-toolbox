@@ -10,6 +10,7 @@ mkdir -p releases
 > "$CHANGELOG_FILE"
 
 declare -A grouped_changes
+grouped_changes=()
 
 log_change() {
   local group="$1"
