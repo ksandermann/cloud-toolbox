@@ -1,7 +1,7 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
 UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=28.3.2
+DOCKER_VERSION=28.3.3
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.33.3
 #https://github.com/helm/helm/releases
@@ -15,7 +15,7 @@ OPENSSH_VERSION=10.0p2
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.33.0
 #https://github.com/vmware-tanzu/velero/releases
-VELERO_VERSION=1.16.1
+VELERO_VERSION=1.16.2
 #https://docs.hashicorp.com/sentinel/changelog
 SENTINEL_VERSION=0.40.0
 #https://github.com/stern/stern/releases
