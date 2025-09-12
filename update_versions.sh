@@ -130,3 +130,12 @@ if [[ ${#grouped_changes[@]} -gt 0 ]]; then
 else
   echo "No version changes detected." >> "$RELEASE_NOTES_FILE"
 fi
+
+table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
+offset=1
+insert_line=$((table_start_line + offset))
+
+new_lines="| ${RELEASE_DATE}_complete | $UBUNTU_VERSION  | $DOCKER_VERSION   | $KUBECTL_VERSION  | $HELM_VERSION | $TERRAFORM_VERSION     | $AZ_CLI_VERSION | $OPENSSH_VERSION   | $CRICTL_VERSION | $VELERO_VERSION | $SENTINEL_VERSION   | $STERN_VERSION | $KUBELOGIN_VERSION     | $OC_CLI_VERSION | $AWS_CLI_VERSION  | $GCLOUD_VERSION    | $ANSIBLE_VERSION   | $JINJA_VERSION  | $VAULT_VERSION |"
+
+sed -i "${insert_line}a\\
+${new_lines}" README.md
