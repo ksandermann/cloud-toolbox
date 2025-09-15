@@ -131,6 +131,12 @@ else
   echo "No version changes detected." >> "$RELEASE_NOTES_FILE"
 fi
 
+
+set -a
+source args_base.args
+source args_optional.args
+set +a
+
 table_start_line=$(awk '/^\| RELEASE / {print NR}' README.md)
 offset=1
 insert_line=$((table_start_line + offset))
