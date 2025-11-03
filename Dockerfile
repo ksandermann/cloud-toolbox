@@ -49,6 +49,8 @@ WORKDIR /root/download
 
 RUN mkdir -p /root/download/binaries
 
+RUN rm -rf /root/.cache /var/cache /tmp/*
+
 #download oc-cli
 RUN if [[ ! -z ${OC_CLI_VERSION} ]] ; then \
       mkdir -p oc_cli && \
