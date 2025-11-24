@@ -28,7 +28,7 @@ github_get_latest_release() {
   local repo="$1"
   local result
   result=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" || echo "")
-  safe_jq "$result" '.tag_name' | sed 's/^v//' || echo ""
+  safe_jq "$result" '.tag_name' | sed -e 's/^docker-v//' -e 's/^v//' || echo ""
 }
 
 pypi_get_latest_release_remove_rcs() {
