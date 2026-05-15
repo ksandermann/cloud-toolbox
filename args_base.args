@@ -10,8 +10,8 @@ HELM_VERSION=4.1.4
 TERRAFORM_VERSION=1.15.2
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.86.0
-#https://mirror.exonetric.net/pub/OpenBSD/OpenSSH/portable/
-OPENSSH_VERSION=10.3p1
+#apt-cache madison openssh-client | head -n1
+OPENSSH_VERSION=1:8.9p1-3ubuntu0.15
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.36.0
 #https://github.com/vmware-tanzu/velero/releases

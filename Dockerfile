@@ -184,11 +184,11 @@ WORKDIR /root
 #https://github.com/waleedka/modern-deep-learning-docker/issues/4#issue-292539892
 #bc and tcptraceroute needed for tcping
 
-## Temporary solution, since arm64 fails in qemu
 RUN set -euxo pipefail && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-        openssh-client openssh-server && \
+        openssh-client=${OPENSSH_VERSION} \
+        openssh-server=${OPENSSH_VERSION} && \
     rm -rf /var/lib/apt/lists/* && \
     ssh -V
 
@@ -309,7 +309,7 @@ RUN if [[ ! -z ${AWS_CLI_VERSION} ]] ; then \
 RUN if [[ ! -z ${GCLOUD_VERSION} ]] ; then \
       echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | sudo tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && \
       curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - && \
-      apt-get update && apt-get install -y google-cloud-cli; \
+      apt-get update && apt-get install -y google-cloud-cli=${GCLOUD_VERSION}; \
     fi
 
 ENV TERM xterm
