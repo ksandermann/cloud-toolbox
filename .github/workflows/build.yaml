@@ -6,6 +6,8 @@ on:
       - master
     paths-ignore:
       - '.github/workflows/update.yaml'
+      - '.github/workflows/verify_tools.yaml'
+      - 'verify_tools.sh'
 jobs:
   Clean-Repo:
     runs-on: [self-hosted, Linux, X64]

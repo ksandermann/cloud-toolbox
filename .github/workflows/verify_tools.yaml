@@ -1,0 +1,44 @@
+name: Verify Tools
+run-name: ${{ github.actor }} is verifying installed tools 🔍
+on:
+  workflow_run:
+    workflows: ["Build Images"]
+    types:
+      - completed
+
+jobs:
+  Verify-Tools:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    timeout-minutes: 60
+    runs-on: [self-hosted, Linux, X64]
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [latest, complete]
+        platform: [linux/amd64, linux/arm64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_sha }}
+
+      - name: Set up QEMU
+        if: matrix.platform == 'linux/arm64'
+        uses: docker/setup-qemu-action@v3.6.0
+        with:
+          image: tonistiigi/binfmt:latest
+          platforms: arm64
+
+      - name: Pull image
+        run: docker pull --platform ${{ matrix.platform }} ksandermann/cloud-toolbox:${{ matrix.image }}
+
+      - name: Verify tools
+        run: |
+          if [[ "${{ matrix.image }}" == "complete" ]]; then MODE=complete; else MODE=base; fi
+          docker run --rm \
+            --platform ${{ matrix.platform }} \
+            -e MODE=$MODE \
+            -v "$PWD:/repo:ro" \
+            -w /repo \
+            ksandermann/cloud-toolbox:${{ matrix.image }} \
+            bash verify_tools.sh
