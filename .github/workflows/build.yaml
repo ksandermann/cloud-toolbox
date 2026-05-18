@@ -44,6 +44,13 @@ jobs:
           platforms: all
       - name: Build Images
         run: bash ./build.sh
+      - name: Reclaim disk
+        if: always()
+        run: |
+          docker buildx prune -af || true
+          docker image    prune -af || true
+          docker container prune -f  || true
+          df -h
   Create-Release:
     needs: Build-Images
     runs-on: [self-hosted, Linux, X64]

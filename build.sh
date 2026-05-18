@@ -39,7 +39,6 @@ docker buildx build \
   ${buildargs_base[@]} ${buildargs_optional[@]} \
   --platform linux/amd64,linux/arm64 \
   -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_COMPLETE \
-  --no-cache \
   --push \
   --progress plain \
   .
@@ -104,7 +103,6 @@ docker buildx build \
   --pull \
   ${buildargs_base[@]} \
   --platform linux/amd64,linux/arm64 \
-  --no-cache \
   -t ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_BASE \
   --progress plain \
   --push \
