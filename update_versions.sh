@@ -46,10 +46,24 @@ pypi_get_latest_release() {
   echo "$result" | jq -r '.releases | keys | .[]' 2>/dev/null | sort -V | tail -n 1 || echo ""
 }
 
-fetch_latest_gcloud_version() {
-  curl -fsSL "https://cloud.google.com/sdk/docs/release-notes" \
-    | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+' \
-    | sort -V | tail -1 || echo ""
+# Resolves the apt-pinnable version string for a package, exactly as the
+# Dockerfile sees it. Runs apt-cache inside an Ubuntu 22.04 container so the
+# result matches `apt-get install pkg=VERSION` on jammy.
+#
+# Args:
+#   $1 — package name (e.g. openssh-client)
+#   $2 — optional extra commands to run before apt-get update (e.g. to add a
+#        third-party apt repo). Defaults to empty (stock Ubuntu archive).
+apt_cache_latest_version() {
+  local package="$1"
+  local extra_setup="${2:-}"
+  docker run --rm ubuntu:22.04 bash -c "
+    set -e
+    export DEBIAN_FRONTEND=noninteractive
+    ${extra_setup}
+    apt-get update -qq >/dev/null
+    apt-cache madison '${package}' | head -n1 | awk '{print \$3}'
+  " 2>/dev/null || echo ""
 }
 
 replace_version_in_args_file() {
@@ -87,10 +101,9 @@ replace_version_in_args_file "KUBECTL_VERSION" "$(github_get_latest_release kube
 replace_version_in_args_file "HELM_VERSION" "$(github_get_latest_release helm/helm)" "args_base.args" "Base"
 replace_version_in_args_file "TERRAFORM_VERSION" "$(github_get_latest_release hashicorp/terraform)" "args_base.args" "Base"
 replace_version_in_args_file "AZ_CLI_VERSION" "$(pypi_get_latest_release azure-cli)" "args_base.args" "Base"
-OPENSSH_VERSION=$(curl -fsSL "https://api.github.com/repos/openssh/openssh-portable/tags" \
-  | jq -r '.[0].name' 2>/dev/null \
-  | sed -E 's/^V_([0-9]+)_([0-9]+)(_P([0-9]+))?$/\1.\2p\4/' \
-  | sed 's/p$//')
+# OpenSSH is installed via apt on Ubuntu jammy, so the pin must match apt's
+# version string (e.g. 1:8.9p1-3ubuntu0.15), not upstream OpenSSH tags.
+OPENSSH_VERSION=$(apt_cache_latest_version "openssh-client")
 replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args" "Base"
 replace_version_in_args_file "CRICTL_VERSION" "$(github_get_latest_release kubernetes-sigs/cri-tools)" "args_base.args" "Base"
 replace_version_in_args_file "VELERO_VERSION" "$(github_get_latest_release vmware-tanzu/velero)" "args_base.args" "Base"
@@ -109,7 +122,18 @@ OC_CLI_VERSION=$(curl -fsSL https://mirror.openshift.com/pub/openshift-v4/x86_64
   | sort -V | tail -1 \
   | sed 's/openshift-client-linux-\([0-9]*\.[0-9]*\.[0-9]*\)\.tar\.gz/\1/')
 replace_version_in_args_file "OC_CLI_VERSION" "$OC_CLI_VERSION" "args_optional.args" "Optional"
-replace_version_in_args_file "GCLOUD_VERSION" "$(fetch_latest_gcloud_version)" "args_optional.args" "Optional"
+# google-cloud-cli is installed from Google's apt repo, so the pin must match
+# apt's version string (e.g. 568.0.0-0). Replicate the Dockerfile's repo setup
+# inside the lookup container.
+GCLOUD_APT_SETUP='
+  apt-get update -qq >/dev/null
+  apt-get install -qq -y --no-install-recommends curl ca-certificates gnupg >/dev/null
+  curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg \
+    | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg
+  echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" \
+    > /etc/apt/sources.list.d/google-cloud-sdk.list
+'
+replace_version_in_args_file "GCLOUD_VERSION" "$(apt_cache_latest_version "google-cloud-cli" "$GCLOUD_APT_SETUP")" "args_optional.args" "Optional"
 
 # README update
 sed -i "s/latest=.*/latest=${RELEASE_DATE}_base/" README.md
