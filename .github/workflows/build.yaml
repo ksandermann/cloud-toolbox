@@ -9,7 +9,15 @@ on:
       - '.github/workflows/verify_tools.yaml'
       - 'verify_tools.sh'
 jobs:
+  Clean-Space:
+    runs-on: [self-hosted, Linux, X64]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Clean up VM space
+        run: bash ./clean_vm.sh
   Clean-Repo:
+    needs: Clean-Space
     runs-on: [self-hosted, Linux, X64]
     steps:
       - name: Checkout
@@ -46,11 +54,7 @@ jobs:
         run: bash ./build.sh
       - name: Reclaim disk
         if: always()
-        run: |
-          docker buildx prune -af || true
-          docker image    prune -af || true
-          docker container prune -f  || true
-          df -h
+        run: bash ./clean_vm.sh
   Create-Release:
     needs: Build-Images
     runs-on: [self-hosted, Linux, X64]
