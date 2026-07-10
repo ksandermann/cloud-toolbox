@@ -1,9 +1,9 @@
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=4.22.2
+OC_CLI_VERSION=4.22.3
 #https://pypi.org/project/awscli/
-AWS_CLI_VERSION=1.45.40
+AWS_CLI_VERSION=1.45.45
 #apt-cache madison google-cloud-cli | head -n1
-GCLOUD_VERSION=575.0.0-0
+GCLOUD_VERSION=575.0.1-0
 #https://pypi.org/project/ansible/
 ANSIBLE_VERSION=9.9.0
 #https://pypi.org/project/Jinja2/
