@@ -3,7 +3,9 @@ set -euo pipefail
 IFS=$'\n\t'
 
 IMAGE_TAG="latest"
-TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
+#TOOLBOX_DIR="$( cd "$(dirname "$0")" ; pwd -P )"
+TOOLBOX_DIR="/home/kevin/git/cloud-toolbox"
+
 
 #functions
 function startNewToolbox {
@@ -13,8 +15,8 @@ function startNewToolbox {
     -v ~/.helm:/root/.helm \
     -v ~/.ssh:/root/.ssh \
     -v ${PWD}:/root/project \
-    -v ~/.gitconfig:/root/.gitconfig \
     -v $TOOLBOX_DIR/.autoexec.sh:/root/.autoexec.sh \
+    -v ~/.gitconfig:/root/.gitconfig \
     -v ~/.aws:/root/.aws \
     -v ~/.azure:/root/.azure \
     -v ~/.config/gcloud:/root/.config/gcloud \
