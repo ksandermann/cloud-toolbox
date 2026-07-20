@@ -1,17 +1,17 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
 UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=29.6.1
+DOCKER_VERSION=29.6.2
 #https://github.com/kubernetes/kubernetes/releases
 KUBECTL_VERSION=1.36.2
 #https://github.com/helm/helm/releases
-HELM_VERSION=4.2.2
+HELM_VERSION=4.2.3
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.15.7
+TERRAFORM_VERSION=1.15.8
 #https://pypi.org/project/azure-cli/
-AZ_CLI_VERSION=2.87.0
+AZ_CLI_VERSION=2.88.0
 #apt-cache madison openssh-client | head -n1
-OPENSSH_VERSION=1:8.9p1-3ubuntu0.15
+OPENSSH_VERSION=1:8.9p1-3ubuntu0.16
 #https://github.com/kubernetes-sigs/cri-tools/releases
 CRICTL_VERSION=1.36.0
 #https://github.com/vmware-tanzu/velero/releases
