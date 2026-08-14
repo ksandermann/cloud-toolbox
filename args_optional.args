@@ -3,7 +3,7 @@ OC_CLI_VERSION=4.22.8
 #https://pypi.org/project/awscli/
 AWS_CLI_VERSION=1.46.0
 #apt-cache madison google-cloud-cli | head -n1
-GCLOUD_VERSION=579.0.0-0
+GCLOUD_VERSION=580.0.0-0
 #https://pypi.org/project/ansible/
 ANSIBLE_VERSION=9.9.0
 #https://pypi.org/project/Jinja2/
