@@ -3,11 +3,11 @@ UBUNTU_VERSION=22.04
 #https://github.com/moby/moby/releases
 DOCKER_VERSION=29.7.2
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.36.3
+KUBECTL_VERSION=1.36.4
 #https://github.com/helm/helm/releases
 HELM_VERSION=4.2.4
 #https://github.com/hashicorp/terraform/releases
-TERRAFORM_VERSION=1.15.8
+TERRAFORM_VERSION=1.15.9
 #https://pypi.org/project/azure-cli/
 AZ_CLI_VERSION=2.89.1
 #apt-cache madison openssh-client | head -n1
