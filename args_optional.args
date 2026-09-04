@@ -1,5 +1,5 @@
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=4.22.9
+OC_CLI_VERSION=4.22.11
 #https://pypi.org/project/awscli/
 AWS_CLI_VERSION=1.46.0
 #apt-cache madison google-cloud-cli | head -n1
@@ -10,3 +10,4 @@ ANSIBLE_VERSION=9.9.0
 JINJA_VERSION=3.1.6
 #https://github.com/hashicorp/vault/releases
 VAULT_VERSION=2.0.4
+#endline
