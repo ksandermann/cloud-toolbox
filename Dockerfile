@@ -177,6 +177,12 @@ SHELL ["/bin/bash", "-c"]
 #env
 ENV DEBIAN_FRONTEND noninteractive
 
+#Ubuntu 24.04 marks its system Python as externally managed (PEP 668), so the
+#pip3 installs below are refused outright. This is a single-purpose toolbox
+#image, not a general-purpose OS, so installing into the system interpreter is
+#exactly what we want.
+ENV PIP_BREAK_SYSTEM_PACKAGES=1
+
 USER root
 WORKDIR /root
 
@@ -218,7 +224,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     lsb-release \
     nano \
     net-tools \
-    netcat \
+    netcat-openbsd \
     nmap \
     openssl
 
@@ -260,11 +266,11 @@ RUN apt-get update && apt-get install -y \
     make \
     openssl
 
-# upgrade pip 
-RUN pip3 install --upgrade pip 
+# upgrade pip
+RUN pip3 install --upgrade --ignore-installed pip
 
 #install common requirements
-RUN pip3 install \
+RUN pip3 install --ignore-installed \
     cryptography \
     hvac \
     jmespath \
