@@ -47,8 +47,8 @@ pypi_get_latest_release() {
 }
 
 # Resolves the apt-pinnable version string for a package, exactly as the
-# Dockerfile sees it. Runs apt-cache inside an Ubuntu 22.04 container so the
-# result matches `apt-get install pkg=VERSION` on jammy.
+# Dockerfile sees it. Runs apt-cache inside an Ubuntu 24.04 container so the
+# result matches `apt-get install pkg=VERSION` on noble.
 #
 # Args:
 #   $1 — package name (e.g. openssh-client)
@@ -57,7 +57,7 @@ pypi_get_latest_release() {
 apt_cache_latest_version() {
   local package="$1"
   local extra_setup="${2:-}"
-  docker run --rm ubuntu:22.04 bash -c "
+  docker run --rm ubuntu:24.04 bash -c "
     set -e
     export DEBIAN_FRONTEND=noninteractive
     ${extra_setup}
@@ -95,13 +95,13 @@ echo "## Changelog" >> "$RELEASE_NOTES_FILE"
 echo "" >> "$RELEASE_NOTES_FILE"
 
 # BASE
-replace_version_in_args_file "UBUNTU_VERSION" "22.04" "args_base.args" "Base"
+replace_version_in_args_file "UBUNTU_VERSION" "24.04" "args_base.args" "Base"
 replace_version_in_args_file "DOCKER_VERSION" "$(github_get_latest_release moby/moby)" "args_base.args" "Base"
 replace_version_in_args_file "KUBECTL_VERSION" "$(github_get_latest_release kubernetes/kubernetes)" "args_base.args" "Base"
 replace_version_in_args_file "HELM_VERSION" "$(github_get_latest_release helm/helm)" "args_base.args" "Base"
 replace_version_in_args_file "TERRAFORM_VERSION" "$(github_get_latest_release hashicorp/terraform)" "args_base.args" "Base"
 replace_version_in_args_file "AZ_CLI_VERSION" "$(pypi_get_latest_release azure-cli)" "args_base.args" "Base"
-# OpenSSH is installed via apt on Ubuntu jammy, so the pin must match apt's
+# OpenSSH is installed via apt on Ubuntu noble, so the pin must match apt's
 # version string (e.g. 1:8.9p1-3ubuntu0.15), not upstream OpenSSH tags.
 OPENSSH_VERSION=$(apt_cache_latest_version "openssh-client")
 replace_version_in_args_file "OPENSSH_VERSION" "$OPENSSH_VERSION" "args_base.args" "Base"
