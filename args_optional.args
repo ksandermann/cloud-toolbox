@@ -1,5 +1,5 @@
 #https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/
-OC_CLI_VERSION=4.22.11
+OC_CLI_VERSION=4.22.12
 #https://pypi.org/project/awscli/
 AWS_CLI_VERSION=1.46.1
 #apt-cache madison google-cloud-cli | head -n1

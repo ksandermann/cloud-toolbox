@@ -14,6 +14,11 @@ echo "building base image with specific tag $UPSTREAM_TAG_BASE and general tag $
 
 ## BUILD COMPLETE IMAGE
 
+# mirror.openshift.com keeps only the current release under clients/ocp/stable/,
+# so a pinned oc version 404s as soon as OpenShift cuts a new one. Repair the pin
+# before parsing the args, otherwise the build dies on an unrelated upstream change.
+bash ./ensure_oc_version.sh || echo "WARNING: oc version could not be verified, continuing with the pinned value"
+
 # Parse args_base.args
 while IFS= read -r line; do
   if [[ "$line" != \#* ]]; then
