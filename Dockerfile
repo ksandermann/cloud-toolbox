@@ -291,8 +291,17 @@ RUN if [[ ! -z ${ANSIBLE_VERSION} && ! -z ${JINJA_VERSION} ]] ; then \
     fi
 
 #install azure-cli
+#pip3-built azure-cli must compile several deps from source, which is extremely slow
+#under QEMU emulation for arm64 builds. Microsoft ships prebuilt amd64/arm64 apt
+#packages (since 2.46.0), so use those instead - same approach as gcloud below.
 RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
-      pip3 install --no-cache-dir --ignore-installed azure-cli==${AZ_CLI_VERSION}; \
+      mkdir -p /etc/apt/keyrings && \
+      curl -sLS https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
+      chmod go+r /etc/apt/keyrings/microsoft.gpg && \
+      AZ_DIST=$(lsb_release -cs) && \
+      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${AZ_DIST} main" | tee /etc/apt/sources.list.d/azure-cli.list > /dev/null && \
+      apt-get update && \
+      apt-get install -y --no-install-recommends azure-cli=${AZ_CLI_VERSION}-1~${AZ_DIST}; \
     fi
 
 #test azure-cli
