@@ -177,6 +177,10 @@ SHELL ["/bin/bash", "-c"]
 #env
 ENV DEBIAN_FRONTEND noninteractive
 
+#retry flaky mirror fetches (e.g. "File has unexpected size ... Mirror sync in progress?"
+#on ports.ubuntu.com) instead of failing a 45-minute multi-arch build
+RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
+
 #Ubuntu 24.04 marks its system Python as externally managed (PEP 668), so the
 #pip3 installs below are refused outright. This is a single-purpose toolbox
 #image, not a general-purpose OS, so installing into the system interpreter is
