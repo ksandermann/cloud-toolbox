@@ -177,8 +177,7 @@ SHELL ["/bin/bash", "-c"]
 #env
 ENV DEBIAN_FRONTEND noninteractive
 
-#retry flaky mirror fetches (e.g. "File has unexpected size ... Mirror sync in progress?"
-#on ports.ubuntu.com) instead of failing a 45-minute multi-arch build
+# Retry flaky mirror fetches instead of failing a long native build.
 RUN echo 'Acquire::Retries "5";' > /etc/apt/apt.conf.d/80-retries
 
 #Ubuntu 24.04 marks its system Python as externally managed (PEP 668), so the
@@ -236,6 +235,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     python3-dev \
     python3-pip \
+    software-properties-common \
     sudo \
     telnet
 
@@ -295,17 +295,16 @@ RUN if [[ ! -z ${ANSIBLE_VERSION} && ! -z ${JINJA_VERSION} ]] ; then \
 
 #install azure-cli
 #pip3-built azure-cli must compile several deps from source, which is extremely slow
-#under QEMU emulation for arm64 builds. Microsoft ships prebuilt amd64/arm64 apt
+#under emulation for arm64 builds. Microsoft ships prebuilt amd64/arm64 apt
 #packages (since 2.46.0), so use those instead - same approach as gcloud below.
-#pipefail + curl -f: a failed key download must abort here, not leave an empty
-#keyring behind that only surfaces later as NO_PUBKEY in apt-get update
+#A failed key download must stop here rather than surface later as NO_PUBKEY.
 RUN if [[ ! -z ${AZ_CLI_VERSION} ]] ; then \
-      set -o pipefail && \
+  set -o pipefail && \
       mkdir -p /etc/apt/keyrings && \
-      curl -fsSL --retry 5 --retry-all-errors https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
+  curl -fsSL --retry 5 --retry-all-errors https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor | tee /etc/apt/keyrings/microsoft.gpg > /dev/null && \
       chmod go+r /etc/apt/keyrings/microsoft.gpg && \
       AZ_DIST=$(lsb_release -cs) && \
-      echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/repos/azure-cli/ ${AZ_DIST} main" | tee /etc/apt/sources.list.d/azure-cli.list > /dev/null && \
+  printf 'Types: deb\nURIs: https://packages.microsoft.com/repos/azure-cli/\nSuites: %s\nComponents: main\nArchitectures: %s\nSigned-By: /etc/apt/keyrings/microsoft.gpg\n' "${AZ_DIST}" "$(dpkg --print-architecture)" | tee /etc/apt/sources.list.d/azure-cli.sources > /dev/null && \
       apt-get update && \
       apt-get install -y --no-install-recommends azure-cli=${AZ_CLI_VERSION}-1~${AZ_DIST}; \
     fi

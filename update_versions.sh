@@ -139,7 +139,7 @@ replace_version_in_args_file "GCLOUD_VERSION" "$(apt_cache_latest_version "googl
 sed -i "s/latest=.*/latest=${RELEASE_DATE}_base/" README.md
 sed -i "s/project=.*/project=${RELEASE_DATE}_base/" README.md
 sed -i "s/complete=.*/complete=${RELEASE_DATE}_complete/" README.md
-sed -i "s/IMAGE_TAG=.*/IMAGE_TAG=\"${RELEASE_DATE}\"/" build.sh
+sed -i "s/DEFAULT_IMAGE_TAG=.*/DEFAULT_IMAGE_TAG=\"${RELEASE_DATE}\"/" build.sh
 
 # Final changelog
 if [[ ${#grouped_changes[@]} -gt 0 ]]; then
