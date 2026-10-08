@@ -27,7 +27,11 @@ safe_jq() {
 github_get_latest_release() {
   local repo="$1"
   local result
-  result=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" || echo "")
+  # Authenticate when a token is set: hosted runners share IPs and hit the
+  # anonymous rate limit (60 requests/hour).
+  local auth=()
+  if [[ -n "${GITHUB_TOKEN:-}" ]]; then auth=(-H "Authorization: Bearer ${GITHUB_TOKEN}"); fi
+  result=$(curl -fsSL "${auth[@]}" "https://api.github.com/repos/$repo/releases/latest" || echo "")
   safe_jq "$result" '.tag_name' | sed -e 's/^docker-v//' -e 's/^v//' || echo ""
 }
 

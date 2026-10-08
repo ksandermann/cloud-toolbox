@@ -6,110 +6,53 @@ on:
     - cron: '20 3 * * MON'
     - cron: '20 3 * * FRI'
   workflow_dispatch:
+concurrency:
+  group: update-versions
+  cancel-in-progress: false
+permissions:
+  contents: write
+  pull-requests: write
 jobs:
-  Clean-Repo:
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Fetch origin
-        run: git fetch origin
-      - name: Checkout master
-        run: git checkout master
-      - name: Delete local branches
-        run: git checkout -b "tmp" || true  && git checkout master && git for-each-ref --format '%(refname:short)' refs/heads | grep -v "master\|main" | xargs git branch -D
-      - name: Pull origin (allow unrelated histories)
-        run: git pull origin master --allow-unrelated-histories || true
-  Create-Branch:
-    needs: Clean-Repo
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set RELEASE_DATE
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> $GITHUB_ENV
-
-      - name: Sync remote branch (if exists)
-        run: |
-          echo "Branch = ${RELEASE_DATE}_automation"
-          git fetch origin
-          git checkout -B "${RELEASE_DATE}_automation" "origin/${RELEASE_DATE}_automation" || git checkout -b "${RELEASE_DATE}_automation"
-        env:
-          RELEASE_DATE: ${{ env.RELEASE_DATE }}
+  # Single job: hosted runners do not share a workspace between jobs.
   Update-Versions:
-    needs: Create-Branch
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: ubuntu-24.04
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Checkout
+      - name: Checkout master
         uses: actions/checkout@v4
-      - name: update versions
+        with:
+          ref: master
+      - name: Set release date and branch
+        run: |
+          echo "RELEASE_DATE=$(date --rfc-3339=date)" >> "$GITHUB_ENV"
+          echo "BRANCH=$(date --rfc-3339=date)_automation" >> "$GITHUB_ENV"
+      - name: Create branch
+        run: git checkout -B "$BRANCH"
+      - name: Update versions
         run: bash update_versions.sh
-  Commit:
-    needs: Update-Versions
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
       - name: Commit
         run: |
           git config --local user.email "kevin.sandermann@gmail.com"
           git config --local user.name "github-actions[bot]"
-          git commit --allow-empty -a -m "Release ${{ env.RELEASE_DATE }}"
-  Push-Changes:
-    needs: Commit
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          branch: ${{ env.RELEASE_DATE }}_automation
-  Create-PR:
-    needs: Push-Changes
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-
-      - name: Prepare PR body
-        id: prep_pr
-        run: |
-          if [ -f changed_versions.txt ]; then
-            echo "✅ Generating changelog from changed_versions.txt"
-            {
-              echo "# Changelog"
-              echo ""
-              cat changed_versions.txt
-            } > pr_body.md
-          else
-            echo "# Changelog" > pr_body.md
-            echo "" >> pr_body.md
-            echo "(no version changes)" >> pr_body.md
-          fi
-
-          # Encode PR body in base64 to safely pass it to the next step
-          ENCODED_BODY=$(base64 -w 0 pr_body.md)
-          echo "ENCODED_BODY=$ENCODED_BODY" >> $GITHUB_ENV
-
+          git commit --allow-empty -a -m "Release ${RELEASE_DATE}"
+      - name: Push branch
+        # The branch is bot-owned and rebuilt from master on every run.
+        run: git push --force origin "$BRANCH"
       - name: Create PR
         run: |
-          BODY=$(echo "$ENCODED_BODY" | base64 -d)
-
-          curl -X POST \
-            -H "Accept: application/vnd.github+json" \
-            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-            https://api.github.com/repos/ksandermann/cloud-toolbox/pulls \
-            -d "$(jq -n \
-              --arg title "Release $RELEASE_DATE" \
-              --arg body "$BODY" \
-              --arg head "${RELEASE_DATE}_automation" \
-              --arg base "master" \
-              '{title: $title, body: $body, head: $head, base: $base}')"
-        env:
-          ENCODED_BODY: ${{ env.ENCODED_BODY }}
-          RELEASE_DATE: ${{ env.RELEASE_DATE }}
+          {
+            echo "# Changelog"
+            echo ""
+            if [[ -s changed_versions.txt ]]; then
+              cat changed_versions.txt
+            else
+              echo "(no version changes)"
+            fi
+          } > pr_body.md
+          if [[ -n "$(gh pr list --head "$BRANCH" --base master --state open --json number --jq '.[].number')" ]]; then
+            echo "PR for $BRANCH already open, branch updated."
+          else
+            gh pr create --base master --head "$BRANCH" --title "Release ${RELEASE_DATE}" --body-file pr_body.md
+          fi
