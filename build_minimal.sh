@@ -25,9 +25,7 @@ trivy image \
     --severity HIGH,CRITICAL,MEDIUM \
     ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_MINIMAL
 
-echo "Vulnerability scan complete. Press ctrl+c to abort and not push images. Sleeping 120 seconds, then proceeding to push images"
-sleep 120
-echo "proceeding with pushing the images"
+echo "Vulnerability scan complete, proceeding with pushing the images"
 
 echo "extracting image layer digests"
 MINIMAL_PRIVATE_MANIFEST_DIGEST_1=$(docker manifest inspect ksandermann/cloud-toolbox-private:$UPSTREAM_TAG_MINIMAL | jq -r '.manifests[0].digest')

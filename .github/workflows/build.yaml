@@ -1,93 +1,116 @@
 name: Build Images
-run-name: ${{ github.actor }} is BUILDING Base and Complete Images 🚀
 on:
   push:
-    branches:
-      - master
     paths-ignore:
       - '.github/workflows/update.yaml'
       - '.github/workflows/verify_tools.yaml'
       - 'verify_tools.sh'
+  workflow_dispatch:
+concurrency:
+  group: cloud-toolbox-${{ github.ref }}
+  cancel-in-progress: false
+permissions:
+  contents: read
 jobs:
-  Clean-Space:
-    runs-on: [self-hosted, Linux, X64]
+  Prepare:
+    runs-on: ubuntu-24.04
+    outputs:
+      image_tag: ${{ steps.metadata.outputs.image_tag }}
+      build_id: ${{ steps.metadata.outputs.build_id }}
+      publish_mode: ${{ steps.metadata.outputs.publish_mode }}
+    steps:
+      - name: Set build metadata
+        id: metadata
+        env:
+          GITHUB_RUN_ID: ${{ github.run_id }}
+          GITHUB_RUN_ATTEMPT: ${{ github.run_attempt }}
+          GITHUB_REF: ${{ github.ref }}
+          GITHUB_EVENT_NAME: ${{ github.event_name }}
+        run: |
+          echo "image_tag=$(date -u +'%Y-%m-%d')" >> "$GITHUB_OUTPUT"
+          echo "build_id=${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" >> "$GITHUB_OUTPUT"
+          if [[ "$GITHUB_REF" == "refs/heads/master" && "$GITHUB_EVENT_NAME" == "push" ]]; then
+            echo "publish_mode=release" >> "$GITHUB_OUTPUT"
+          else
+            echo "publish_mode=test" >> "$GITHUB_OUTPUT"
+          fi
+  Build-Images:
+    timeout-minutes: 360
+    needs: Prepare
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - architecture: amd64
+            runner: ubuntu-24.04
+          - architecture: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    env:
+      BUILD_ARCH: ${{ matrix.architecture }}
+      BUILD_ID: ${{ needs.Prepare.outputs.build_id }}
+      IMAGE_TAG: ${{ needs.Prepare.outputs.image_tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Clean up VM space
-        run: bash ./clean_vm.sh
-  Clean-Repo:
-    needs: Clean-Space
-    runs-on: [self-hosted, Linux, X64]
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-      - name: Fetch origin
-        run: git fetch origin
-      - name: Checkout master
-        run: git checkout master
-      - name: Delete local branches
-        run: git checkout -b "tmp" || true  && git checkout master && git for-each-ref --format '%(refname:short)' refs/heads | grep -v "master\|main" | xargs git branch -D
-      - name: Pull origin
-        run: git pull origin master
-  Build-Images:
-    timeout-minutes: 360
-    needs: Clean-Repo
-    runs-on: [self-hosted, Linux, X64]
-    steps:
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      # Remove all registered emulators so setup-qemu-action installs a current QEMU.
-      # The old multiarch/qemu-user-static image ships QEMU 7.2, whose handlers
-      # setup-qemu-action would leave in place - and under it arm64 OpenSSL fails every
-      # TLS handshake (curl: SSL_ERROR_SYSCALL), breaking downloads in the arm64 build.
-      - name: Reset QEMU handlers
-        run: docker run --rm --privileged tonistiigi/binfmt:latest --uninstall "qemu-*"
-      - name: Set up QEMU
-        id: qemu
-        uses: docker/setup-qemu-action@v3.6.0
-        with:
-          image: tonistiigi/binfmt:latest
-          platforms: all
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+      - name: Set up Trivy
+        uses: aquasecurity/setup-trivy@v0.3.1
       - name: Build Images
         run: bash ./build.sh
-      - name: Reclaim disk
-        if: always()
-        run: bash ./clean_vm.sh
-  Create-Release:
-    needs: Build-Images
-    runs-on: [self-hosted, Linux, X64]
+  Publish-Images:
+    needs: [Prepare, Build-Images]
+    runs-on: ubuntu-24.04
+    env:
+      BUILD_ID: ${{ needs.Prepare.outputs.build_id }}
+      IMAGE_TAG: ${{ needs.Prepare.outputs.image_tag }}
+      PUBLISH_MODE: ${{ needs.Prepare.outputs.publish_mode }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Get current date
-        run: echo "RELEASE_DATE=$(date --rfc-3339=date)" >> ${GITHUB_ENV}
-
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Publish and verify multi-platform tags
+        run: bash ./publish.sh
+  Create-Release:
+    if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+    needs: [Prepare, Publish-Images]
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    env:
+      RELEASE_DATE: ${{ needs.Prepare.outputs.image_tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Generate Release Notes from changes
         run: |
-          echo "${{ env.RELEASE_DATE }}" > release_notes.md
-          echo "" >> release_notes.md
-          echo "Changelog" >> release_notes.md
-
-          # Only diff args_base.args and args_optional.args
-          git fetch origin master
-          if git diff HEAD^ HEAD -- args_base.args args_optional.args | grep '^+'; then
-            git diff HEAD^ HEAD -- args_base.args args_optional.args | grep '^+' | grep '=' | sed 's/^+/- /' >> release_notes.md
-          else
-            echo "- No version changes detected." >> release_notes.md
-          fi
-
-      - name: Display Release Notes (for debug)
+          {
+            echo "$RELEASE_DATE"
+            echo
+            echo "Changelog"
+            changes=$(git diff HEAD^ HEAD -- args_base.args args_optional.args | grep -E '^\+[^+].*=' || true)
+            if [[ -n "$changes" ]]; then
+              printf '%s\n' "$changes" | sed 's/^+/- /'
+            else
+              echo "- No version changes detected."
+            fi
+          } > release_notes.md
+      - name: Display Release Notes
         run: cat release_notes.md
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:

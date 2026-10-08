@@ -27,7 +27,11 @@ safe_jq() {
 github_get_latest_release() {
   local repo="$1"
   local result
-  result=$(curl -fsSL "https://api.github.com/repos/$repo/releases/latest" || echo "")
+  # Authenticate when a token is set: hosted runners share IPs and hit the
+  # anonymous rate limit (60 requests/hour).
+  local auth=()
+  if [[ -n "${GITHUB_TOKEN:-}" ]]; then auth=(-H "Authorization: Bearer ${GITHUB_TOKEN}"); fi
+  result=$(curl -fsSL "${auth[@]}" "https://api.github.com/repos/$repo/releases/latest" || echo "")
   safe_jq "$result" '.tag_name' | sed -e 's/^docker-v//' -e 's/^v//' || echo ""
 }
 
@@ -139,7 +143,7 @@ replace_version_in_args_file "GCLOUD_VERSION" "$(apt_cache_latest_version "googl
 sed -i "s/latest=.*/latest=${RELEASE_DATE}_base/" README.md
 sed -i "s/project=.*/project=${RELEASE_DATE}_base/" README.md
 sed -i "s/complete=.*/complete=${RELEASE_DATE}_complete/" README.md
-sed -i "s/IMAGE_TAG=.*/IMAGE_TAG=\"${RELEASE_DATE}\"/" build.sh
+sed -i "s/DEFAULT_IMAGE_TAG=.*/DEFAULT_IMAGE_TAG=\"${RELEASE_DATE}\"/" build.sh
 
 # Final changelog
 if [[ ${#grouped_changes[@]} -gt 0 ]]; then
