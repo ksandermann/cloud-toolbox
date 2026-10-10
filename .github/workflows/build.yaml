@@ -1,4 +1,5 @@
-name: Build Images
+name: build - full
+run-name: build - full (${{ github.ref_name }})
 on:
   push:
     paths-ignore:

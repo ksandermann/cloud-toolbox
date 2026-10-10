@@ -1,5 +1,5 @@
-name: Build Minimal Image
-run-name: ${{ github.actor }} is BUILDING Minimal Image 🚀
+name: build - minimal
+run-name: build - minimal (${{ github.event_name == 'workflow_dispatch' && 'manual' || github.event_name }})
 on:
   schedule:
     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
