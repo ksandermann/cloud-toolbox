@@ -1,5 +1,5 @@
-name: Update Versions
-run-name: ${{ github.actor }} is UPDATING 🚀
+name: update - versions
+run-name: update - versions (${{ github.event_name == 'workflow_dispatch' && 'manual' || github.event_name }})
 on:
   schedule:
     #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule

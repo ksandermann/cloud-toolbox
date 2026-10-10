@@ -1,8 +1,8 @@
-name: Verify Tools
-run-name: ${{ github.actor }} is verifying toolbox images
+name: build - verify
+run-name: build - verify (${{ github.event.workflow_run.head_branch || 'manual' }})
 on:
   workflow_run:
-    workflows: ["Build Images"]
+    workflows: ["build - full"]
     types:
       - completed
   workflow_dispatch:
