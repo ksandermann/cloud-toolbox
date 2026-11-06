@@ -77,7 +77,12 @@ replace_version_in_args_file() {
   local group="$4"
   local current_version=""
 
-  if [[ -z "$new_version" ]]; then return; fi
+  if [[ -z "$new_version" || "$new_version" == "null" ||
+        "$new_version" == *$'\n'* || "$new_version" == *[[:space:]]* ]]; then
+    echo "ERROR: Could not resolve a valid version for $key" >&2
+    LOOKUP_FAILED=1
+    return
+  fi
 
   if grep -q "^${key}=" "$file"; then
     current_version=$(grep "^${key}=" "$file" | cut -d'=' -f2-)
@@ -90,6 +95,8 @@ replace_version_in_args_file() {
     log_change "$group" "$key added with value $new_version"
   fi
 }
+
+LOOKUP_FAILED=0
 
 echo "Updating versions..."
 
@@ -138,6 +145,12 @@ GCLOUD_APT_SETUP='
     > /etc/apt/sources.list.d/google-cloud-sdk.list
 '
 replace_version_in_args_file "GCLOUD_VERSION" "$(apt_cache_latest_version "google-cloud-cli" "$GCLOUD_APT_SETUP")" "args_optional.args" "Optional"
+
+# Do not commit a partial update when any upstream lookup failed.
+if [[ "$LOOKUP_FAILED" != 0 ]]; then
+  echo "Version lookup failed; refusing to create or merge a partial update." >&2
+  exit 1
+fi
 
 # README update
 sed -i "s/latest=.*/latest=${RELEASE_DATE}_base/" README.md

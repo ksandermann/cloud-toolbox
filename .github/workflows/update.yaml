@@ -2,9 +2,8 @@ name: update - versions
 run-name: update - versions (${{ github.event_name == 'workflow_dispatch' && 'manual' || github.event_name }})
 on:
   schedule:
-    #UTC - https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#schedule
-    - cron: '20 3 * * MON'
-    - cron: '20 3 * * FRI'
+    - cron: '0 7 * * MON,FRI'
+      timezone: Europe/Berlin
   workflow_dispatch:
 concurrency:
   group: update-versions
@@ -32,6 +31,13 @@ jobs:
         run: git checkout -B "$BRANCH"
       - name: Update versions
         run: bash update_versions.sh
+      - name: Validate updated files
+        run: |
+          for file in update_versions.sh build.sh publish.sh verify_tools.sh; do bash -n "$file"; done
+          git diff --check
+          for file in args_base.args args_optional.args; do
+            awk 'NF && $0 !~ /^#/ && $0 !~ /^[A-Z_]+=[^[:space:]]+$/ { print "Invalid version entry: " $0; bad=1 } END { exit bad }' "$file"
+          done
       - name: Commit
         run: |
           git config --local user.email "kevin.sandermann@gmail.com"
@@ -56,3 +62,64 @@ jobs:
           else
             gh pr create --base master --head "$BRANCH" --title "Release ${RELEASE_DATE}" --body-file pr_body.md
           fi
+      - name: Merge successful conflict-free scheduled PR
+        if: github.event_name == 'schedule'
+        uses: actions/github-script@v7
+        env:
+          MERGE_TOKEN: ${{ secrets.UPDATE_PR_MERGE_TOKEN }}
+        with:
+          # Use a separate token so the merge push starts build - full.
+          github-token: ${{ secrets.UPDATE_PR_MERGE_TOKEN || github.token }}
+          script: |
+            if (!process.env.MERGE_TOKEN) {
+              core.setFailed('Set UPDATE_PR_MERGE_TOKEN with Contents: write and Pull requests: write permissions.');
+              return;
+            }
+            const { owner, repo } = context.repo;
+            const { data: prs } = await github.rest.pulls.list({
+              owner, repo, head: `${owner}:${process.env.BRANCH}`, base: 'master', state: 'open'
+            });
+            if (prs.length !== 1) {
+              core.setFailed('Expected exactly one open update PR.');
+              return;
+            }
+            const pull_number = prs[0].number;
+            for (let attempt = 0; attempt < 60; attempt++) {
+              const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number });
+              if (pr.state !== 'open' || pr.draft ||
+                  pr.user.login !== 'github-actions[bot]' ||
+                  pr.head.repo?.full_name !== `${owner}/${repo}` ||
+                  pr.head.ref !== process.env.BRANCH || pr.base.ref !== 'master') {
+                core.setFailed('PR no longer matches the expected bot-owned update PR.');
+                return;
+              }
+              if (pr.mergeable === false) {
+                core.setFailed(`PR #${pull_number} has merge conflicts; leaving it open.`);
+                return;
+              }
+              const ref = pr.head.sha;
+              const checks = await github.paginate(github.rest.checks.listForRef, {
+                owner, repo, ref, filter: 'latest', per_page: 100
+              });
+              const { data: status } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref });
+              const failed = checks.some(c => c.status === 'completed' &&
+                !['success', 'neutral', 'skipped'].includes(c.conclusion)) ||
+                status.statuses.some(s => ['failure', 'error'].includes(s.state));
+              if (failed) {
+                core.setFailed('PR has failed checks; leaving it open.');
+                return;
+              }
+              const pending = checks.some(c => c.status !== 'completed') ||
+                status.statuses.some(s => s.state === 'pending');
+              // "clean" also excludes blocked reviews, required checks and stale branches.
+              if (pr.mergeable === true && pr.mergeable_state === 'clean' && !pending) {
+                const { data: result } = await github.rest.pulls.merge({
+                  owner, repo, pull_number, sha: ref, merge_method: 'squash'
+                });
+                if (!result.merged) core.setFailed(result.message || 'PR was not merged.');
+                else core.info(`Merged PR #${pull_number}; the master push starts build - full.`);
+                return;
+              }
+              if (attempt < 59) await new Promise(resolve => setTimeout(resolve, 10000));
+            }
+            core.setFailed('PR is not ready after 10 minutes; leaving it open for review.');
