@@ -2,7 +2,7 @@
 set -euo pipefail
 IFS=$'\n\t'
 
-DEFAULT_IMAGE_TAG="2026-11-02"
+DEFAULT_IMAGE_TAG="2026-11-06"
 IMAGE_TAG="${IMAGE_TAG:-$DEFAULT_IMAGE_TAG}"
 BUILD_ID="${BUILD_ID:-local-$(date -u +%s)}"
 PRIVATE_REPOSITORY="${PRIVATE_REPOSITORY:-ksandermann/cloud-toolbox-private}"
