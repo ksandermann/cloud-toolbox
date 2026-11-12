@@ -30,5 +30,8 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Set up Trivy
         uses: aquasecurity/setup-trivy@v0.3.1
+        with:
+          # Avoid the installer's failing "latest" tag lookup.
+          version: v0.76.2
       - name: Build Images
         run: bash ./build_minimal.sh
