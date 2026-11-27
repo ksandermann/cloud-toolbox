@@ -1,9 +1,9 @@
 MULTISTAGE_BUILDER_VERSION=2022-12-21
 UBUNTU_VERSION=24.04
 #https://github.com/moby/moby/releases
-DOCKER_VERSION=29.10.0
+DOCKER_VERSION=29.10.1
 #https://github.com/kubernetes/kubernetes/releases
-KUBECTL_VERSION=1.37.2
+KUBECTL_VERSION=1.37.3
 #https://github.com/helm/helm/releases
 HELM_VERSION=4.3.2
 #https://github.com/hashicorp/terraform/releases
